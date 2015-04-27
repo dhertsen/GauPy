@@ -1,12 +1,13 @@
-import molmod.graphs as g
-import molmod.molecular_graphs as mg
 import utils
 import warnings
 
 # Dirty trick to silence warnings of confliciting
 # modules on the HPC cluster and to silence NumPy
 # warnings.
-warnings.filterwarnings('ignore')
+with warnings.catch_warnings():
+    warnings.simplefilter('ignore')
+    import molmod.graphs as g
+    import molmod.molecular_graphs as mg
 
 h = mg.HasAtomNumber(1)
 c = mg.HasAtomNumber(6)

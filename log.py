@@ -6,14 +6,15 @@ import filenames
 import molecules
 import fnmatch
 import utils
-import numpy as np
-import molmod.units as units
-import molmod.molecules as mol
 
 # Dirty trick to silence warnings of confliciting
 # modules on the HPC cluster and to silence NumPy
 # warnings.
-warnings.filterwarnings('ignore')
+with warnings.catch_warnings():
+    warnings.simplefilter('ignore')
+    import numpy as np
+    import molmod.units as units
+    import molmod.molecules as mol
 
 
 class LOGFile(object):

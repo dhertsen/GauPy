@@ -1,14 +1,15 @@
 '''Common functions'''
 import warnings
-import numpy as np
-import molmod.units as units
-import molmod.periodic as periodic
 import log
 
 # Dirty trick to silence warnings of confliciting
 # modules on the HPC cluster and to silence NumPy
 # warnings.
-warnings.filterwarnings('ignore')
+with warnings.catch_warnings():
+    warnings.simplefilter('ignore')
+    import numpy as np
+    import molmod.units as units
+    import molmod.periodic as periodic
 
 
 def anum(atom):

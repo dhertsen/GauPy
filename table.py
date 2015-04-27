@@ -1,12 +1,14 @@
 import log
 import warnings
 import utils
-import numpy as np
 
 # Dirty trick to silence warnings of confliciting
 # modules on the HPC cluster and to silence NumPy
 # warnings.
-warnings.filterwarnings('ignore')
+with warnings.catch_warnings():
+    warnings.simplefilter('ignore')
+    import numpy as np
+
 
 
 def _ignore(value):
