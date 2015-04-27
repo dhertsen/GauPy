@@ -4,7 +4,7 @@ import gaupy.table as table
 import argparse
 import sys
 import gaupy.log as log
-import gaupy.sixfour as sixfour
+# import gaupy.sixfour as sixfour
 
 parser = argparse.ArgumentParser('Tabulate parsed output from Gaussian '
                                  + 'output files.')
@@ -59,7 +59,9 @@ for x in args.extra:
 if args.type == 'LOGFile':
     type = log.LOGFile
 elif args.type == 'SixFour':
-    type = sixfour.SixFour
+    # TODO make sixfour work, find better way to accomodate custom projects
+    # type = sixfour.SixFour
+    pass
 
 print table.GaussianTable(files, columns, layout, partition=args.sort,
                           partition_energies_rmsds=args.partitionenergies,
