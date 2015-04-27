@@ -1,0 +1,32 @@
+#! /usr/bin/python
+
+import gaupy.log as log
+import gaupy.utils as utils
+import argparse
+import matplotlib.pyplot as plt
+import sys
+
+parser = argparse.ArgumentParser('Check geometric convergence of Gaussian '
+                                 + 'output file.')
+parser.add_argument('file', help='Gaussian output file', default=sys.stdin)
+parser.add_argument('--stepmin', help='Minimum of step number axis', type=int)
+parser.add_argument('--stepmax', help='Maximum of step number axis', type=int)
+parser.add_argument('--emin', help='Minimum of energy axis', type=float)
+parser.add_argument('--emax', help='Maximum of energy axis', type=float)
+args = parser.parse_args()
+
+plt.plot(utils.relative_energies(log.LOGFile(args.file).energies))
+plt.xlabel('Optimization steps')
+plt.ylabel('Rel. E$_{el}$ (kJ/mol)')
+
+if args.stepmin is not None:
+    plt.gca().set_xlim(left=args.stepmin)
+if args.stepmax is not None:
+    plt.gca().set_xlim(right=args.stepmax)
+if args.emin is not None:
+    plt.gca().set_ylim(bottom=args.emin)
+if args.emax is not None:
+    plt.gca().set_ylim(bottom=args.emax)
+
+plt.gcf().set_size_inches([1, 1])
+plt.show()

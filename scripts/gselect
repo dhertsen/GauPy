@@ -1,0 +1,79 @@
+#! /usr/bin/python
+
+import argparse
+import gaupy.log as log
+
+parser = argparse.ArgumentParser('Select Gaussian output files '
+                                 + 'and perform some action on selected files')
+
+sgroup = parser.add_argument_group(title='selections')
+sgroup.add_argument('--termination', '-t', default=None,
+                    help='Select on termination (\'ok\',\
+                    \'error\', specific error)')
+sgroup.add_argument('--notspe', action='store_true',
+                    help='Do not select *spe*')
+sgroup.add_argument('--notirc', action='store_true',
+                    help='Do not select *irc*')
+sgroup.add_argument('--ts', action='store_true',
+                    help='Select TSs (\'freq\' in route section,\
+                    lowest frequency < -100 cm-1)')
+
+agroup = parser.add_argument_group(title='actions')
+agroup.add_argument('--restart', action='store_true',
+                    help='Write restart input file for selected log files')
+agroup.add_argument('--rm', action='store_true',
+                    help='Remove selected log files')
+agroup.add_argument('--rmall', action='store_true',
+                    help='Remove all files (all extensions)\
+                    for selected log files')
+agroup.add_argument('--mv', nargs=2, default=None,
+                    help='For the selected log files, move all files with\
+                    extension (first argument) to subfolder\
+                    (second argument)')
+agroup.add_argument('--mvall', default=None, help='For selected log files,\
+                    move all files (all extensions) to subfolder (argument)')
+agroup.add_argument('--cp', nargs=2, default=None,
+                    help='For the selected log files, move all files with\
+                    extension (first argument) to subfolder\
+                    (second argument)')
+agroup.add_argument('--cpall', default=None, help='For selected log files,\
+                    move all files (all extensions) to subfolder (argument)')
+parser.add_argument('files', nargs='*', help='Gaussian output files')
+
+args = parser.parse_args()
+
+logs = log.LOGFile.parse_all(*args.files)
+
+if args.termination:
+    if args.termination == 'ok':
+        logs = [l for l in logs if not l.error]
+    elif args.termination == 'error':
+        logs = [l for l in logs if l.error]
+    else:
+        logs = [l for l in logs if l.error == args.termination]
+if args.notspe:
+    logs = [l for l in logs if 'spe' not in l.name]
+if args.notirc:
+    logs = [l for l in logs if 'irc' not in l.name]
+if args.ts:
+    logs = [l for l in logs
+            if 'freq' in l.keywords and l.lowest_frequency < -100]
+
+for l in logs:
+    if args.restart:
+        open(l.files.com, 'w').write(l.to_input())
+        print('%s written.' % l.files.com)
+    elif args.rm:
+        l.files.remove_ext('log')
+    elif args.rmall:
+        l.files.remove_all()
+    elif args.mv:
+        l.files.move_ext(args.mv[1], args.mv[0])
+    elif args.mvall:
+        l.files.move_all(args.mvall[0])
+    elif args.cp:
+        l.files.copy_ext(args.cp[1], args.cp[0])
+    elif args.cpall:
+        l.files.copy_all(args.cpall[0])
+    else:
+        print l.files.log

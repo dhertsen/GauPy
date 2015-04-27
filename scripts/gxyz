@@ -1,0 +1,23 @@
+#! /usr/bin/python
+
+import gaupy.log as log
+import sys
+import argparse
+import molmod.io.xyz as xyz
+
+parser = argparse.ArgumentParser('XYZ files from Gaussian output files.')
+parser.add_argument('files', nargs='*', help='Gaussian output files',
+                    default=sys.stdin)
+args = parser.parse_args()
+
+
+for f in args.files:
+    try:
+        flog = log.LOGFile(f)
+        xw = xyz.XYZWriter(flog.files.xyz, flog.geometry.numbers)
+        comment = '%s\tE=%s\tG=%s\tGcorr=%s' % (
+            flog.files.base, flog.energy, flog.gibbs, flog.gibbscorrection)
+        xw.dump(comment, flog.geometry.coordinates)
+        print('%s written.' % flog.files.xyz)
+    except:
+        print('ERROR: %s could not be processed' % f)

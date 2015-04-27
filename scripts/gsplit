@@ -1,0 +1,20 @@
+#! /usr/bin/python
+
+import argparse
+import molmod.io.xyz as xyz
+
+parser = argparse.ArgumentParser('Split an xyz movie root.xyz into seperate'
+                                 + 'root-#.xyz files.')
+parser.add_argument('--step', '-s', type=int, default=1,
+                    help='Only sample every x steps.')
+parser.add_argument('files', nargs='*', help='xyz movies')
+args = parser.parse_args()
+
+for f in args.files:
+    xr = xyz.XYZReader(f, slice(None, None, args.step))
+    first = xr.get_first_molecule()
+    for i, (title, coordinates) in enumerate(xr):
+        fi = f.replace('.xyz', '-%s.xyz' % i)
+        xw = xyz.XYZWriter(fi, first.numbers)
+        xw.dump(title, coordinates)
+        print ('%s written.' % fi)

@@ -1,0 +1,56 @@
+#! /usr/bin/python
+
+import shutil
+import sys
+import gaupy.log as log
+import argparse
+
+parser = argparse.ArgumentParser('Write IRC Gaussian input files from TS.')
+parser.add_argument('files', nargs='*', help='Gaussian output files',
+                    default=sys.stdin)
+group = parser.add_mutually_exclusive_group()
+group.add_argument('--fwd', '-f', action='store_true',
+                   help='Forward IRC input file only')
+group.add_argument('--rev', '-r', action='store_true',
+                   help='Reverse IRC input file only')
+parser.add_argument('--maxcycle', default=200,
+                    help='Gaussian irc(maxcycle) keyword')
+parser.add_argument('--maxpoints', default=10,
+                    help='Gaussian irc(maxpoints) keyword')
+parser.add_argument('--stepsize', default=10,
+                    help='Gaussian irc(stepsize) keyword')
+parser.add_argument('--extra', default='',
+                    help='Extra input for route section')
+parser.add_argument('--replacets', action='store_true',
+                    help='Replace typical ts parts of filename\
+                    (ts, tsopt, etc.) with irc. Otherwise, irc\
+                    will be added to the filename')
+args = parser.parse_args()
+
+# TODO This is probably not the correct way to read from stdin.
+try:
+    files = args.files.read().split()
+except:
+    files = args.files
+
+# If neither fwd, nor rev are specified as an option, create both files.
+if not args.fwd and not args.rev:
+    args.fwd = args.rev = True
+
+for f in args.files:
+    l = log.LOGFile(f)
+    geom = l.geometry
+    ircfiles = l.files.ts_to_irc(replace=args.replacets)
+    for d, e in [('fwd', 'forward'), ('rev', 'reverse')]:
+        if getattr(args, d):
+            try:
+                shutil.copy(l.files.chk, ircfiles[d].chk)
+                l.geometry = None
+            except:
+                pass
+            l.keywords = [l.lot, ('irc(%s,calcfc,maxcycle=%i,maxpoints=%i,'
+                                  + 'stepsize=%i)')
+                          % (e, args.maxcycle, args.maxpoints, args.stepsize),
+                          args.extra]
+            l.write_input(ircfiles[d].com)
+            print('%s written.' % ircfiles[d].com)

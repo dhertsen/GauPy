@@ -1,0 +1,66 @@
+#! /usr/bin/python
+
+import gaupy.table as table
+import argparse
+import sys
+import gaupy.log as log
+import gaupy.sixfour as sixfour
+
+parser = argparse.ArgumentParser('Tabulate parsed output from Gaussian '
+                                 + 'output files.')
+parser.add_argument('--sort', '-s', action='store_true',
+                    help='Sort reactions')
+parser.add_argument('--gibbs', '-g', '-G', action='store_true',
+                    help='Print relative Gibbs free energy (kJ/mol)')
+parser.add_argument('--enthalpy', '-H', action='store_true',
+                    help='Print relative enthalpies (kJ/mol)')
+parser.add_argument('--rmsd', '-r', action='store_true',
+                    help='Print RMSDs')
+parser.add_argument('--partitionenergies', '-b', action='store_true',
+                    help='Calculate relative Gibbs free energies/enthalpies '
+                    + 'and RMSDs per partition, only if -gs')
+parser.add_argument('--method', '-m', action='store_true',
+                    help='Print method and basis set')
+parser.add_argument('--extra', '-x', action='append', default=[],
+                    help='Print extra column '
+                    + '(fetch attribute from log.LOGFile object)')
+parser.add_argument('--type', '-t', default='LOGFile',
+                    help='Use different parsing class (LOGFile, SixFour)')
+parser.add_argument('files', nargs='*', help='Gaussian output files',
+                    default=sys.stdin)
+args = parser.parse_args()
+
+# TODO This is probably not the correct way to read from stdin.
+try:
+    files = args.files.read().split()
+except:
+    files = args.files
+
+columns = ['file', 'nimag', 'lowest_frequency', 'irc.length', 'error']
+layout = ['fit+2', '%-5s', '%-7i', '%-7s', 'fit+2']
+if args.method:
+    columns.insert(1, 'method')
+    layout.insert(1, '%-8s')
+    columns.insert(2, 'basis')
+    layout.insert(2, '%-15s')
+if args.enthalpy:
+    columns.insert(1, 'relenthalpy')
+    layout.insert(1, '%-8.1f')
+if args.gibbs:
+    columns.insert(1, 'relgibbs')
+    layout.insert(1, '%-8.1f')
+if args.rmsd:
+    columns.insert(-2, 'rmsd')
+    layout.insert(-2, '%-10.3e')
+for x in args.extra:
+    columns.append(x)
+    layout.append('fit+2')
+
+if args.type == 'LOGFile':
+    type = log.LOGFile
+elif args.type == 'SixFour':
+    type = sixfour.SixFour
+
+print table.GaussianTable(files, columns, layout, partition=args.sort,
+                          partition_energies_rmsds=args.partitionenergies,
+                          type=type)

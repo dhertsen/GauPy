@@ -1,0 +1,26 @@
+#! /usr/bin/python
+
+import gaupy.log as log
+import argparse
+import sys
+
+parser = argparse.ArgumentParser('''Write Gaussian input file for the
+optimization of IRC endpoints. Only works if 'irc' in filename.''')
+parser.add_argument('files', nargs='*', help='Gaussian output files',
+                    default=sys.stdin)
+args = parser.parse_args()
+
+# TODO This is probably not the correct way to read from stdin.
+try:
+    files = args.files.read().split()
+except:
+    files = args.files
+
+for f in args.files:
+    l = log.LOGFile(f)
+    if l.irc:
+        l.keywords = [l.lot, 'opt', 'freq']
+        l.geometry = l.irc.geometries[-1]
+        fn = l.files.irc_to_end()
+        l.write_input(fn)
+        print('%s written.' % fn.com)

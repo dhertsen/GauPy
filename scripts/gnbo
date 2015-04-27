@@ -1,0 +1,51 @@
+#! /usr/bin/python
+
+import gaupy.log as log
+import argparse
+import sys
+
+line = '-' * 100
+caption = (' ' * 77 + 'E(2)  E(j)-E(i) F(i,j)\n'
+           + ' ' * 10 + 'Donor NBO (i)' + 20 * ' '
+           + 'Acceptor NBO (j)                 kcal/mol   a.u.    a.u. ')
+full = []
+
+parser = argparse.ArgumentParser('Parse the NBO interaction energy between two'
+                                 + ' atom groups from Gaussian output files'
+                                 + ' and print them in kcal/mol')
+parser.add_argument('--verbosity', '-v', action='store_true',
+                    help='Print output fully')
+parser.add_argument('--kjmol', '-k', action='store_true',
+                    help='Use kJ/mol instead of kcal/mol')
+parser.add_argument('--atom1', '-a1', type=int, nargs='*',
+                    help='Numbers of the first atom group in the XYZ matrix')
+parser.add_argument('--atom2', '-a2', type=int, nargs='*',
+                    help='Numbers of the second atom group in the XYZ matrix')
+parser.add_argument('--files', '-f', nargs='*', help='Gaussian output files',
+                    default=sys.stdin)
+args = parser.parse_args()
+
+inters = []
+conv = 4.184 if args.kjmol else 1.0
+for f in args.files:
+    full.append(line)
+    full.append(f)
+    full.append(line)
+    try:
+        inter = 0
+        for a1 in args.atom1:
+            for a2 in args.atom2:
+                full.append('Interaction between atom %i and %i' % (a1, a2))
+                full.append(caption)
+                inter += log.LOGFile(f).get_nbo_energy(a1-1, a2-2, full) * conv
+    except:
+        inter = float('nan')
+    inters.append(inter)
+if args.verbosity:
+    print '\n'.join(full)
+    print line
+    print 'summary'
+    print line
+width = int(max([len(f) for f in args.files]) * 1.5)
+print '\n'.join(['%-*s %-.2f' % (width, f, i)
+                 for (f, i) in zip(args.files, inters)])

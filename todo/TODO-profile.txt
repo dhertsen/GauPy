@@ -1,0 +1,352 @@
+##################################################################################
+#                           DOCUMENTATION                                        #
+##################################################################################
+# 
+#  This is an example of a config file that can be used by the profile.py script
+#  to generate energy profiles.
+# 
+#  (c) Dietmar Hertsen, February 2014
+# 
+# 
+# 
+# EXECUTION
+# 
+# Each configuration file that is passed to profile.py contains all information
+# to create a seperate image with energy profiles. These configuration files must
+# have cfg extensions. The profile.py script can always be executed with 'python
+# profile.py profiles1.cfg profiles2.cfg'. The name of the output files, if any,
+# is specified in the configuration files.
+# 
+# 
+# 
+# BLOCK AND LINE OPTIONS
+# 
+# Profiles are the building units of the images. The consist of bars, horizontal
+# lines corresponsding with energy levels, interconnected with connections. A
+# single image can contain multiple profiles.
+# 
+# All data in the configuration file is structures as a block or a line option.
+# Comment lines starting with # are ignored. A typical block option looks like
+# this:
+#     & KEYWORD
+#     line1
+#     line2
+#     line3
+#     line4
+#     & END KEYWORD
+# Capitalization and spaces are ignored in the header and footer. Personally, I
+# use capitals for block options, although is not necessary. Empty lines in the
+# body are ignored as well. Each line corresponds to a single profile and may
+# contain one or more words. If a single word is provided, this option holds for
+# the entire profile. If multiple words are given, information about the seperate
+# bars, labels, connections, etc. of the profile are given. The words are
+# splitted by any amount of whitespace and all leading whitespace is ignored.
+# 
+# A special type of block option is used for the definition of extra lines and
+# texts:
+#     & LINES
+#     x1=0 x2=1 y1=0 y2=1 extraoption=extravalue
+#     & END LINES
+# 
+# Line options consist of keyword and a value:
+#     keyword value
+# 
+# A limited amount of line options use the following syntax:
+#     keyword parameter1=value1 parameter2=value1
+# 
+# In all cases, whitespace will split words. If this is unwanted, doubleq quotes
+# may be used:
+#     keyword "sentence value"
+# 
+#     & KEYWORD
+#     a b "c d" #     "very long sentence" #     & END KEYWORD # 
+# Several options may be provided as (a) line options, (b) block options with a
+# single word per line or (c) block options with multiple words per line. (a)
+# will set an option for all profiles, (b) for a single profile and (c) for a
+# profile element. The option 'barcolors' for example, sets the color of the
+# horizontal lines:
+# 
+#     barcolors red   --> all bars red
+# 
+#     & BARCOLORS
+#     red
+#     green           --> single green profile
+#     red
+#     & END BARCOLORS
+# 
+#     & BARCOLORS
+#     red red red
+#     red green red   --> single green bar
+#     red red red
+#     & END BARCOLORS
+# 
+# Single line options have the highest priority if both a block and a line are
+# present in the config file.
+# 
+# The following options can be entered as (a), (b) or (c):
+# 'toplabels', 'bottomlabels', 'positions', 'corrections', 'toplabelcolors',
+# 'bottomlabelcolors', 'barcolors', 'barlinewidth', 'barlinestyle',
+# 'toplabellinespace', 'bottomlabellinespace', 'toplabelsize', 'bottomlabelsize',
+# 'connectioncolors', 'connectionlinewidth', 'connectionlinestyle'.
+# 
+# The following options are only defined per profile and have to be entered as
+# (a) or (b): 'colors','references','legend','conversions'.
+# 
+# The special block options 'texts' and 'lines' can only be specified as (c)
+# because they are not connected to a profile. Moreover, the 'energies' block can
+# only be given as (c).
+# 
+# All possible line options:
+# 'showplot', 'saveplot', 'conversions', 'corrections', 'references',
+# 'roundEnergies', 'colors', 'positions', 'barlinewidth', 'connectionlinewidth',
+# 'barlinestyle', 'connectionlinestyle', 'xmargin', 'ymargin', 'secondaryyaxis',
+# 'toplabellinespace', 'bottomlabellinespace', 'toplabelsize', 'bottomlabelsize',
+# 'showLegend', 'ylabelsize', 'yticksize', 'titlesize', 'legend', 'toplabels',
+# 'bottomlabels', 'title', 'width', 'space', 'ylabel', 'toplabelcolors',
+# 'bottomlabelcolors', 'barcolors', 'axes', 'size', 'connectioncolors'.
+# 
+# 
+# 
+# ENERGIES
+# 
+# The 'energies' block is the only necessary element of a config file and defines
+# the energy levels. It can contain both filenames (Gaussian output files) and
+# numerical entries. These energies are transformed according to: (energies -
+# references + corrections) * conversions. In the following example, the
+# electronic energies are taken from the files in 'energies', the corrections for
+# the gibbs free energy are taken 'corrections', the reference for every profile
+# is the first value in every profile and the hartree energies taken from the
+# Gaussian output files are converted to kJ/mol according to 'conversions':
+# 
+#     & ENERGIES
+#     reactant-a-singlepoint.log TS-a-singlepoint.log product-a-singlepoint.log
+#     reactant-b-singlepoint.log TS-b-singlepoint.log product-b-singlepoint.log
+#     & END ENERGIES
+# 
+#     & CORRECTIONS
+#     reactant-a-frequency.log TS-a-frequency.log product-a-frequency.log
+#     reactant-b-frequency.log TS-b-frequency.log product-b-frequency.log
+#     & END CORRECTIONS
+# 
+#     & REFERENCES
+#     value-1
+#     value-1
+#     & END REFERENCES
+# 
+#     conversion = 2625.49962
+# 
+#     energytype energies=electronic corrections=gibbscorrection
+# 
+# The energytype option defines what kind of energy (correction) is extracted
+# from the Gaussian output files
+# (electronic,enthalpy,entropy,gibbs,enthalpycorrection,gibbscorrection).  In
+# 'corrections' and 'references' both filenames and numerical values can be used.
+#
+# Entries of the type value-# can be employed in 'references' to refer to a value
+# in the same profile. Entries of the type 'value-i-j' can be used to refer to
+# value j in profile j. So 'value-1' as a line option will set the reference for
+# every profile to its first element, while 'value-1-1' as a line option will set
+# the reference to the first energy of the first profile for every bar.
+# 
+# The value that is used as a reference is energies+corrections when values-i or
+# value-i-j is included.
+# 
+# 
+# 
+# POSITIONS
+# 
+# The first bar of every energy profile will be placed at the left side of the
+# image. This is called position 1. Subsequent bars will be placed at positions
+# 2, 3, etc. extending to the right side. The positions can be manually set,
+# however:
+# 
+#     & POSITIONS
+#     1 2 3
+#     4 5 6
+#     & END POSITIONS
+# 
+# This will result in two profiles next to eachother.
+# 
+# 
+# 
+# LEGEND
+# 
+# Legends are profile specific and can only be specified as a column matrix or a
+# single line keyword:
+# 
+#     & LEGEND
+#     "This is the first profile."
+#     "This is the second profile."
+#     & END LEGEND
+# 
+# 
+# 
+# LABELS AND BLOCK EXPANSION
+# 
+# Labels can be places above and below the bars (top and bottom labels). Special
+# keywords may be used: 'energy' will print the energy (after reference,
+# correction and conversion), 'filename' will print the filename that was present
+# in the ENERGIES block, 'uniquefilename' prints the unique part of the fillename
+# that was present in the ENERGIES block, 'uniqueprofilefilename' will print the
+# part that is unique within the profile. For example:
+# 
+#     & ENERGIES
+#     A-a-1.log A-a-2.log A-a-3.log
+#     A-b-1.log A-b-2.log A-b-3.log
+#     & END ENERGIES
+#     
+#     uniquefilename:
+#     a-1 a-2 a-3
+#     b-1 b-2 b-3
+#     
+#     uiniqueprofilefilename:
+#     1 2 3
+#     1 2 3
+# 
+# '-' is used as a delimiter, the log extension is removed.
+# 
+# The TOPLABELS and BOTTOMLABEL blocks provide an excellent example of how
+# options will be expanded to the size of the ENERGIES block. These are all
+# equivalent definitions if a 2x2 energy block is present:
+# 
+# toplabels energy
+# 
+#     & TOPLABELS
+#     energy
+#     energy
+#     & END TOPLABELS
+#     
+#     & TOPLABELS
+#     energy energy
+#     energy energy
+#     & END TOPLABELS
+# 
+# In general, the pattern that was provided will be expanded to match the size of
+# the ENERGIES block. Extra rows or columns will be ignored. These examples are
+# for a 4x4 energy block:
+# 
+#     Example 1
+# 
+#     & TOPLABELS
+#     a b c
+#     & END TOPLABELS
+# 
+#     yields
+# 
+#     a b c a
+#     a b c a
+#     a b c a
+#     a b c a
+# 
+#     Example 2
+# 
+#     & TOPLABELS
+#     a b
+#     c d e
+#     & END TOPLABELS
+# 
+#     yields
+# 
+#     a b a b
+#     c d e c
+#     a b a b
+#     c d e c
+#      
+#     Example 3
+# 
+#     & TOPLABELS
+#     a b c d e
+#     b
+#     c
+#     d
+#     e
+#     & END TOPLABELS
+# 
+#     will yield
+# 
+#     a b c d
+#     b b b b 
+#     c c c c 
+#     d d d d 
+# 
+# If the energies are used as labels, the roundenergies line option can be used
+# to specify the wanted number of decimals: roundenergies 1
+# 
+# All the label types can be mixed:
+# 
+#     & BOTTOMLABELS
+#     energy filename uniquefilename uniqueprofilefilename
+#     "Hello world" Hello!
+#     & END BOTTOMLABELS
+# 
+# COLORS AND OTHER PROFILE STYLE OPTIONS
+# 
+# The colors can be set for all profiles with the colors keyword or per profile
+# in the COLORS block. In this way all bars, labels and connections of the
+# corresponding profiles will have the same colors. This can be overridden by
+# barcolors, toplabelcolors, bottomlabelcolors and connectioncolors. The first
+# three will be expanded to the same dimensions as the ENERGIES block,
+# connectioncolors needs one less value per profile since the number of
+# connections equals the number of bars minus 1.
+# 
+# Basic colors: b(lue), g(reen), r(ed), c(yan), m(agenta), y(ellow), k or black,
+# w(hite). Gray shades can be given as a string encoding a float in the 0-1
+# range, e.g. '0.75'.  You can specify the color using an html hex string, as
+# in:color = '#eeefff'.
+# 
+# Other size options that will be expanded to the size of ENERGIES: barlinewidth,
+# barlinestyle , toplabellinespace (relative distance between bar and top label),
+# bottomlabellinespace (relative distance between bar and bottom label),
+# toplabelsize, bottomlabelsize, connectionlinewidth (one less value needed per
+# profile), connectionlinestyle (one less value needed per profile).
+# 
+# Typical linestyles: '', ' ', 'None', '--', '-.', '-', ':' Text size: size in
+# points or relative size, e.g. 'small','large','smaller','x-large', etc.
+# 
+# EXTRA LINES AND TEXTS
+# 
+# Extra lines can be specified in the following manner:
+# 
+#     & LINES
+#     x1=0 y1=0 x2=1 y2=1 linecolor=black linestyle=- linewidth=1
+#     x1=1 y1=2 x2=1 y2=1 linecolor=black linestyle=- linewidth=1
+#     & END LINES
+# 
+# This block draws two linesm each from (x1,y1) to (x2,y2). Style options are
+# optional. Texts are specified in the same way:
+# 
+#     & TEXTS
+#     x=0 y=0 color=black size=medium text="Hello world"
+#     & END TEXTS
+# 
+# '1begin', '1middle' and '1end' can be used in the x coordinates to specify the
+# beginning, middle or end of bar 1.
+# 
+# 
+# PLOT OPTIONS
+# 
+# The following options can only be included as line options since they only
+# determine the plot area and have no impact on the profiles:
+# 
+#     showplot yes/no         # show the plot
+#     saveplot filename       # profile not saved is saveplot is missing (pdf, png, eps, etc.)
+#                             # if both showplot and saveplot are missing,
+#                             # the plot will be shown
+#     size width=10 height=10 # size of the saved figure
+# 
+#     xmargin 3               # relative space between the bars and the left and right side of the image
+#     ymargin 10              # relative space between the bars and the top and bottom of the image
+#                             # Normally, the energy range is chosen automatically. In that case ymargin is
+#                             # used for the necessary whitespace.
+#     axes ymin=0 ymax=100    # Energy dimensions are set by the user, ymargin is ignored.
+# 
+#     secondaryyaxis yes/no   # show a second energy axis on the right
+#     yticksize medium        # size of the ticks on the energy axes
+#     ylabel                  # label of the energy axis, none is missing
+#     ylabelsize medium       # size of energy axis label
+# 
+#     title "Some title"      # title
+#     titlesize x-large       # title size
+# 
+#     width 7                 # relative width of the bars
+#     space 2                 # relative space between bars

@@ -1,0 +1,888 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>gaupy package &mdash; GauPy 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="GauPy 1.0 documentation" href="index.html" />
+    <link rel="prev" title="Welcome to PyGaussian’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to PyGaussian’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">GauPy 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gaupy-package">
+<h1>gaupy package<a class="headerlink" href="#gaupy-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="gaupy-todo-pox-module">
+<h2>gaupy.TODO-pox module<a class="headerlink" href="#gaupy-todo-pox-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="gaupy-todo-profile-module">
+<h2>gaupy.TODO-profile module<a class="headerlink" href="#gaupy-todo-profile-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="gaupy-todo-snar-module">
+<h2>gaupy.TODO-snar module<a class="headerlink" href="#gaupy-todo-snar-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="gaupy-conf-module">
+<h2>gaupy.conf module<a class="headerlink" href="#gaupy-conf-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-gaupy.filenames">
+<span id="gaupy-filenames-module"></span><h2>gaupy.filenames module<a class="headerlink" href="#module-gaupy.filenames" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="gaupy.filenames.GaussianFile">
+<em class="property">class </em><tt class="descclassname">gaupy.filenames.</tt><tt class="descname">GaussianFile</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#gaupy.filenames.GaussianFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>split [a-zA-Z0-9]
+possible to override reaction_patterns
+all extensions possible
+filenames in different folders can be compared
+split is without path, root with</p>
+<dl class="method">
+<dt id="gaupy.filenames.GaussianFile.add">
+<tt class="descname">add</tt><big>(</big><em>element</em><big>)</big><a class="headerlink" href="#gaupy.filenames.GaussianFile.add" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="gaupy.filenames.GaussianFile.complex_patterns">
+<tt class="descname">complex_patterns</tt><em class="property"> = ['fwd', 'rev', 'react', 'int', 'prc', 'prod']</em><a class="headerlink" href="#gaupy.filenames.GaussianFile.complex_patterns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="gaupy.filenames.GaussianFile.copy_all">
+<tt class="descname">copy_all</tt><big>(</big><em>dir</em><big>)</big><a class="headerlink" href="#gaupy.filenames.GaussianFile.copy_all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="gaupy.filenames.GaussianFile.copy_ext">
+<tt class="descname">copy_ext</tt><big>(</big><em>dir</em>, <em>*extensions</em><big>)</big><a class="headerlink" href="#gaupy.filenames.GaussianFile.copy_ext" title="Permalink to this definition">¶</a></dt>
+<dd><p>does not trigger reset of root</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gaupy.filenames.GaussianFile.get_all">
+<tt class="descname">get_all</tt><big>(</big><big>)</big><a class="headerlink" href="#gaupy.filenames.GaussianFile.get_all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="gaupy.filenames.GaussianFile.irc_patterns">
+<tt class="descname">irc_patterns</tt><em class="property"> = ['ircfwd', 'ircrev', 'ircreact', 'ircint', 'ircprc', 'ircprod']</em><a class="headerlink" href="#gaupy.filenames.GaussianFile.irc_patterns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="gaupy.filenames.GaussianFile.irc_to_end">
+<tt class="descname">irc_to_end</tt><big>(</big><big>)</big><a class="headerlink" href="#gaupy.filenames.GaussianFile.irc_to_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a single value, since one IRC corresponds to a single complex.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="gaupy.filenames.GaussianFile.max_width">
+<em class="property">classmethod </em><tt class="descname">max_width</tt><big>(</big><em>files</em><big>)</big><a class="headerlink" href="#gaupy.filenames.GaussianFile.max_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>works on string filenames as well</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gaupy.filenames.GaussianFile.move_all">
+<tt class="descname">move_all</tt><big>(</big><em>dir</em><big>)</big><a class="headerlink" href="#gaupy.filenames.GaussianFile.move_all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="gaupy.filenames.GaussianFile.move_ext">
+<tt class="descname">move_ext</tt><big>(</big><em>dir</em>, <em>*extensions</em><big>)</big><a class="headerlink" href="#gaupy.filenames.GaussianFile.move_ext" title="Permalink to this definition">¶</a></dt>
+<dd><p>does not trigger reset of root</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="gaupy.filenames.GaussianFile.partition">
+<em class="property">classmethod </em><tt class="descname">partition</tt><big>(</big><em>files</em><big>)</big><a class="headerlink" href="#gaupy.filenames.GaussianFile.partition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="gaupy.filenames.GaussianFile.reaction_patterns">
+<tt class="descname">reaction_patterns</tt><em class="property"> = ['fwd', 'rev', 'react', 'int', 'prc', 'prod', 'ircfwd', 'ircrev', 'ircreact', 'ircint', 'ircprc', 'ircprod', 'ts', 'ts1', 'ts2', 'tsopt', 'spe']</em><a class="headerlink" href="#gaupy.filenames.GaussianFile.reaction_patterns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="gaupy.filenames.GaussianFile.remove">
+<tt class="descname">remove</tt><big>(</big><em>*elements</em><big>)</big><a class="headerlink" href="#gaupy.filenames.GaussianFile.remove" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="gaupy.filenames.GaussianFile.remove_all">
+<tt class="descname">remove_all</tt><big>(</big><big>)</big><a class="headerlink" href="#gaupy.filenames.GaussianFile.remove_all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="gaupy.filenames.GaussianFile.remove_ext">
+<tt class="descname">remove_ext</tt><big>(</big><em>*extensions</em><big>)</big><a class="headerlink" href="#gaupy.filenames.GaussianFile.remove_ext" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="gaupy.filenames.GaussianFile.replace">
+<tt class="descname">replace</tt><big>(</big><em>find</em>, <em>replace</em><big>)</big><a class="headerlink" href="#gaupy.filenames.GaussianFile.replace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="gaupy.filenames.GaussianFile.same_reaction">
+<tt class="descname">same_reaction</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#gaupy.filenames.GaussianFile.same_reaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>other must be GaussianFile</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gaupy.filenames.GaussianFile.ts_patterns">
+<tt class="descname">ts_patterns</tt><em class="property"> = ['ts', 'ts1', 'ts2', 'tsopt']</em><a class="headerlink" href="#gaupy.filenames.GaussianFile.ts_patterns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="gaupy.filenames.GaussianFile.ts_to_irc">
+<tt class="descname">ts_to_irc</tt><big>(</big><em>replace=False</em><big>)</big><a class="headerlink" href="#gaupy.filenames.GaussianFile.ts_to_irc" title="Permalink to this definition">¶</a></dt>
+<dd><p>yields two values, cause a single TS yields two IRCs
+dictionary with keys &#8216;fwd&#8217;, &#8216;rev&#8217;
+replace: try ts_patterns -&gt; irc_patterns first, then add
+else: just add</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gaupy.filenames.GaussianFile.x">
+<tt class="descname">x</tt><em class="property"> = 'prod'</em><a class="headerlink" href="#gaupy.filenames.GaussianFile.x" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-gaupy.hpc">
+<span id="gaupy-hpc-module"></span><h2>gaupy.hpc module<a class="headerlink" href="#module-gaupy.hpc" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="gaupy.hpc.running">
+<tt class="descclassname">gaupy.hpc.</tt><tt class="descname">running</tt><big>(</big><em>clusters=['haunter', 'gastly', 'raichu', 'delcatty'], names='*'</em><big>)</big><a class="headerlink" href="#gaupy.hpc.running" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all running calculations.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd><dl class="first docutils">
+<dt>clusters:       clusters to check for running calculations</dt>
+<dd>(default: [&#8216;haunter&#8217;, &#8216;gastly&#8217;, &#8216;raichu&#8217;, &#8216;delcatty&#8217;])</dd>
+</dl>
+<p class="last">names:          bash-style pattern to filter job names</p>
+</dd>
+<dt>Return:</dt>
+<dd>{&#8216;job_name&#8217;:{job information}}</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="gaupy-log-module">
+<h2>gaupy.log module<a class="headerlink" href="#gaupy-log-module" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-gaupy.log"></span><p>Parsing Gaussian output files</p>
+<dl class="class">
+<dt id="gaupy.log.IRCPath">
+<em class="property">class </em><tt class="descclassname">gaupy.log.</tt><tt class="descname">IRCPath</tt><big>(</big><em>logfile</em><big>)</big><a class="headerlink" href="#gaupy.log.IRCPath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gaupy.log.Path" title="gaupy.log.Path"><tt class="xref py py-class docutils literal"><span class="pre">gaupy.log.Path</span></tt></a></p>
+<p>IRC path derived from <tt class="xref py py-class docutils literal"><span class="pre">gaussian.log.Path</span></tt></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="gaupy.log.LOGFile">
+<em class="property">class </em><tt class="descclassname">gaupy.log.</tt><tt class="descname">LOGFile</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#gaupy.log.LOGFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Parsed Gaussian output file from <tt class="docutils literal"><span class="pre">filename</span></tt>. <tt class="docutils literal"><span class="pre">'.log'</span></tt> will be added
+to filenames without extension or will replace any other extension
+before parsing. Only this true log file will be parsed.</p>
+<dl class="attribute">
+<dt id="gaupy.log.LOGFile.file">
+<tt class="descname">file</tt><em class="property"> = None</em><a class="headerlink" href="#gaupy.log.LOGFile.file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Root of filename (filename without extension, with directory),
+equivalent with and shortcut for <tt class="docutils literal"><span class="pre">self.files.root</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gaupy.log.LOGFile.files">
+<tt class="descname">files</tt><em class="property"> = None</em><a class="headerlink" href="#gaupy.log.LOGFile.files" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="xref py py-class docutils literal"><span class="pre">gaussian.filenames.GaussianFile</span></tt> object constructed
+from <tt class="docutils literal"><span class="pre">filename</span></tt>. This attribute can be used to quickly access
+other extensions without the need for replace commands:</p>
+<blockquote>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="46%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Attribute</th>
+<th class="head">Filename</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">foo.files.root</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">'calculation'</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">foo.files.log</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">'calculation.log'</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">foo.files.chk</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">'calculation.chk'</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">foo.files.arbitrary</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">'calculation.arbitrary'</span></tt></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="gaupy.log.LOGFile.get_hi_charges">
+<tt class="descname">get_hi_charges</tt><big>(</big><em>csv_file=None</em><big>)</big><a class="headerlink" href="#gaupy.log.LOGFile.get_hi_charges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hirshfeld I charges will be parsed from a csv file written by Horton
+and stored in the <tt class="docutils literal"><span class="pre">hi_charges</span></tt> attribute of the current
+instance as a list of atomic charges.</p>
+<blockquote>
+<div>If <tt class="docutils literal"><span class="pre">csv_file=None</span></tt>, the csv file is assumed to have the same
+root as the current file. Else, the provided csv_file is used.</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="gaupy.log.LOGFile.get_nbo_energy">
+<tt class="descname">get_nbo_energy</tt><big>(</big><em>atom1</em>, <em>atom2</em>, <em>debug=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#gaupy.log.LOGFile.get_nbo_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the NBO interaction energy between <tt class="docutils literal"><span class="pre">atom1</span></tt> and <tt class="docutils literal"><span class="pre">atom2</span></tt>.
+Debug info will be stored in the <tt class="docutils literal"><span class="pre">debug</span></tt> list.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gaupy.log.LOGFile.movie">
+<tt class="descname">movie</tt><big>(</big><big>)</big><a class="headerlink" href="#gaupy.log.LOGFile.movie" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an xyz movie from the Gaussian output file. This can be a movie
+of scan points, IRC points or geometry optimization steps. The latter
+will be created if no scan/IRC points are found. The comments contain
+the step number.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="gaupy.log.LOGFile.parse_all">
+<em class="property">classmethod </em><tt class="descname">parse_all</tt><big>(</big><em>*pargs</em><big>)</big><a class="headerlink" href="#gaupy.log.LOGFile.parse_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of <tt class="xref py py-class docutils literal"><span class="pre">gaussian.log.LOGFile</span></tt> instances for the
+provided files, which may be provided with any or without extensions.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="gaupy.log.LOGFile.partition">
+<em class="property">classmethod </em><tt class="descname">partition</tt><big>(</big><em>logs</em><big>)</big><a class="headerlink" href="#gaupy.log.LOGFile.partition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Partition a list of <tt class="docutils literal"><span class="pre">LOGFile``s</span> <span class="pre">according</span> <span class="pre">to</span> <span class="pre">their</span> <span class="pre">filename.</span> <span class="pre">Return</span>
+<span class="pre">an</span> <span class="pre">iterator</span> <span class="pre">of</span> <span class="pre">sets</span> <span class="pre">of</span> <span class="pre">``LOGFile``s.</span>
+<span class="pre">See</span> <span class="pre">``gaussian.filenames.GaussianFiles</span></tt> for more information.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="gaupy.log.LOGFile.select">
+<em class="property">classmethod </em><tt class="descname">select</tt><big>(</big><em>name</em>, <em>logfiles</em><big>)</big><a class="headerlink" href="#gaupy.log.LOGFile.select" title="Permalink to this definition">¶</a></dt>
+<dd><p>From a list of <tt class="xref py py-class docutils literal"><span class="pre">gaussian.log.LOGFile</span></tt>,
+select those where <tt class="xref py py-attr docutils literal"><span class="pre">gaussian.log.LOGFile.files.root</span></tt>
+matches <tt class="docutils literal"><span class="pre">name</span></tt> (unix wildcards allowed).
+In case of a single find, return a single object instead of a list.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="gaupy.log.LOGFile.set_relative_energies">
+<em class="property">classmethod </em><tt class="descname">set_relative_energies</tt><big>(</big><em>logs</em>, <em>reference='min'</em>, <em>absolute=0</em>, <em>relative=0</em>, <em>conversion='kjmol'</em><big>)</big><a class="headerlink" href="#gaupy.log.LOGFile.set_relative_energies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the relative electronic energy (<tt class="docutils literal"><span class="pre">relenergy</span></tt>),
+the relative enthalpy (<tt class="docutils literal"><span class="pre">relenthalpy</span></tt>) and the relative
+Gibbs free energy (<tt class="docutils literal"><span class="pre">relgibbs</span></tt>) attributes
+for each <tt class="xref py py-class docutils literal"><span class="pre">gaussian.log.LOGFile</span></tt> in <tt class="docutils literal"><span class="pre">logs</span></tt> list.</p>
+<p>By default, the most stable system is chosen as a reference and
+the results are saved as kJ/mol. For more settings see
+<a href="#id1"><span class="problematic" id="id2">:method:`gaussian.utils.relative_energies`</span></a>.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="gaupy.log.LOGFile.set_rmsds">
+<em class="property">classmethod </em><tt class="descname">set_rmsds</tt><big>(</big><em>logs</em><big>)</big><a class="headerlink" href="#gaupy.log.LOGFile.set_rmsds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set RMSDs (<tt class="docutils literal"><span class="pre">rmsd</span></tt> attribute of <tt class="xref py py-class docutils literal"><span class="pre">gaussian.log.LOGFile</span></tt>
+instance) for a number
+of Gaussian output files. First one is used as a reference.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gaupy.log.LOGFile.to_input">
+<tt class="descname">to_input</tt><big>(</big><em>filename=None</em><big>)</big><a class="headerlink" href="#gaupy.log.LOGFile.to_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a Gaussian input file using the same methods and computational
+resources, starting from the end point of this calculation.</p>
+<blockquote>
+<div><p>Structure of the input file with (attributes)</p>
+<div class="highlight-python"><div class="highlight"><pre>%nproc=(nproc)
+%mem=(mem)
+%chk=(chk)
+#(route_section)
+
+(comment)
+
+(charge) (multiplicity)
+(geometry)
+
+(scrf_nonstandard_input)
+</pre></div>
+</div>
+<p>If <tt class="docutils literal"><span class="pre">filename=None</span></tt>, <tt class="docutils literal"><span class="pre">files.base</span></tt> will be used for <tt class="docutils literal"><span class="pre">(chk)</span></tt>,
+else <tt class="docutils literal"><span class="pre">GaussianFile(filename).base</span></tt> will be used. In other words,
+the base (path without extension and directories) of the
+the <tt class="docutils literal"><span class="pre">filename</span></tt> argument or the current <tt class="docutils literal"><span class="pre">LOGFile</span></tt>
+is used.</p>
+<p>Note that it is allowed to change attributes such as the route
+section, before you use the function. In this way, you can
+adapt calculation parameters before a subsequent input file
+is constructed.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="gaupy.log.LOGFile.write_input">
+<tt class="descname">write_input</tt><big>(</big><em>filename=None</em><big>)</big><a class="headerlink" href="#gaupy.log.LOGFile.write_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a Gaussian input file with the data parsed from the output
+file. See <tt class="xref py py-meth docutils literal"><span class="pre">gaussian.log.LOGFile.to_input()</span></tt> for more info.</p>
+<blockquote>
+<div>The base (path without extension and dirs) of the <tt class="docutils literal"><span class="pre">filename</span></tt>
+argument or the current filename is used for the input file
+and the checkpoint line in the input file.</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="gaupy.log.Path">
+<em class="property">class </em><tt class="descclassname">gaupy.log.</tt><tt class="descname">Path</tt><a class="headerlink" href="#gaupy.log.Path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Generic path class for scan and IRC paths.</p>
+<blockquote>
+<div>Needs <tt class="docutils literal"><span class="pre">_point_positions</span></tt>
+and <tt class="docutils literal"><span class="pre">_logfile</span></tt> (<tt class="xref py py-class docutils literal"><span class="pre">gaussian.log.LOGFile</span></tt>)
+attributes to be functional. At each of the point positions, the
+electronic energy and geometry above that position will be selected
+as a point. The parsing of <tt class="docutils literal"><span class="pre">_point_positions</span></tt> determines the type
+of path.</div></blockquote>
+</dd></dl>
+
+<dl class="class">
+<dt id="gaupy.log.ScanPath">
+<em class="property">class </em><tt class="descclassname">gaupy.log.</tt><tt class="descname">ScanPath</tt><big>(</big><em>logfile</em><big>)</big><a class="headerlink" href="#gaupy.log.ScanPath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gaupy.log.Path" title="gaupy.log.Path"><tt class="xref py py-class docutils literal"><span class="pre">gaupy.log.Path</span></tt></a></p>
+<p>Scan path derived from <tt class="xref py py-class docutils literal"><span class="pre">gaussian.log.Path</span></tt></p>
+</dd></dl>
+
+</div>
+<div class="section" id="gaupy-logc-module">
+<h2>gaupy.logc module<a class="headerlink" href="#gaupy-logc-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-gaupy.molecules">
+<span id="gaupy-molecules-module"></span><h2>gaupy.molecules module<a class="headerlink" href="#module-gaupy.molecules" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="gaupy.molecules.Match">
+<em class="property">class </em><tt class="descclassname">gaupy.molecules.</tt><tt class="descname">Match</tt><big>(</big><em>number</em>, <em>supermolecule</em><big>)</big><a class="headerlink" href="#gaupy.molecules.Match" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>used in the classification of a molecules
+logfile.geometry.somecenter.xyz</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="gaupy.molecules.SuperMolecule">
+<em class="property">class </em><tt class="descclassname">gaupy.molecules.</tt><tt class="descname">SuperMolecule</tt><big>(</big><em>*pargs</em>, <em>**kargs</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">molmod.molecules.Molecule</span></tt></p>
+<p>mention from_file, write_to_file</p>
+<dl class="method">
+<dt id="gaupy.molecules.SuperMolecule.angle">
+<tt class="descname">angle</tt><big>(</big><em>*atoms</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.angle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="gaupy.molecules.SuperMolecule.avogadro">
+<tt class="descname">avogadro</tt><big>(</big><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.avogadro" title="Permalink to this definition">¶</a></dt>
+<dd><p>writes a file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gaupy.molecules.SuperMolecule.break_bond">
+<tt class="descname">break_bond</tt><big>(</big><em>atom1</em>, <em>atom2</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.break_bond" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return two SuperMolecules by breaking bond</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gaupy.molecules.SuperMolecule.closest">
+<tt class="descname">closest</tt><big>(</big><em>atom_type</em>, <em>reference</em>, <em>n=1</em>, <em>exclude=False</em>, <em>only=False</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.closest" title="Permalink to this definition">¶</a></dt>
+<dd><p>If n=1: return the number in the xyz matrix of the atom of atom_type
+which is the closest to a reference atom in a geometry.
+If n&gt;1, return a list of the n closest atoms of atom_type, which are
+closest to the reference atom.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd><dl class="first docutils">
+<dt>atom_type:      atom number or symbol of the atoms whose number</dt>
+<dd>in the xyz matrix
+must be returned</dd>
+</dl>
+<p class="last">reference:      number of the reference atom in the xyz matrix
+n:              number of atoms to return
+exclude:        exclude these atoms
+only:           limit search to these atoms</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gaupy.molecules.SuperMolecule.coordinates">
+<tt class="descname">coordinates</tt><a class="headerlink" href="#gaupy.molecules.SuperMolecule.coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Read-only attribute:</em> atomic Cartesian coordinates.</p>
+<p>The attribute must satisfy the following conditions:</p>
+<ul class="simple">
+<li>Must be an instance of <tt class="docutils literal"><span class="pre">&lt;type</span> <span class="pre">'numpy.ndarray'&gt;</span></tt></li>
+<li>Must have dimension 2.</li>
+<li>Must have shape (?, 3).</li>
+<li>Must have dtype <tt class="docutils literal"><span class="pre">&lt;type</span> <span class="pre">'float'&gt;</span></tt>.</li>
+<li>Special conditions: the number of rows must be the same as the length of the array numbers.</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="gaupy.molecules.SuperMolecule.dihedral">
+<tt class="descname">dihedral</tt><big>(</big><em>*atoms</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.dihedral" title="Permalink to this definition">¶</a></dt>
+<dd><p>IUPAC sign convention</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gaupy.molecules.SuperMolecule.dist">
+<tt class="descname">dist</tt><big>(</big><em>atom1</em>, <em>atom2</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate distance between atom1 and atom2 in molecule geom
+(molod.molecules.Molecule).</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>atom1/2:        number of atoms in xyz matrix</dd>
+<dt>Return:</dt>
+<dd>float</dd>
+</dl>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="gaupy.molecules.SuperMolecule.from_Molecule">
+<em class="property">classmethod </em><tt class="descname">from_Molecule</tt><big>(</big><em>molecule</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.from_Molecule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make SuperMolecule from molmod.molecules.Molmod instance.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="gaupy.molecules.SuperMolecule.from_string">
+<em class="property">classmethod </em><tt class="descname">from_string</tt><big>(</big><em>string</em>, <em>ignore_header=False</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.from_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>handles both symbols and numbers,
+take three last cols and first col</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gaupy.molecules.SuperMolecule.get_nrings">
+<tt class="descname">get_nrings</tt><big>(</big><em>n</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.get_nrings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Look for all n-membered rings</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gaupy.molecules.SuperMolecule.graph">
+<tt class="descname">graph</tt><a class="headerlink" href="#gaupy.molecules.SuperMolecule.graph" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Read-only attribute:</em> the molecular graph with the atom connectivity.</p>
+<p>The attribute must satisfy the following conditions:</p>
+<ul class="simple">
+<li>Must be an instance of <tt class="docutils literal"><span class="pre">&lt;class</span> <span class="pre">'molmod.molecular_graphs.MolecularGraph'&gt;</span></tt></li>
+<li>Special conditions: the atomic numbers must match.</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="gaupy.molecules.SuperMolecule.initiate_match">
+<tt class="descname">initiate_match</tt><big>(</big><em>ignore_hydrogens=True</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.initiate_match" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="gaupy.molecules.SuperMolecule.masses">
+<tt class="descname">masses</tt><a class="headerlink" href="#gaupy.molecules.SuperMolecule.masses" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Read-only attribute:</em> the atomic masses.</p>
+<p>The attribute must satisfy the following conditions:</p>
+<ul class="simple">
+<li>Must be an instance of <tt class="docutils literal"><span class="pre">&lt;type</span> <span class="pre">'numpy.ndarray'&gt;</span></tt></li>
+<li>Must have dimension 1.</li>
+<li>Must have dtype <tt class="docutils literal"><span class="pre">&lt;type</span> <span class="pre">'float'&gt;</span></tt>.</li>
+<li>Special conditions: the size must be the same as the length of the array numbers.</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="gaupy.molecules.SuperMolecule.molecules">
+<tt class="descname">molecules</tt><big>(</big><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.molecules" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the molecules as seperate SuperMolecules</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gaupy.molecules.SuperMolecule.nonhydrogens">
+<tt class="descname">nonhydrogens</tt><big>(</big><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.nonhydrogens" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="gaupy.molecules.SuperMolecule.numbers">
+<tt class="descname">numbers</tt><a class="headerlink" href="#gaupy.molecules.SuperMolecule.numbers" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Read-only attribute:</em> the atomic numbers.</p>
+<p>The attribute must satisfy the following conditions:</p>
+<ul class="simple">
+<li>May not be None.</li>
+<li>Must be an instance of <tt class="docutils literal"><span class="pre">&lt;type</span> <span class="pre">'numpy.ndarray'&gt;</span></tt></li>
+<li>Must have dimension 1.</li>
+<li>Must have dtype <tt class="docutils literal"><span class="pre">&lt;type</span> <span class="pre">'int'&gt;</span></tt>.</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="gaupy.molecules.SuperMolecule.opbend_angle">
+<tt class="descname">opbend_angle</tt><big>(</big><em>*atoms</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.opbend_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>angle plane 012 and vector 03</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gaupy.molecules.SuperMolecule.opbend_dist">
+<tt class="descname">opbend_dist</tt><big>(</big><em>*atoms</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.opbend_dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>distance plane 012 and vector 03</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gaupy.molecules.SuperMolecule.part">
+<tt class="descname">part</tt><big>(</big><em>atoms</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.part" title="Permalink to this definition">¶</a></dt>
+<dd><p>make a new SuperMolecule</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gaupy.molecules.SuperMolecule.set_match">
+<tt class="descname">set_match</tt><big>(</big><em>name</em>, <em>pattern</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.set_match" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="gaupy.molecules.SuperMolecule.set_matches">
+<tt class="descname">set_matches</tt><big>(</big><em>patterns</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.set_matches" title="Permalink to this definition">¶</a></dt>
+<dd><p>patterns is OrderedDict {attributes: patterns}
+returns the unparsed ones</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gaupy.molecules.SuperMolecule.symbols">
+<tt class="descname">symbols</tt><a class="headerlink" href="#gaupy.molecules.SuperMolecule.symbols" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Read-only attribute:</em> symbols for the atoms, which can be element names for force-field atom types.</p>
+<p>The attribute must satisfy the following conditions:</p>
+<ul class="simple">
+<li>Must be an instance of <tt class="docutils literal"><span class="pre">&lt;type</span> <span class="pre">'tuple'&gt;</span></tt></li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gaupy.molecules.SuperMolecule.title">
+<tt class="descname">title</tt><a class="headerlink" href="#gaupy.molecules.SuperMolecule.title" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Read-only attribute:</em> a short description of the system.</p>
+<p>The attribute must satisfy the following conditions:</p>
+<ul class="simple">
+<li>Must be an instance of <tt class="docutils literal"><span class="pre">&lt;type</span> <span class="pre">'basestring'&gt;</span></tt></li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="gaupy.molecules.SuperMolecule.to_string">
+<tt class="descname">to_string</tt><big>(</big><em>header=False</em>, <em>comment=''</em>, <em>symbols=False</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.to_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="gaupy.molecules.SuperMolecule.unit_cell">
+<tt class="descname">unit_cell</tt><a class="headerlink" href="#gaupy.molecules.SuperMolecule.unit_cell" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Read-only attribute:</em> description of the periodic boundary conditions.</p>
+<p>The attribute must satisfy the following conditions:</p>
+<ul class="simple">
+<li>Must be an instance of <tt class="docutils literal"><span class="pre">&lt;class</span> <span class="pre">'molmod.unit_cells.UnitCell'&gt;</span></tt></li>
+</ul>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-gaupy.patterns">
+<span id="gaupy-patterns-module"></span><h2>gaupy.patterns module<a class="headerlink" href="#module-gaupy.patterns" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="gaupy.patterns.ch2">
+<tt class="descclassname">gaupy.patterns.</tt><tt class="descname">ch2</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="headerlink" href="#gaupy.patterns.ch2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="gaupy.patterns.ipr">
+<tt class="descclassname">gaupy.patterns.</tt><tt class="descname">ipr</tt><big>(</big><em>atom</em><big>)</big><a class="headerlink" href="#gaupy.patterns.ipr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="gaupy.patterns.me">
+<tt class="descclassname">gaupy.patterns.</tt><tt class="descname">me</tt><big>(</big><em>atom</em><big>)</big><a class="headerlink" href="#gaupy.patterns.me" title="Permalink to this definition">¶</a></dt>
+<dd><p>at can be &#8216;C&#8217;, &#8216;c&#8217;, 6 or a pattern</p>
+</dd></dl>
+
+</div>
+<div class="section" id="gaupy-profile-module">
+<h2>gaupy.profile module<a class="headerlink" href="#gaupy-profile-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="gaupy-sixfour-module">
+<h2>gaupy.sixfour module<a class="headerlink" href="#gaupy-sixfour-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-gaupy.table">
+<span id="gaupy-table-module"></span><h2>gaupy.table module<a class="headerlink" href="#module-gaupy.table" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="gaupy.table.ColumnLayout">
+<em class="property">class </em><tt class="descclassname">gaupy.table.</tt><tt class="descname">ColumnLayout</tt><big>(</big><em>layout</em><big>)</big><a class="headerlink" href="#gaupy.table.ColumnLayout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="gaupy.table.ColumnLayout.format">
+<tt class="descname">format</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#gaupy.table.ColumnLayout.format" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="gaupy.table.GaussianTable">
+<em class="property">class </em><tt class="descclassname">gaupy.table.</tt><tt class="descname">GaussianTable</tt><big>(</big><em>logs</em>, <em>columns</em>, <em>layout</em>, <em>partition=False</em>, <em>partition_energies_rmsds=False</em>, <em>type=&lt;class 'gaupy.log.LOGFile'&gt;</em><big>)</big><a class="headerlink" href="#gaupy.table.GaussianTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="attribute">
+<dt id="gaupy.table.GaussianTable.alias">
+<tt class="descname">alias</tt><em class="property"> = {'lowest_frequency': 'FREQ', 'irc.length': '#IRC', 'relenthalpy': 'Hrel', 'electronic': 'E', 'electronic_relative': 'Erel', 'temperature': 'T', 'nimag': '#IM', 'pressure': 'P', 'gibbs': 'G', 'gibbs_relative': 'Grel', 'relgibbs': 'Grel'}</em><a class="headerlink" href="#gaupy.table.GaussianTable.alias" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-gaupy.utils">
+<span id="gaupy-utils-module"></span><h2>gaupy.utils module<a class="headerlink" href="#module-gaupy.utils" title="Permalink to this headline">¶</a></h2>
+<p>Common functions</p>
+<dl class="function">
+<dt id="gaupy.utils.all_translations">
+<tt class="descclassname">gaupy.utils.</tt><tt class="descname">all_translations</tt><big>(</big><em>l</em><big>)</big><a class="headerlink" href="#gaupy.utils.all_translations" title="Permalink to this definition">¶</a></dt>
+<dd><p>list to generator</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gaupy.utils.anum">
+<tt class="descclassname">gaupy.utils.</tt><tt class="descname">anum</tt><big>(</big><em>atom</em><big>)</big><a class="headerlink" href="#gaupy.utils.anum" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert atomic symbol or number to atomic number</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gaupy.utils.asym">
+<tt class="descclassname">gaupy.utils.</tt><tt class="descname">asym</tt><big>(</big><em>atom</em><big>)</big><a class="headerlink" href="#gaupy.utils.asym" title="Permalink to this definition">¶</a></dt>
+<dd><p>covert atomic symbol or number to atomic symbol</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="gaupy.utils.cached">
+<em class="property">class </em><tt class="descclassname">gaupy.utils.</tt><tt class="descname">cached</tt><big>(</big><em>factory</em><big>)</big><a class="headerlink" href="#gaupy.utils.cached" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Descriptor (non-data) for building an attribute on-demand on first use.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gaupy.utils.energies">
+<tt class="descclassname">gaupy.utils.</tt><tt class="descname">energies</tt><big>(</big><em>values</em>, <em>energy_type='gibbs'</em><big>)</big><a class="headerlink" href="#gaupy.utils.energies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a list or NumPy array of energies and filenames to a NumPy array
+of energies. Energy of type <tt class="docutils literal"><span class="pre">energy_type</span></tt> will be taken from log files.
+<tt class="docutils literal"><span class="pre">float('nan')</span></tt> values are allowed.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gaupy.utils.energy">
+<tt class="descclassname">gaupy.utils.</tt><tt class="descname">energy</tt><big>(</big><em>value</em>, <em>energy_type='gibbs'</em><big>)</big><a class="headerlink" href="#gaupy.utils.energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a energy or a filename to an energy. If a filename was provided,
+energy of type <tt class="docutils literal"><span class="pre">energy_type</span></tt> will be parsed. <tt class="docutils literal"><span class="pre">float('nan')</span></tt> values are
+allowed and will even be returned if an error occurs.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gaupy.utils.find_all">
+<tt class="descclassname">gaupy.utils.</tt><tt class="descname">find_all</tt><big>(</big><em>string</em>, <em>sub</em><big>)</big><a class="headerlink" href="#gaupy.utils.find_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generator to find all indices at which a substring occurs in a string.</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd>string:         parent string
+sub:            substring</dd>
+<dt>Return:</dt>
+<dd>generator, yields int</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="gaupy.utils.get_full_attr">
+<tt class="descclassname">gaupy.utils.</tt><tt class="descname">get_full_attr</tt><big>(</big><em>obj</em>, <em>attr</em><big>)</big><a class="headerlink" href="#gaupy.utils.get_full_attr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make constructs like _getattr(somobject, &#8216;a.b.c.d&#8217;) possible. Whenever
+there is an error fetching the terminal attribute, None is returned.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gaupy.utils.is_translation">
+<tt class="descclassname">gaupy.utils.</tt><tt class="descname">is_translation</tt><big>(</big><em>l1</em>, <em>l2</em><big>)</big><a class="headerlink" href="#gaupy.utils.is_translation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="gaupy.utils.relative_energies">
+<tt class="descclassname">gaupy.utils.</tt><tt class="descname">relative_energies</tt><big>(</big><em>values</em>, <em>reference='min'</em>, <em>absolute=0</em>, <em>relative=0</em>, <em>conversion='kjmol'</em>, <em>energy_type='gibbs'</em><big>)</big><a class="headerlink" href="#gaupy.utils.relative_energies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a list of energies and filanemes to a list of relative energies.</p>
+<blockquote>
+<div><p>First of all, the internal reference is applied. The original
+<tt class="docutils literal"><span class="pre">energies</span></tt> array is transformed to <strong>internal reference</strong>:</p>
+<blockquote>
+<div>&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;    &#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;-
+<tt class="docutils literal"><span class="pre">reference=</span></tt>              reference
+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;    &#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;-
+<tt class="docutils literal"><span class="pre">'min'</span></tt>                   smallest energy in array
+<tt class="docutils literal"><span class="pre">'max'</span></tt>                   largest energy in array
+<tt class="docutils literal"><span class="pre">'none'</span></tt>                  use absolute values
+<tt class="docutils literal"><span class="pre">i</span></tt>                       i-th energy of array
+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;    &#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;-</div></blockquote>
+<p>If any filename is present, the energy will be parsed from the
+corresponding log file first. The type of energy can be specified
+(see Gaussian white pages for more info):</p>
+<blockquote>
+<div>&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;    &#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;-
+<tt class="docutils literal"><span class="pre">energy_type=</span></tt>            type
+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;    &#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;-
+<tt class="docutils literal"><span class="pre">'electronic'</span></tt>            electronic
+<tt class="docutils literal"><span class="pre">'gibbs'</span></tt>                 Gibbs free
+<tt class="docutils literal"><span class="pre">'enthalpy'</span></tt>              enthalpy
+<tt class="docutils literal"><span class="pre">'zpe'</span></tt>                   ZPE
+<tt class="docutils literal"><span class="pre">'zpesum'</span></tt>                electronic energy + ZPE
+<tt class="docutils literal"><span class="pre">'thermal'</span></tt>               thermal energy
+<tt class="docutils literal"><span class="pre">'gibbscorrection'</span></tt>       Gibbs - electronic
+<tt class="docutils literal"><span class="pre">'enthalpycorrection'</span></tt>    enthalpy - electronic
+<tt class="docutils literal"><span class="pre">'thermalcorrection'</span></tt>     thermal - electronic
+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;    &#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;-</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">float('nan')</span></tt> values are allowed in the array. They will result
+in float(&#8216;nan&#8217;) values in the output array.</p>
+<dl class="docutils">
+<dt>The <strong>internal reference</strong> is then further converted as such:</dt>
+<dd>(<strong>internal reference</strong> + <tt class="docutils literal"><span class="pre">absolute</span></tt>) * <tt class="docutils literal"><span class="pre">conversion</span></tt>
++ <tt class="docutils literal"><span class="pre">relative</span></tt></dd>
+</dl>
+<p><tt class="docutils literal"><span class="pre">absolute</span></tt> may be a number or a filename, <tt class="docutils literal"><span class="pre">relative</span></tt>
+is expected to be a number.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="gaupy.utils.translate">
+<tt class="descclassname">gaupy.utils.</tt><tt class="descname">translate</tt><big>(</big><em>l</em>, <em>shift</em><big>)</big><a class="headerlink" href="#gaupy.utils.translate" title="Permalink to this definition">¶</a></dt>
+<dd><p>list to list</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-gaupy">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-gaupy" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">gaupy package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#gaupy-todo-pox-module">gaupy.TODO-pox module</a></li>
+<li><a class="reference internal" href="#gaupy-todo-profile-module">gaupy.TODO-profile module</a></li>
+<li><a class="reference internal" href="#gaupy-todo-snar-module">gaupy.TODO-snar module</a></li>
+<li><a class="reference internal" href="#gaupy-conf-module">gaupy.conf module</a></li>
+<li><a class="reference internal" href="#module-gaupy.filenames">gaupy.filenames module</a></li>
+<li><a class="reference internal" href="#module-gaupy.hpc">gaupy.hpc module</a></li>
+<li><a class="reference internal" href="#gaupy-log-module">gaupy.log module</a></li>
+<li><a class="reference internal" href="#gaupy-logc-module">gaupy.logc module</a></li>
+<li><a class="reference internal" href="#module-gaupy.molecules">gaupy.molecules module</a></li>
+<li><a class="reference internal" href="#module-gaupy.patterns">gaupy.patterns module</a></li>
+<li><a class="reference internal" href="#gaupy-profile-module">gaupy.profile module</a></li>
+<li><a class="reference internal" href="#gaupy-sixfour-module">gaupy.sixfour module</a></li>
+<li><a class="reference internal" href="#module-gaupy.table">gaupy.table module</a></li>
+<li><a class="reference internal" href="#module-gaupy.utils">gaupy.utils module</a></li>
+<li><a class="reference internal" href="#module-gaupy">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to PyGaussian&#8217;s documentation!</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/gaupy.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to PyGaussian’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">GauPy 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, Dietmar Hertsen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
