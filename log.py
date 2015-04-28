@@ -7,8 +7,8 @@ import molecules
 import fnmatch
 import utils
 import numpy as np
-import molmod.units as units
 import molmod.molecules as mol
+import molmod.units as units
 
 # Dirty trick to silence warnings of confliciting
 # modules on the HPC cluster and to silence NumPy
