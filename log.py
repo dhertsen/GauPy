@@ -452,7 +452,7 @@ class LOGFile(object):
         List of keywords in the route section, a simple (lowercase) split
         of the routesection, without #
         '''
-        return self.route_section.replace('#', max=1).split()
+        return self.route_section.replace('#', '', 1).split()
 
     @utils.cached
     def _charge_and_multiplicity(self):
@@ -986,7 +986,7 @@ class LOGFile(object):
                              if re.search('^[^\(]+/', x)
                              ][0].split('/')
             for b in basis_aliases:
-                basis.replace(b, basis_aliases[b])
+                basis = basis.replace(b, basis_aliases[b])
             lot = '%s/%s' % (method, basis)
         except:
             # If no 'method/basis' was found, assume that the first word
@@ -1001,14 +1001,14 @@ class LOGFile(object):
         '''
         Method (Gaussian keyword: DFT functional, semiempirical method, etc.)
         '''
-        self._method_and_basis[0]
+        return self._method_and_basis[0]
 
     @utils.cached
     def basis(self):
         '''
         Basis set (Gaussian keyword). ``None`` for semiempirical methods.
         '''
-        self._method_and_basis[1]
+        return self._method_and_basis[1]
 
     @utils.cached
     def lot(self):

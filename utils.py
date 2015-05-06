@@ -91,7 +91,7 @@ def energy(value, energy_type='gibbs'):
     allowed and will even be returned if an error occurs.
     '''
     try:
-        return float(energy)
+        return float(value)
     except:
         try:
             return getattr(log.LOGFile(value), energy_type)
