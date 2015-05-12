@@ -66,8 +66,8 @@ class IsoPropyl(gaupy.log.LOGFile):
                  + (self.geometry.diene_head2.xyz
                     - self.geometry.diene_c4.xyz))
         diene /= np.linalg.norm(diene)
-        dienophile_subs = (self.geometry.furan_o.xyz
-                           - self.geometry.furan_c2.xyz)
+        dienophile_subs = (self.geometry.furan_c2.xyz
+                           - self.geometry.furan_o.xyz)
         dienophile_subs /= np.linalg.norm(dienophile_subs)
         angle = math.acos(np.dot(diene, dienophile_subs))
         # stereo attributes is stored both is self and self.geometry
@@ -78,15 +78,36 @@ class IsoPropyl(gaupy.log.LOGFile):
             self.exoendo = self.geometry.stereo = 'exo'
 
     def _cistrans(self):
+
+        # check on which side of the ring the iPr group is placed
+        # unit vector perpendicular on ring, centered on diene_c1
+        n1 = np.cross(self.geometry.diene_c2.xyz
+                      - self.geometry.diene_c1.xyz,
+                      self.geometry.diene_head1.xyz
+                      - self.geometry.diene_c1.xyz)
+        n1 /= np.linalg.norm(n1)
+        # unit vector from that diene_c1 center to iPr
         ipr = self.geometry.ipr_tert.xyz - self.geometry.diene_c1.xyz
         ipr /= np.linalg.norm(ipr)
-        cis = self.geometry.furan_cation.xyz - self.geometry.diene_head2.xyz
-        cis /= np.linalg.norm(cis)
-        trans = self.geometry.diene_c4.xyz - self.geometry.diene_head2.xyz
-        trans /= np.linalg.norm(trans)
-        cisangle = math.acos(np.dot(cis, ipr))
-        transangle = math.acos(np.dot(trans, ipr))
-        if cisangle < transangle:
+        # how are these two vector aligned with respect to eachother
+        iprside = math.acos(np.dot(n1, ipr)) < (math.pi / 2)
+
+        # do the same thing around the second bridge head
+        # unit vector perpendicular on ring, centered on diene_head2
+        n2 = np.cross(self.geometry.diene_c2.xyz
+                      - self.geometry.diene_head2.xyz,
+                      self.geometry.diene_c4.xyz
+                      - self.geometry.diene_head2.xyz)
+        n2 /= np.linalg.norm(n2)
+        # unit vector from that diene_head center to cation
+        head = self.geometry.furan_cation.xyz - self.geometry.diene_head2.xyz
+        head /= np.linalg.norm(head)
+        # alignment
+        headside = math.acos(np.dot(n2, head)) < (math.pi / 2)
+
+        # Define cis and trans. Don't bother with the signs, just check
+        # whether == or != belongs to cis or trans.
+        if iprside != headside:
             self.cistrans = self.geometry.cistrans = 'cis'
         else:
             self.cistrans = self.geometry.cistrans = 'trans'

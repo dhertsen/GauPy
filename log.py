@@ -345,15 +345,15 @@ class LOGFile(object):
         reles = utils.relative_energies(values=logs, reference=reference,
                                         absolute=absolute, relative=relative,
                                         conversion=conversion,
-                                        energy_type='electronic')
+                                        type='energy')
         relhs = utils.relative_energies(values=logs, reference=reference,
                                         absolute=absolute, relative=relative,
                                         conversion=conversion,
-                                        energy_type='enthalpy')
+                                        type='enthalpy')
         relgs = utils.relative_energies(values=logs, reference=reference,
                                         absolute=absolute, relative=relative,
                                         conversion=conversion,
-                                        energy_type='gibbs')
+                                        type='gibbs')
         for i, l in enumerate(logs):
             l.relenergy = reles[i]
             l.relenthalpy = relhs[i]

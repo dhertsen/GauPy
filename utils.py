@@ -84,35 +84,39 @@ def find_all(string, sub):
         start += len(sub)
 
 
-def energy(value, energy_type='gibbs'):
+def energy(value, type='gibbs'):
     '''
     Convert a energy or a filename to an energy. If a filename was provided,
-    energy of type ``energy_type`` will be parsed. ``float('nan')`` values are
-    allowed and will even be returned if an error occurs.
+    energy of type ``type`` will be parsed. ``float('nan')`` values are
+    allowed and will even be returned if an error occurs. Passing LOGFile
+    objects also works.
     '''
     try:
         return float(value)
     except:
         try:
-            return getattr(log.LOGFile(value), energy_type)
+            return float(getattr(log.LOGFile(value), type))
         except:
-            return float('nan')
+            try:
+                return float(getattr(value, type))
+            except:
+                return float('nan')
 
 
-def energies(values, energy_type='gibbs'):
+def energies(values, type='gibbs'):
     '''
     Convert a list or NumPy array of energies and filenames to a NumPy array
-    of energies. Energy of type ``energy_type`` will be taken from log files.
+    of energies. Energy of type ``type`` will be taken from log files.
     ``float('nan')`` values are allowed.
     '''
     if values:
-        return np.array([energy(e, energy_type) for e in values])
+        return np.array([energy(e, type) for e in values])
     else:
         return np.array([])
 
 
 def relative_energies(values, reference='min', absolute=0, relative=0,
-                      conversion='kjmol', energy_type='gibbs'):
+                      conversion='kjmol', type='gibbs'):
     '''
     Convert a list of energies and filanemes to a list of relative energies.
 
@@ -131,7 +135,7 @@ def relative_energies(values, reference='min', absolute=0, relative=0,
         corresponding log file first. The type of energy can be specified
         (see Gaussian white pages for more info):
             ------------------------    -------------------------------------
-            ``energy_type=``            type
+            ``type=``            type
             ------------------------    -------------------------------------
             ``'electronic'``            electronic
             ``'gibbs'``                 Gibbs free
@@ -156,9 +160,9 @@ def relative_energies(values, reference='min', absolute=0, relative=0,
     '''
 
     # Necessary if [] or np.array([]) is passed
-    if energies:
+    if values:
         # Convert to numerical energies
-        e = energies(values, energy_type=energy_type)
+        e = energies(values, type=type)
         # Internal reference
         if reference == 'min':
             e = e - np.nanmin(e)

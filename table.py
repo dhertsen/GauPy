@@ -46,7 +46,8 @@ class GaussianTable(object):
     alias = {'gibbs': 'G', 'electronic': 'E', 'irc.length': '#IRC',
              'gibbs_relative': 'Grel', 'electronic_relative': 'Erel',
              'nimag': '#IM', 'lowest_frequency': 'FREQ', 'relgibbs': 'Grel',
-             'relenthalpy': 'Hrel', 'temperature': 'T', 'pressure': 'P'}
+             'relenthalpy': 'Hrel', 'temperature': 'T', 'pressure': 'P',
+             'multiplicity': 'MULTI'}
 
     def __init__(self, logs, columns, layout, partition=False,
                  partition_energies_rmsds=False, type=log.LOGFile):
@@ -77,9 +78,14 @@ class GaussianTable(object):
                     extra = int(c.replace('fit', ''))
                 except:
                     extra = 0
-                maxwidth = max([len('%s' % utils.get_full_attr(
+                # maximum width of content
+                contentwidth = max([len('%s' % utils.get_full_attr(
                     l, self.columns[i])) for l in self.logs])
-                fitted = '%%-%is' % (maxwidth + extra)
+                # make sure column header is not wider,
+                # also look at aliases
+                width = max(contentwidth, len(self.alias.get(
+                    self.columns[i], self.columns[i])))
+                fitted = '%%-%is' % (width + extra)
                 self.layout.append(ColumnLayout(fitted))
             else:
                 self.layout.append(ColumnLayout(c))

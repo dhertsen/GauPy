@@ -3,8 +3,8 @@
 import gaupy.table as table
 import argparse
 import sys
-import gaupy.log as log
-# import gaupy.sixfour as sixfour
+from gaupy.log import LOGFile
+from gaupy.custom import *
 
 parser = argparse.ArgumentParser('Tabulate parsed output from Gaussian '
                                  + 'output files.')
@@ -24,8 +24,7 @@ parser.add_argument('--method', '-m', action='store_true',
 parser.add_argument('--extra', '-x', action='append', default=[],
                     help='Print extra column '
                     + '(fetch attribute from log.LOGFile object)')
-parser.add_argument('--type', '-t', default='LOGFile',
-                    help='Use different parsing class (LOGFile, SixFour)')
+parser.add_argument('--type', '-t', help='Use different parsing class')
 parser.add_argument('files', nargs='*', help='Gaussian output files',
                     default=sys.stdin)
 args = parser.parse_args()
@@ -56,12 +55,12 @@ for x in args.extra:
     columns.append(x)
     layout.append('fit+2')
 
-if args.type == 'LOGFile':
-    type = log.LOGFile
-elif args.type == 'SixFour':
-    # TODO make sixfour work, find better way to accomodate custom projects
-    # type = sixfour.SixFour
-    pass
+type = LOGFile
+if args.type:
+    try:
+        type = eval(args.type)
+    except:
+        print('Parsing class %s not found.' % args.type)
 
 print table.GaussianTable(files, columns, layout, partition=args.sort,
                           partition_energies_rmsds=args.partitionenergies,
