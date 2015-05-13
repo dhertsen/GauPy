@@ -22,6 +22,9 @@ class SixFour(gaupy.log.LOGFile):
     def __init__(self, filename):
         super(SixFour, self).__init__(filename)
 
+        # adjusted scaling necessary for thiophene molecular graphs
+        self.scalings = [1.0, 1.6]
+
         # stoichiometry determines which study is being studied
         if self.stoichiometry == 'C14H19O(1+)':
             self.system = 'furan'
@@ -44,7 +47,7 @@ class SixFour(gaupy.log.LOGFile):
             second = self.geometry.bonded(self.geometry.four_head1.n,
                                           self.geometry.six_c3.n)
             # TS?
-            ts = self.nimag == 1 and self.lowest_frequency < -100
+            ts = self.nimag == 1 and self.lowest_frequency < -50
             # let's classify
             if ts:
                 if second:

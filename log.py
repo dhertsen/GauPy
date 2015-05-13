@@ -45,6 +45,11 @@ class LOGFile(object):
         Root of filename (filename without extension, with directory),
         equivalent with and shortcut for ``self.files.root``.
         '''
+        self.scalings = [1.0, 1.5]
+        '''
+        Default scaling factors used for molecular graphics: first element
+        for self.nimag==0, second element for self.nimag==1.
+        '''
 
     # Methods
 
@@ -87,7 +92,7 @@ class LOGFile(object):
         # Create a SuperMolecule
         geometry = mol.Molecule(atoms, coordinates)
         geometry = molecules.SuperMolecule.from_Molecule(geometry)
-        geometry.scale(self.nimag)
+        geometry.scale(self.nimag, factor=self.scalings)
         return geometry
 
     def _get_geometries(self, orientation='orientation'):
@@ -538,7 +543,7 @@ class LOGFile(object):
                 '\n'.join([l.replace(',', '\t')
                            for l in self._summary_block.replace(' ', '').split(
                                r'\\')[3].split('\\')[1:]]))
-            geom.scale(self.nimag)
+            geom.scale(self.nimag, factor=self.scalings)
             return geom
         # If not, fetch last geometry from self.geometries.
         else:

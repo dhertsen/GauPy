@@ -200,8 +200,11 @@ class SuperMolecule(mol.Molecule):
                 setattr(self, name, Match(u, self))
                 self.unparsed.remove(u)
                 logging.debug(
-                    'SuperMolecule.set_match(): end pattern %s' % name)
+                    'SuperMolecule.set_match(): pattern at atom %i' % u)
                 return
+        else:
+            logging.debug(
+                'SupperMolecule.set_match(): pattern %s not found' % name)
 
     def set_matches(self, patterns):
         '''
