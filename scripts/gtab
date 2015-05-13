@@ -5,6 +5,7 @@ import argparse
 import sys
 from gaupy.log import LOGFile
 from gaupy.custom import *
+import logging
 
 parser = argparse.ArgumentParser('Tabulate parsed output from Gaussian '
                                  + 'output files.')
@@ -25,6 +26,8 @@ parser.add_argument('--extra', '-x', action='append', default=[],
                     help='Print extra column '
                     + '(fetch attribute from log.LOGFile object)')
 parser.add_argument('--type', '-t', help='Use different parsing class')
+parser.add_argument('--debug', help='Print debug messages',
+                    action='store_true')
 parser.add_argument('files', nargs='*', help='Gaussian output files',
                     default=sys.stdin)
 args = parser.parse_args()
@@ -61,6 +64,9 @@ if args.type:
         type = eval(args.type)
     except:
         print('Parsing class %s not found.' % args.type)
+
+if args.debug:
+    logging.basicConfig(level='DEBUG', format='%(asctime)s %(message)s')
 
 print table.GaussianTable(files, columns, layout, partition=args.sort,
                           partition_energies_rmsds=args.partitionenergies,

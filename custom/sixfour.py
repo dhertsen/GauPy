@@ -1,113 +1,168 @@
 import gaupy.log
 import gaupy.molecules
-from gaupy.patterns import h, c, o, me, ch2, ipr
+from gaupy.patterns import h, c, o, s, me
 import molmod.molecular_graphs as g
 import molmod.graphs as gr
 from collections import OrderedDict
 import numpy as np
 import math
 import warnings
+import logging
 
 # Dirty trick to silence warnings of confliciting
 # modules on the HPC cluster and to silence NumPy
 # warnings.
 warnings.filterwarnings('ignore')
 
-__all__ = ['IsoPropyl']
+__all__ = ['SixFour']
 
 
-class IsoPropyl(gaupy.log.LOGFile):
+class SixFour(gaupy.log.LOGFile):
 
     def __init__(self, filename):
-        super(IsoPropyl, self).__init__(filename)
-        self._classify()
-        self._exoendo()
-        self._cistrans()
+        super(SixFour, self).__init__(filename)
+
+        # stoichiometry determines which study is being studied
+        if self.stoichiometry == 'C14H19O(1+)':
+            self.system = 'furan'
+        elif self.stoichiometry == 'C14H19S(1+)':
+            self.system = 'thiophene'
+        elif self.stoichiometry == 'C18H27O(1+)':
+            self.system = 'ipr-me'
+        elif self.stoichiometry == 'C17H25O(1+)':
+            self.system = 'ipr-h'
+
+        # reactant system consist of two seperate molecules
+        if len(self.geometry.molecules()) == 2:
+            self.species = 'reactant'
+        # in all other cases, atoms have to be classified
+        else:
+            self._classify()
+            self._exoendo()
+            self._cistrans()
+            # second bond formed?
+            second = self.geometry.neighbors(self.geometry.four_head1.n,
+                                             self.geometry.six_cation.n)
+            # TS?
+            ts = self.nimag == 1 and self.lowest_frequency < -100
+            # let's classify
+            if ts:
+                if second:
+                    self.species = 'ts2'
+                else:
+                    self.species = 'ts1'
+            else:
+                if second:
+                    self.species = 'product'
+                else:
+                    self.species = 'intermediate'
 
     def _classify(self):
-        # Patterns
-        p = OrderedDict()
-        c_bonded_with_cch = g.HasNeighborNumbers(1, 6, 6)
-        p['furan_o'] = o
-        p['furan_c5'] = g.HasNeighbors(o, me(6), c_bonded_with_cch)
-        p['furan_me'] = g.HasNeighbors(p['furan_c5'], h, h, h)
-        p['furan_c4'] = g.HasNeighbors(p['furan_c5'], h, c)
-        p['furan_c2'] = g.HasNeighbors(o, c, c)
-        p['diene_c4'] = g.HasNeighbors(c_bonded_with_cch, c, me(6))
-        p['ipr_tert'] = g.HasNeighbors(me(6), me(6), h, c)
-        p['ipr_me1'] = me(ipr(6))
-        p['ipr_me2'] = me(ipr(6))
-        p['diene_me'] = g.HasNeighbors(p['diene_c4'], h, h, h)
-        p['diene_c1'] = g.HasNeighbors(p['ipr_tert'], c, c, h)
-        p['diene_c2'] = ch2(p['diene_c1'], 6)
-        p['diene_head1'] = gr.CritOr(g.HasNeighbors(p['diene_c1'], c, h),
-                                     g.HasNeighbors(p['diene_c1'], c, c, h))
-        p['diene_c3'] = g.HasNeighbors(p['diene_head1'], p['diene_c4'], h)
-        p['diene_head2'] = gr.CritOr(g.HasNeighbors(p['diene_c4'],
-                                                    p['diene_c2'], h),
-                                     g.HasNeighbors(p['diene_c4'],
-                                                    p['diene_c2'], h, c))
-        p['furan_c3'] = gr.CritOr(g.HasNeighbors(p['furan_c4'], c, h),
-                                  g.HasNeighbors(p['furan_c4'], c, c, h))
-        p['furan_c2'] = g.HasNeighbors(p['furan_c3'], o, c)
-        p['furan_cation_me1'] = me(6)
-        p['furan_cation_me2'] = me(6)
 
-        # Pattern matching
+        # custom patterns
+        os = gr.CritOr(o, s)
+        c_bonded_with_cch = g.HasNeighborNumbers(1, 6, 6)
+
+        # patterns in specific order, since the groups recognized
+        # will be removed from self.geometry.unparsed sequentially
+        p = OrderedDict()
+        p['six_hetero'] = os
+        p['six_c5'] = g.HasNeighbors(os, me(6), c_bonded_with_cch)
+        p['six_me'] = g.HasNeighbors(p['six_c5'], h, h, h)
+        p['six_c4'] = g.HasNeighbors(p['six_c5'], h, c)
+        p['six_c2'] = g.HasNeighbors(o, c, c)
+        # In the first case, two methyl groups on the cationic position.
+        # In the second case, a single one.
+        p['six_cation'] = gr.CritOr(
+            g.HasNeighbors(p['six_c2'], c, me(6), h),
+            g.HasNeighbors(p['six_c2'], c, me(6), me(6)))
+        # First case: before the second bond is formed.
+        # Second case: after the second bond is formed.
+        p['six_c3'] = gr.CritOr(
+            g.HasNeighbors(p['six_c4'], p['six_c2'], h),
+            g.HasNeighbors(p['six_c4'], p['six_c2'], h, c))
+        # first bond has been formed when _classify() is called
+        p['four_head2'] = g.HasNeighbors(p['six_cation'], c, c, h)
+        p['four_c2'] = g.HasNeighbors(p['four_head2'], c, c, h)
+        p['four_c1'] = gr.CritOr(
+            g.HasNeighbors(p['four_c2'], c, h, h),
+            g.HasNeighbors(p['four_c2'], c, c, h))
+        # First case: before the second bond is formed.
+        # Second case: after the second bond is formed.
+        p['four_head1'] = gr.CritOr(
+            g.HasNeighbors(p['four_c1'], c, h),
+            g.HasNeighbors(p['four_c1'], c, c, h))
+        p['four_c3'] = g.HasNeighbors(p['four_head1'], c, h)
+        p['four_c4'] = gr.CritOr(
+            g.HasNeighbors(p['four_head2'], p['four_c3'], h),
+            g.HasNeighbors(p['four_head2'], p['four_c3'], c))
+
+        # TODO
+        '''
+        - six and four instead of furan and diene
+        - hetero instead of o
+        - only diene_ipr further parsed, because it's necessay
+          for cis/trans
+        '''
+        if 'ipr' in self.system:
+            p['diene_ipr'] = g.HasNeighbors(p['four_c1'], c, c, h)
+
         self.geometry.initiate_match()
+        logging.debug('call set_matches from sixfour.SixFour._classify()')
         self.geometry.set_matches(p)
-        if len(self.geometry.unparsed) == 1:
-            self.geometry.furan_cation = gaupy.molecules.Match(
-                self.geometry.unparsed[0], self.geometry)
 
     def _exoendo(self):
-        diene = ((self.geometry.diene_head1.xyz
-                  - self.geometry.diene_c3.xyz)
-                 + (self.geometry.diene_head2.xyz
-                    - self.geometry.diene_c4.xyz))
-        diene /= np.linalg.norm(diene)
-        dienophile_subs = (self.geometry.furan_c2.xyz
-                           - self.geometry.furan_o.xyz)
-        dienophile_subs /= np.linalg.norm(dienophile_subs)
-        angle = math.acos(np.dot(diene, dienophile_subs))
-        # stereo attributes is stored both is self and self.geometry
-        # (handy for making tables)
-        if 0 <= angle <= (math.pi / 2):
-            self.exoendo = self.geometry.stereo = 'endo'
+        if 'ipr' in self.system:
+            four = ((self.geometry.four_head1.xyz - self.geometry.four_c3.xyz)
+                    + (self.geometry.four_head2.xyz
+                       - self.geometry.four_c4.xyz))
+            four /= np.linalg.norm(four)
+            six_subs = (self.geometry.six_c2.xyz - self.geometry.six_o.xyz)
+            six_subs /= np.linalg.norm(six_subs)
+            angle = math.acos(np.dot(four, six_subs))
+            # stereo attributes is stored both is self and self.geometry
+            # (handy for making tables)
+            if 0 <= angle <= (math.pi / 2):
+                self.exoendo = self.geometry.stereo = 'endo'
+            else:
+                self.exoendo = self.geometry.stereo = 'exo'
         else:
-            self.exoendo = self.geometry.stereo = 'exo'
+            self.exoendo = None
 
     def _cistrans(self):
 
-        # check on which side of the ring the iPr group is placed
-        # unit vector perpendicular on ring, centered on diene_c1
-        n1 = np.cross(self.geometry.diene_c2.xyz
-                      - self.geometry.diene_c1.xyz,
-                      self.geometry.diene_head1.xyz
-                      - self.geometry.diene_c1.xyz)
-        n1 /= np.linalg.norm(n1)
-        # unit vector from that diene_c1 center to iPr
-        ipr = self.geometry.ipr_tert.xyz - self.geometry.diene_c1.xyz
-        ipr /= np.linalg.norm(ipr)
-        # how are these two vector aligned with respect to eachother
-        iprside = math.acos(np.dot(n1, ipr)) < (math.pi / 2)
+        if 'ipr' in self.system:
+            # check on which side of the ring the iPr group is placed
+            # unit vector perpendicular on ring, centered on six_c1
+            n1 = np.cross(self.geometry.six_c2.xyz
+                          - self.geometry.six_c1.xyz,
+                          self.geometry.six_head1.xyz
+                          - self.geometry.six_c1.xyz)
+            n1 /= np.linalg.norm(n1)
+            # unit vector from that six_c1 center to iPr
+            ipr = self.geometry.four_ipr.xyz - self.geometry.six_c1.xyz
+            ipr /= np.linalg.norm(ipr)
+            # how are these two vector aligned with respect to eachother
+            iprside = math.acos(np.dot(n1, ipr)) < (math.pi / 2)
 
-        # do the same thing around the second bridge head
-        # unit vector perpendicular on ring, centered on diene_head2
-        n2 = np.cross(self.geometry.diene_c2.xyz
-                      - self.geometry.diene_head2.xyz,
-                      self.geometry.diene_c4.xyz
-                      - self.geometry.diene_head2.xyz)
-        n2 /= np.linalg.norm(n2)
-        # unit vector from that diene_head center to cation
-        head = self.geometry.furan_cation.xyz - self.geometry.diene_head2.xyz
-        head /= np.linalg.norm(head)
-        # alignment
-        headside = math.acos(np.dot(n2, head)) < (math.pi / 2)
+            # do the same thing around the second bridge head
+            # unit vector perpendicular on ring, centered on six_head2
+            n2 = np.cross(self.geometry.six_c2.xyz
+                          - self.geometry.six_head2.xyz,
+                          self.geometry.six_c4.xyz
+                          - self.geometry.six_head2.xyz)
+            n2 /= np.linalg.norm(n2)
+            # unit vector from that six_head center to cation
+            head = self.geometry.four_cation.xyz - self.geometry.six_head2.xyz
+            head /= np.linalg.norm(head)
+            # alignment
+            headside = math.acos(np.dot(n2, head)) < (math.pi / 2)
 
-        # Define cis and trans. Don't bother with the signs, just check
-        # whether == or != belongs to cis or trans.
-        if iprside != headside:
-            self.cistrans = self.geometry.cistrans = 'cis'
+            # Define cis and trans. Don't bother with the signs, just check
+            # whether == or != belongs to cis or trans.
+            if iprside != headside:
+                self.cistrans = self.geometry.cistrans = 'cis'
+            else:
+                self.cistrans = self.geometry.cistrans = 'trans'
         else:
-            self.cistrans = self.geometry.cistrans = 'trans'
+            self.cistrans = None

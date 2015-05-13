@@ -13,6 +13,7 @@ h = mg.HasAtomNumber(1)
 c = mg.HasAtomNumber(6)
 n = mg.HasAtomNumber(7)
 o = mg.HasAtomNumber(8)
+s = mg.HasAtomNumber(16)
 
 csp3 = g.CritAnd(c, mg.HasNumNeighbors(4))
 csp2 = g.CritAnd(c, mg.HasNumNeighbors(3))

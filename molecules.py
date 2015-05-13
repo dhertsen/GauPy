@@ -3,6 +3,7 @@ import warnings
 import subprocess
 import os
 import utils
+import logging
 
 # Dirty trick to silence warnings of confliciting
 # modules on the HPC cluster and to silence NumPy
@@ -156,11 +157,14 @@ class SuperMolecule(mol.Molecule):
         return type(self)(newnumbers, newcoord)
 
     def _graph(self):
-        try:
-            self.graph = mgrp.MolecularGraph.from_geometry(
-                self, scaling=self.scaling)
-        except:
-            self.set_default_graph()
+        if self.graph:
+            return
+        else:
+            try:
+                self.graph = mgrp.MolecularGraph.from_geometry(
+                    self, scaling=self.scaling)
+            except:
+                self.set_default_graph()
 
     def get_nrings(self, n):
         '''
@@ -183,10 +187,13 @@ class SuperMolecule(mol.Molecule):
             self.unparsed = range(self.size)
 
     def set_match(self, name, pattern):
+        logging.debug('SuperMolecule.set_match(): begin pattern %s' % name)
         for u in self.unparsed:
             if pattern(u, self.graph):
                 setattr(self, name, Match(u, self))
                 self.unparsed.remove(u)
+                logging.debug(
+                    'SuperMolecule.set_match(): end pattern %s' % name)
                 return
 
     def set_matches(self, patterns):
@@ -214,3 +221,10 @@ class SuperMolecule(mol.Molecule):
         self._graph()
         mol1, mol2 = self.graph.get_halfs(atom1, atom2)
         return self.part(mol1), self.part(mol2)
+
+    def neighbors(self, atom1, atom2):
+        '''
+        Is there a bond between atom1 and atom2? Returns a boolean.
+        '''
+        self._graph()
+        return atom2 in self.graph.neighbors[atom1]
