@@ -35,6 +35,13 @@ class SuperMolecule(mol.Molecule):
 
     def __init__(self, *pargs, **kargs):
         super(SuperMolecule, self).__init__(*pargs, **kargs)
+        self.scaling = 1.0
+
+    def scale(self, nimag, factor=[1.0, 1.5]):
+        if nimag == 0:
+            self.scaling = factor[0]
+        elif nimag == 1:
+            self.scaling = factor[1]
 
     @classmethod
     def from_Molecule(cls, molecule):
@@ -222,7 +229,7 @@ class SuperMolecule(mol.Molecule):
         mol1, mol2 = self.graph.get_halfs(atom1, atom2)
         return self.part(mol1), self.part(mol2)
 
-    def neighbors(self, atom1, atom2):
+    def bonded(self, atom1, atom2):
         '''
         Is there a bond between atom1 and atom2? Returns a boolean.
         '''

@@ -9,6 +9,7 @@ import utils
 import numpy as np
 import molmod.molecules as mol
 import molmod.units as units
+import logging
 
 # Dirty trick to silence warnings of confliciting
 # modules on the HPC cluster and to silence NumPy
@@ -24,6 +25,7 @@ class LOGFile(object):
     '''
 
     def __init__(self, filename):
+        logging.debug('log.LOGFile.__init__(): %s' % filename)
         self.files = filenames.GaussianFile(filename)
         '''
         :class:`gaussian.filenames.GaussianFile` object constructed
@@ -84,7 +86,9 @@ class LOGFile(object):
 
         # Create a SuperMolecule
         geometry = mol.Molecule(atoms, coordinates)
-        return molecules.SuperMolecule.from_Molecule(geometry)
+        geometry = molecules.SuperMolecule.from_Molecule(geometry)
+        geometry.scale(self.nimag)
+        return geometry
 
     def _get_geometries(self, orientation='orientation'):
         '''
@@ -530,10 +534,12 @@ class LOGFile(object):
         # parsed, since self.geometries is only constructed when it is first
         # called.
         if self._summary_block:
-            return molecules.SuperMolecule.from_string(
+            geom = molecules.SuperMolecule.from_string(
                 '\n'.join([l.replace(',', '\t')
                            for l in self._summary_block.replace(' ', '').split(
                                r'\\')[3].split('\\')[1:]]))
+            geom.scale(self.nimag)
+            return geom
         # If not, fetch last geometry from self.geometries.
         else:
             return self.geometries[-1]
@@ -790,19 +796,6 @@ class LOGFile(object):
             return self.frequencies[0]
         except:
             return float('nan')
-
-    @utils.cached
-    def geometry_scaling(self):
-        '''
-        Geometry scaling parameter used to detect bonds. If there is a
-        single imaginary frequency, the calculation is assumed to be
-        TS and the parameter is set to 1.5, else it is set to 1.0.
-        Manual tuning may be necessary for some systems?
-        '''
-        if self.nimag == 1:
-            return 1.5
-        else:
-            return 1.0
 
     @utils.cached
     def chk_consistent(self):
