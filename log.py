@@ -1013,7 +1013,7 @@ class LOGFile(object):
         '''
         Method/basis for ab initio, method for semiempirics
         '''
-        self._method_and_basis[2]
+        return self._method_and_basis[2]
 
     @utils.cached
     def dipole(self):
