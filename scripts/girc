@@ -46,11 +46,17 @@ for f in args.files:
             try:
                 shutil.copy(l.files.chk, ircfiles[d].chk)
                 l.geometry = None
+                l.keywords = [
+                    l.lot,
+                    ('irc(%s,rcfc,maxcycle=%i,maxpoints=%i,' + 'stepsize=%i)')
+                    % (e, args.maxcycle, args.maxpoints, args.stepsize),
+                    'geom=checkpoint', args.extra]
             except:
-                pass
-            l.keywords = [l.lot, ('irc(%s,calcfc,maxcycle=%i,maxpoints=%i,'
-                                  + 'stepsize=%i)')
-                          % (e, args.maxcycle, args.maxpoints, args.stepsize),
-                          args.extra]
+                l.keywords = [
+                    l.lot,
+                    ('irc(%s,calcfc,maxcycle=%i,maxpoints=%i,'
+                     + 'stepsize=%i)')
+                    % (e, args.maxcycle, args.maxpoints, args.stepsize),
+                    args.extra]
             l.write_input(ircfiles[d].com)
             print('%s written.' % ircfiles[d].com)
