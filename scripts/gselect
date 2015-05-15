@@ -18,6 +18,10 @@ sgroup.add_argument('--ts', action='store_true',
                     help='Select TSs (\'freq\' in route section,\
                     lowest frequency < -100 cm-1)')
 
+pgroup = parser.add_argument_group(title='print options')
+pgroup.add_argument('--extension', '-e', default='log',
+                    help='Print this extension')
+
 agroup = parser.add_argument_group(title='actions')
 agroup.add_argument('--restart', action='store_true',
                     help='Write restart input file for selected log files')
@@ -76,4 +80,4 @@ for l in logs:
     elif args.cpall:
         l.files.copy_all(args.cpall[0])
     else:
-        print l.files.log
+        print getattr(l.files, args.extension)
