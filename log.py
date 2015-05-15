@@ -212,7 +212,7 @@ class LOGFile(object):
 
 %(comment)s
 
-%(charge)s %(multiplicity)s
+%(charge)i %(multiplicity)i
 %(geometry_text)s
 
 %(scrf)s

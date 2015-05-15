@@ -2,6 +2,7 @@
 
 import argparse
 import gaupy.log as log
+import gaupy.hpc as hpc
 
 parser = argparse.ArgumentParser('Select Gaussian output files '
                                  + 'and perform some action on selected files')
@@ -17,6 +18,10 @@ sgroup.add_argument('--notirc', action='store_true',
 sgroup.add_argument('--ts', action='store_true',
                     help='Select TSs (\'freq\' in route section,\
                     lowest frequency < -100 cm-1)')
+sgroup.add_argument('--notrun', action='store_true',
+                    help='Exclude queued or running calculations')
+sgroup.add_argument('--ircstep', type=int,
+                    help='Minimum number of IRC steps')
 
 pgroup = parser.add_argument_group(title='print options')
 pgroup.add_argument('--extension', '-e', default='log',
@@ -62,6 +67,19 @@ if args.notirc:
 if args.ts:
     logs = [l for l in logs
             if 'freq' in l.keywords and l.lowest_frequency < -100]
+if args.notrun:
+    hpc.set_status(*logs)
+    logs = [l for l in logs if not l.hpc]
+if args.ircstep:
+    newlog = []
+    # do not exclude non-IRC calculations
+    for l in logs:
+        if l.irc:
+            if l.irc.length >= args.ircstep:
+                newlog.append(l)
+        else:
+            newlog.append(l)
+    logs = newlog
 
 for l in logs:
     if args.restart:

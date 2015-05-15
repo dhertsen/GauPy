@@ -2,6 +2,7 @@ import log
 import warnings
 import utils
 import numpy as np
+import hpc
 
 # Dirty trick to silence warnings of confliciting
 # modules on the HPC cluster and to silence NumPy
@@ -56,6 +57,8 @@ class GaussianTable(object):
         self.type.set_relative_energies(self.logs)
         self.type.set_rmsds(self.logs)
         self.columns = columns
+        if 'hpc' in self.columns:
+            hpc.set_status(*self.logs)
         self._layout(layout)
         self._empty_columns()
         self.width = sum([l.width for l in self.layout])

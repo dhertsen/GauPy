@@ -11,11 +11,13 @@ parser = argparse.ArgumentParser('Tabulate parsed output from Gaussian '
                                  + 'output files.')
 parser.add_argument('--sort', '-s', action='store_true',
                     help='Sort reactions')
+parser.add_argument('--running', '-r', action='store_true',
+                    help='Check job state (R: running, Q: queued)')
 parser.add_argument('--gibbs', '-g', '-G', action='store_true',
                     help='Print relative Gibbs free energy (kJ/mol)')
 parser.add_argument('--enthalpy', '-H', action='store_true',
                     help='Print relative enthalpies (kJ/mol)')
-parser.add_argument('--rmsd', '-r', action='store_true',
+parser.add_argument('--rmsd', action='store_true',
                     help='Print RMSDs')
 parser.add_argument('--partitionenergies', '-b', action='store_true',
                     help='Calculate relative Gibbs free energies/enthalpies '
@@ -54,6 +56,9 @@ if args.gibbs:
 if args.rmsd:
     columns.insert(-2, 'rmsd')
     layout.insert(-2, '%-10.3e')
+if args.running:
+    columns.append('hpc')
+    layout.append('fit+2')
 for x in args.extra:
     columns.append(x)
     layout.append('fit+2')

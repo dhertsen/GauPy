@@ -2,15 +2,17 @@ import subprocess
 import re
 import fnmatch
 
+# Available clusters on the Stevin infrastructure
+clusters = ['raichu', 'delcatty', 'haunter', 'gastly']
 
-def running(clusters=['haunter', 'gastly', 'raichu', 'delcatty'], names='*'):
+
+def running(clusters=clusters):
     '''
     Get all running calculations.
 
     Arguments:
         clusters:       clusters to check for running calculations
                         (default: ['haunter', 'gastly', 'raichu', 'delcatty'])
-        names:          bash-style pattern to filter job names
     Return:
         {'job_name':{job information}}
     '''
@@ -64,11 +66,14 @@ def running(clusters=['haunter', 'gastly', 'raichu', 'delcatty'], names='*'):
                     pass
 
             calculation['cluster'] = cluster
-
-            # Filter wanted calculations UNIX-style.
-            if fnmatch.fnmatchcase(calculation['job_name'], names):
-                running_calculations[calculation['job_name']] = calculation
+            running_calculations[calculation['job_name']] = calculation
 
     # Return a dictionary of running calculations
     # {'job_name':{job information}}
     return running_calculations
+
+def set_status(*logfiles):
+    r = running()
+    for lf in logfiles:
+        if lf.file in r:
+            lf.hpc = r[lf.file]['job_state']
