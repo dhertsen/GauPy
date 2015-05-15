@@ -1,6 +1,5 @@
 import subprocess
 import re
-import fnmatch
 
 # Available clusters on the Stevin infrastructure
 clusters = ['raichu', 'delcatty', 'haunter', 'gastly']
@@ -17,21 +16,21 @@ def running(clusters=clusters):
         {'job_name':{job information}}
     '''
 
-    running_calculations = {}
+    calculations = dict()
 
     for cluster in clusters:
 
         # Retrieve job numbers for every cluster.
         qstat = subprocess.Popen(['module swap cluster/%s ; qstat' % cluster],
                                  stdout=subprocess.PIPE, shell=True)
-        qstat_output, qstat_error = qstat.communicate()
-        jobnumbers = re.findall('([0-9]*)\.master', qstat_output)
+        qstatout, qstaterr = qstat.communicate()
+        jobids = re.findall('([0-9]*)\.master', qstatout)
 
-        for jobnumber in jobnumbers:
+        for jobid in jobids:
 
             # Retrieve the output of qstat -f $JOB_ID for every job.
             qstatf = subprocess.Popen(['module swap cluster/%s ; qstat -f %s'
-                                       % (cluster, jobnumber)],
+                                       % (cluster, jobid)],
                                       stdout=subprocess.PIPE, shell=True)
             qstatf_output, qstatf_error = qstatf.communicate()
 
@@ -47,30 +46,14 @@ def running(clusters=clusters):
                                                        qstatf_output).group(1)
                 except:
                     pass
-                try:
-                    # First node on which the calculation is running.
-                    calculation['node'] = re.search(r'exec_host = ([^/]*)',
-                                                    qstatf_output).group(1)
-                except:
-                    pass
-                try:
-                    # Retrieve path.
-                    start = qstatf_output.find('Output_Path')
-                    start = qstatf_output.find(':', start) + 1
-                    end = qstatf_output.find('Priority')
-                    end = qstatf_output.rfind('/', 0, end)
-                    path = ''.join([x.strip() for x
-                                    in qstatf_output[start:end].split('\n')])
-                    calculation['path'] = path
-                except:
-                    pass
 
             calculation['cluster'] = cluster
-            running_calculations[calculation['job_name']] = calculation
+            calculations[calculation['job_name']] = calculation
 
     # Return a dictionary of running calculations
     # {'job_name':{job information}}
-    return running_calculations
+    return calculations
+
 
 def set_status(*logfiles):
     r = running()
