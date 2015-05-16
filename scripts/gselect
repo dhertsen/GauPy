@@ -1,8 +1,10 @@
 #! /usr/bin/python
 
+# TODO import from, as, etc.: consistency
 import argparse
 import gaupy.log as log
 import gaupy.hpc as hpc
+import logging
 
 parser = argparse.ArgumentParser('Select Gaussian output files '
                                  + 'and perform some action on selected files')
@@ -49,9 +51,15 @@ agroup.add_argument('--cp', nargs=2, default=None,
                     (second argument)')
 agroup.add_argument('--cpall', default=None, help='For selected log files,\
                     move all files (all extensions) to subfolder (argument)')
+parser.add_argument('--debug', help='Print debug messages',
+                    action='store_true')
 parser.add_argument('files', nargs='*', help='Gaussian output files')
 
 args = parser.parse_args()
+
+# TODO logging.debug() does not seem to print anything
+if args.debug:
+    logging.basicConfig(level='DEBUG', format='%(asctime)s %(message)s')
 
 logs = log.LOGFile.parse_all(*args.files)
 
@@ -72,13 +80,16 @@ if args.ts:
 if args.notrun:
     hpc.set_status(*logs)
     logs = [l for l in logs if not l.hpc]
-if args.ircmin:
+if args.ircmin or args.ircmax:
     newlog = []
     # do not exclude non-IRC calculations
     for l in logs:
         if l.irc:
-            if (args.ircmin or 0) <= l.irc.length <= (
-                    agrs.ircmax or float('inf')):
+            ircmin = args.ircmin or 0
+            ircmax = args.ircmax or float('inf')
+            if ircmin > ircmax:
+                raise Exception('ircmin should be lower than ircmax')
+            if ircmin <= l.irc.length <= ircmax:
                 newlog.append(l)
         else:
             newlog.append(l)

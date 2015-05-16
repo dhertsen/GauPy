@@ -2,6 +2,7 @@ import os
 import re
 import glob
 import shutil
+import logging
 
 
 class GaussianFile(object):
@@ -91,34 +92,44 @@ class GaussianFile(object):
 
     def move_all(self, dir):
         for f in self.get_all():
-            shutil.move(f, os.path.join(dir, os.path.basename(f)))
+            to = os.path.join(dir, os.path.basename(f))
+            shutil.move(f, to)
+            print('Moved %s to %s' % (f, to))
         self._reset_root(dir)
 
     def move_ext(self, dir, *extensions):
         ''' does not trigger reset of root'''
         for ext in extensions:
             ext = getattr(self, ext)
-            shutil.move(ext, os.path.join(dir, os.path.basename(ext)))
+            to = os.path.join(dir, os.path.basename(ext))
+            shutil.move(ext, to)
+            print('Moved %s to %s' % (ext, to))
 
     def copy_all(self, dir):
         for f in self.get_all():
-            shutil.copy(f, os.path.join(dir, os.path.basename(f)))
+            to = os.path.join(dir, os.path.basename(f))
+            shutil.copy(f, to)
+            print('Copied %s to %s' % (f, to))
         self._reset_root(dir)
 
     def copy_ext(self, dir, *extensions):
         ''' does not trigger reset of root'''
         for ext in extensions:
             ext = getattr(self, ext)
-            shutil.copy(ext, os.path.join(dir, os.path.basename(ext)))
+            to = os.path.join(dir, os.path.basename(ext))
+            shutil.copy(ext, to)
+            print('Copied %s to %s' % (ext, to))
 
     def remove_all(self):
         for f in self.get_all():
             os.remove(f)
+            print('Removed %s' % f)
 
     def remove_ext(self, *extensions):
         for ext in extensions:
             ext = getattr(self, ext)
             os.remove(ext)
+            print('Removed %s' % ext)
 
     def same_reaction(self, other):
         '''other must be GaussianFile'''
