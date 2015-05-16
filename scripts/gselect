@@ -20,8 +20,10 @@ sgroup.add_argument('--ts', action='store_true',
                     lowest frequency < -100 cm-1)')
 sgroup.add_argument('--notrun', action='store_true',
                     help='Exclude queued or running calculations')
-sgroup.add_argument('--ircstep', type=int,
+sgroup.add_argument('--ircmin', type=int,
                     help='Minimum number of IRC steps')
+sgroup.add_argument('--ircmax', type=int,
+                    help='Maximum number of IRC steps')
 
 pgroup = parser.add_argument_group(title='print options')
 pgroup.add_argument('--extension', '-e', default='log',
@@ -70,12 +72,13 @@ if args.ts:
 if args.notrun:
     hpc.set_status(*logs)
     logs = [l for l in logs if not l.hpc]
-if args.ircstep:
+if args.ircmin:
     newlog = []
     # do not exclude non-IRC calculations
     for l in logs:
         if l.irc:
-            if l.irc.length >= args.ircstep:
+            if (args.ircmin or 0) <= l.irc.length <= (
+                    agrs.ircmax or float('inf')):
                 newlog.append(l)
         else:
             newlog.append(l)
