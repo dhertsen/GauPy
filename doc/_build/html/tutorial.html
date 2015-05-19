@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Using the Python modules &mdash; GauPy 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="GauPy 1.0 documentation" href="index.html" />
+    <link rel="prev" title="gaupy package" href="gaupy.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="gaupy.html" title="gaupy package"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">GauPy 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="using-the-python-modules">
+<h1>Using the Python modules<a class="headerlink" href="#using-the-python-modules" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="load-output-files">
+<h2>Load output files<a class="headerlink" href="#load-output-files" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="gaupy.html#gaupy.log.LOGFile" title="gaupy.log.LOGFile"><tt class="xref py py-class docutils literal"><span class="pre">gaupy.log.LOGFile</span></tt></a> is the main class for analyzing output files. Fetching attributes from the output files is straightforward:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gaupy.log</span> <span class="kn">import</span> <span class="n">LOGFile</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lf</span> <span class="o">=</span> <span class="n">LOGFile</span><span class="p">(</span><span class="s">&#39;output.log&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lf</span><span class="o">.</span><span class="n">multiplicity</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+<p>For the sake of efficiency, attributes are parsed and cached when they are first requested. Depending on the attribute, a different default value will be returned if it could not be retrieved from the output file. If a single numeric value is expected, <tt class="docutils literal"><span class="pre">nan</span></tt> is the default value. In all other cases, a default with a <tt class="docutils literal"><span class="pre">False</span></tt> boolean value is returned (<tt class="docutils literal"><span class="pre">None</span></tt>, <tt class="docutils literal"><span class="pre">False</span></tt>, <tt class="docutils literal"><span class="pre">[]</span></tt>). The latter allows for pythonic constructs:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">lf</span> <span class="o">=</span> <span class="n">LOGFile</span><span class="p">(</span><span class="s">&#39;output.log&#39;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">lf</span><span class="o">.</span><span class="n">energies</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">lf</span><span class="o">.</span><span class="n">geometries</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;What is this? Energies found, but no geometries&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This is probably a good time to talk about filenames and <a class="reference internal" href="gaupy.html#gaupy.filenames.GaussianFile" title="gaupy.filenames.GaussianFile"><tt class="xref py py-class docutils literal"><span class="pre">gaupy.filenames.GaussianFile</span></tt></a>. It does not matter which file type is passed to the <tt class="docutils literal"><span class="pre">LOGFile</span></tt> constructor: <tt class="docutils literal"><span class="pre">LOGFile('output.log')</span></tt>, <tt class="docutils literal"><span class="pre">LOGFile('output.chk')</span></tt>, <tt class="docutils literal"><span class="pre">LOGFile('output')</span></tt>, etc. are equivalent and will look for an output file with a log extension. For each calculation, a <tt class="docutils literal"><span class="pre">GaussianFile</span></tt> instance is created and stored as the <tt class="docutils literal"><span class="pre">files</span></tt> attribute of the <tt class="docutils literal"><span class="pre">LOGFile</span></tt>. This object allows for a number of common filename operations and quick access to different extensions. As the root of the filename <tt class="docutils literal"><span class="pre">lf.files.root</span></tt> is used frequently, <tt class="docutils literal"><span class="pre">lf.file</span></tt> is provided as a quick alias.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">lf</span> <span class="o">=</span> <span class="n">LOGFile</span><span class="p">(</span><span class="s">&#39;folder/output.extension&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lf</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">root</span>
+<span class="go">folder/output</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lf</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">base</span>
+<span class="go">output</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lf</span><span class="o">.</span><span class="n">otherextension</span>
+<span class="go">folder/output.otherextension</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="geometries">
+<h2>Geometries<a class="headerlink" href="#geometries" title="Permalink to this headline">¶</a></h2>
+<p>Several types of geometries can be fetched:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="22%" />
+<col width="78%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Attribute</th>
+<th class="head">Output file</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">standard_orientations</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">Standard</span> <span class="pre">orientation</span></tt> (all occurences)</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">input_orientations</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">Input</span> <span class="pre">orientation</span></tt> (all occurences)</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">geometries</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">Standard</span> <span class="pre">orientation</span></tt> if present, else <tt class="docutils literal"><span class="pre">Input</span> <span class="pre">orientation</span></tt> (all occurences)</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">geometry</span></tt></td>
+<td>summary block at the end of the file if present, else last element of <tt class="docutils literal"><span class="pre">geometries</span></tt></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="energies">
+<h2>Energies<a class="headerlink" href="#energies" title="Permalink to this headline">¶</a></h2>
+<p>Multiple energies are available:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="36%" />
+<col width="49%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Attribute</th>
+<th class="head">Output file</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>energy</td>
+<td><tt class="docutils literal"><span class="pre">HF</span> <span class="pre">Done</span></tt> (last occurence)</td>
+<td>E <sub>el</sub></td>
+</tr>
+<tr class="row-odd"><td>energies</td>
+<td><tt class="docutils literal"><span class="pre">HF</span> <span class="pre">Done</span></tt> (all occurences)</td>
+<td>list of all E <sub>el</sub></td>
+</tr>
+<tr class="row-even"><td>zpe</td>
+<td><tt class="docutils literal"><span class="pre">Zero-point</span> <span class="pre">correction</span></tt></td>
+<td>ZPE</td>
+</tr>
+<tr class="row-odd"><td>thermalcorrection</td>
+<td><tt class="docutils literal"><span class="pre">Thermal</span> <span class="pre">correction</span> <span class="pre">to</span> <span class="pre">Energy</span></tt></td>
+<td>E <sub>corr</sub> = ZPE + E <sub>trans</sub> + E <sub>rot</sub> + E <sub>vib</sub></td>
+</tr>
+<tr class="row-even"><td>enthalpycorrection</td>
+<td><tt class="docutils literal"><span class="pre">Thermal</span> <span class="pre">correction</span> <span class="pre">to</span> <span class="pre">Enthalpy</span></tt></td>
+<td>H <sub>corr</sub> = E <sub>corr</sub> + k <sub>b</sub> T</td>
+</tr>
+<tr class="row-odd"><td>gibbscorrection</td>
+<td><tt class="docutils literal"><span class="pre">Thermal</span> <span class="pre">correction</span> <span class="pre">to</span> <span class="pre">Gibbs</span> <span class="pre">Free</span> <span class="pre">Energy</span></tt></td>
+<td>G <sub>corr</sub> = H <sub>corr</sub> - T S <sub>tot</sub></td>
+</tr>
+<tr class="row-even"><td>zpesum</td>
+<td><tt class="docutils literal"><span class="pre">Sum</span> <span class="pre">of</span> <span class="pre">electronic</span> <span class="pre">and</span> <span class="pre">zero-point</span> <span class="pre">Energies</span></tt></td>
+<td>E <sub>el</sub> + ZPE</td>
+</tr>
+<tr class="row-odd"><td>thermal</td>
+<td><tt class="docutils literal"><span class="pre">Sum</span> <span class="pre">of</span> <span class="pre">electronic</span> <span class="pre">and</span> <span class="pre">thermal</span> <span class="pre">Energies</span></tt></td>
+<td>E <sub>tot</sub> = E <sub>el</sub> + E <sub>corr</sub></td>
+</tr>
+<tr class="row-even"><td>enthalpy</td>
+<td><tt class="docutils literal"><span class="pre">Sum</span> <span class="pre">of</span> <span class="pre">electronic</span> <span class="pre">and</span> <span class="pre">thermal</span> <span class="pre">Enthalpies</span></tt></td>
+<td>H = E <sub>el</sub> + H <sub>corr</sub></td>
+</tr>
+<tr class="row-odd"><td>gibbs</td>
+<td><tt class="docutils literal"><span class="pre">Sum</span> <span class="pre">of</span> <span class="pre">electronic</span> <span class="pre">and</span> <span class="pre">thermal</span> <span class="pre">Free</span> <span class="pre">Energies</span></tt></td>
+<td>G = E <sub>el</sub> + G <sub>corr</sub></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Using the Python modules</a><ul>
+<li><a class="reference internal" href="#load-output-files">Load output files</a></li>
+<li><a class="reference internal" href="#geometries">Geometries</a></li>
+<li><a class="reference internal" href="#energies">Energies</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="gaupy.html"
+                        title="previous chapter">gaupy package</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/tutorial.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="gaupy.html" title="gaupy package"
+             >previous</a> |</li>
+        <li><a href="index.html">GauPy 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, Dietmar Hertsen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

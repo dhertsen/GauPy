@@ -24,6 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="GauPy 1.0 documentation" href="index.html" />
+    <link rel="next" title="Using the Python modules" href="tutorial.html" />
     <link rel="prev" title="Welcome to PyGaussian’s documentation!" href="index.html" /> 
   </head>
   <body>
@@ -36,6 +37,9 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="tutorial.html" title="Using the Python modules"
+             accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="index.html" title="Welcome to PyGaussian’s documentation!"
              accesskey="P">previous</a> |</li>
@@ -192,20 +196,24 @@ else: just add</p>
 <span id="gaupy-hpc-module"></span><h2>gaupy.hpc module<a class="headerlink" href="#module-gaupy.hpc" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="gaupy.hpc.running">
-<tt class="descclassname">gaupy.hpc.</tt><tt class="descname">running</tt><big>(</big><em>clusters=['haunter', 'gastly', 'raichu', 'delcatty'], names='*'</em><big>)</big><a class="headerlink" href="#gaupy.hpc.running" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">gaupy.hpc.</tt><tt class="descname">running</tt><big>(</big><em>clusters=['raichu', 'delcatty', 'haunter', 'gastly']</em><big>)</big><a class="headerlink" href="#gaupy.hpc.running" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get all running calculations.</p>
 <dl class="docutils">
 <dt>Arguments:</dt>
-<dd><dl class="first docutils">
+<dd><dl class="first last docutils">
 <dt>clusters:       clusters to check for running calculations</dt>
 <dd>(default: [&#8216;haunter&#8217;, &#8216;gastly&#8217;, &#8216;raichu&#8217;, &#8216;delcatty&#8217;])</dd>
 </dl>
-<p class="last">names:          bash-style pattern to filter job names</p>
 </dd>
 <dt>Return:</dt>
 <dd>{&#8216;job_name&#8217;:{job information}}</dd>
 </dl>
 </dd></dl>
+
+<dl class="function">
+<dt id="gaupy.hpc.set_status">
+<tt class="descclassname">gaupy.hpc.</tt><tt class="descname">set_status</tt><big>(</big><em>*logfiles</em><big>)</big><a class="headerlink" href="#gaupy.hpc.set_status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 <div class="section" id="gaupy-log-module">
@@ -309,6 +317,13 @@ provided files, which may be provided with any or without extensions.</p>
 <span class="pre">See</span> <span class="pre">``gaussian.filenames.GaussianFiles</span></tt> for more information.</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="gaupy.log.LOGFile.scalings">
+<tt class="descname">scalings</tt><em class="property"> = None</em><a class="headerlink" href="#gaupy.log.LOGFile.scalings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default scaling factors used for molecular graphics: first element
+for self.nimag==0, second element for self.nimag==1.</p>
+</dd></dl>
+
 <dl class="classmethod">
 <dt id="gaupy.log.LOGFile.select">
 <em class="property">classmethod </em><tt class="descname">select</tt><big>(</big><em>name</em>, <em>logfiles</em><big>)</big><a class="headerlink" href="#gaupy.log.LOGFile.select" title="Permalink to this definition">¶</a></dt>
@@ -336,6 +351,13 @@ the results are saved as kJ/mol. For more settings see
 <dd><p>Set RMSDs (<tt class="docutils literal"><span class="pre">rmsd</span></tt> attribute of <tt class="xref py py-class docutils literal"><span class="pre">gaussian.log.LOGFile</span></tt>
 instance) for a number
 of Gaussian output files. First one is used as a reference.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gaupy.log.LOGFile.standard_orientations">
+<tt class="descname">standard_orientations</tt><big>(</big><big>)</big><a class="headerlink" href="#gaupy.log.LOGFile.standard_orientations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all geometries in standard orientation, see
+<tt class="xref py py-attr docutils literal"><span class="pre">gaussian.log.LOGFile.geometries</span></tt>.</p>
 </dd></dl>
 
 <dl class="method">
@@ -432,6 +454,12 @@ logfile.geometry.somecenter.xyz</p>
 <dt id="gaupy.molecules.SuperMolecule.avogadro">
 <tt class="descname">avogadro</tt><big>(</big><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.avogadro" title="Permalink to this definition">¶</a></dt>
 <dd><p>writes a file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gaupy.molecules.SuperMolecule.bonded">
+<tt class="descname">bonded</tt><big>(</big><em>atom1</em>, <em>atom2</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.bonded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is there a bond between atom1 and atom2? Returns a boolean.</p>
 </dd></dl>
 
 <dl class="method">
@@ -586,6 +614,11 @@ take three last cols and first col</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="gaupy.molecules.SuperMolecule.scale">
+<tt class="descname">scale</tt><big>(</big><em>nimag, factor=[1.0, 1.5]</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.scale" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="gaupy.molecules.SuperMolecule.set_match">
 <tt class="descname">set_match</tt><big>(</big><em>name</em>, <em>pattern</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.set_match" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -679,7 +712,7 @@ returns the unparsed ones</p>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <dl class="attribute">
 <dt id="gaupy.table.GaussianTable.alias">
-<tt class="descname">alias</tt><em class="property"> = {'lowest_frequency': 'FREQ', 'irc.length': '#IRC', 'relenthalpy': 'Hrel', 'electronic': 'E', 'electronic_relative': 'Erel', 'temperature': 'T', 'nimag': '#IM', 'pressure': 'P', 'gibbs': 'G', 'gibbs_relative': 'Grel', 'relgibbs': 'Grel'}</em><a class="headerlink" href="#gaupy.table.GaussianTable.alias" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">alias</tt><em class="property"> = {'lowest_frequency': 'FREQ', 'irc.length': '#IRC', 'relenthalpy': 'Hrel', 'electronic': 'E', 'electronic_relative': 'Erel', 'temperature': 'T', 'nimag': '#IM', 'pressure': 'P', 'multiplicity': 'MULTI', 'gibbs': 'G', 'gibbs_relative': 'Grel', 'relgibbs': 'Grel'}</em><a class="headerlink" href="#gaupy.table.GaussianTable.alias" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -715,18 +748,19 @@ returns the unparsed ones</p>
 
 <dl class="function">
 <dt id="gaupy.utils.energies">
-<tt class="descclassname">gaupy.utils.</tt><tt class="descname">energies</tt><big>(</big><em>values</em>, <em>energy_type='gibbs'</em><big>)</big><a class="headerlink" href="#gaupy.utils.energies" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">gaupy.utils.</tt><tt class="descname">energies</tt><big>(</big><em>values</em>, <em>type='gibbs'</em><big>)</big><a class="headerlink" href="#gaupy.utils.energies" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a list or NumPy array of energies and filenames to a NumPy array
-of energies. Energy of type <tt class="docutils literal"><span class="pre">energy_type</span></tt> will be taken from log files.
+of energies. Energy of type <tt class="docutils literal"><span class="pre">type</span></tt> will be taken from log files.
 <tt class="docutils literal"><span class="pre">float('nan')</span></tt> values are allowed.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="gaupy.utils.energy">
-<tt class="descclassname">gaupy.utils.</tt><tt class="descname">energy</tt><big>(</big><em>value</em>, <em>energy_type='gibbs'</em><big>)</big><a class="headerlink" href="#gaupy.utils.energy" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">gaupy.utils.</tt><tt class="descname">energy</tt><big>(</big><em>value</em>, <em>type='gibbs'</em><big>)</big><a class="headerlink" href="#gaupy.utils.energy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a energy or a filename to an energy. If a filename was provided,
-energy of type <tt class="docutils literal"><span class="pre">energy_type</span></tt> will be parsed. <tt class="docutils literal"><span class="pre">float('nan')</span></tt> values are
-allowed and will even be returned if an error occurs.</p>
+energy of type <tt class="docutils literal"><span class="pre">type</span></tt> will be parsed. <tt class="docutils literal"><span class="pre">float('nan')</span></tt> values are
+allowed and will even be returned if an error occurs. Passing LOGFile
+objects also works.</p>
 </dd></dl>
 
 <dl class="function">
@@ -756,7 +790,7 @@ there is an error fetching the terminal attribute, None is returned.</p>
 
 <dl class="function">
 <dt id="gaupy.utils.relative_energies">
-<tt class="descclassname">gaupy.utils.</tt><tt class="descname">relative_energies</tt><big>(</big><em>values</em>, <em>reference='min'</em>, <em>absolute=0</em>, <em>relative=0</em>, <em>conversion='kjmol'</em>, <em>energy_type='gibbs'</em><big>)</big><a class="headerlink" href="#gaupy.utils.relative_energies" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">gaupy.utils.</tt><tt class="descname">relative_energies</tt><big>(</big><em>values</em>, <em>reference='min'</em>, <em>absolute=0</em>, <em>relative=0</em>, <em>conversion='kjmol'</em>, <em>type='gibbs'</em><big>)</big><a class="headerlink" href="#gaupy.utils.relative_energies" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a list of energies and filanemes to a list of relative energies.</p>
 <blockquote>
 <div><p>First of all, the internal reference is applied. The original
@@ -775,7 +809,7 @@ corresponding log file first. The type of energy can be specified
 (see Gaussian white pages for more info):</p>
 <blockquote>
 <div>&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;    &#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;-
-<tt class="docutils literal"><span class="pre">energy_type=</span></tt>            type
+<tt class="docutils literal"><span class="pre">type=</span></tt>            type
 &#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;    &#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;-
 <tt class="docutils literal"><span class="pre">'electronic'</span></tt>            electronic
 <tt class="docutils literal"><span class="pre">'gibbs'</span></tt>                 Gibbs free
@@ -843,6 +877,9 @@ is expected to be a number.</p>
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
                         title="previous chapter">Welcome to PyGaussian&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tutorial.html"
+                        title="next chapter">Using the Python modules</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/gaupy.txt"
@@ -874,6 +911,9 @@ is expected to be a number.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="tutorial.html" title="Using the Python modules"
+             >next</a> |</li>
         <li class="right" >
           <a href="index.html" title="Welcome to PyGaussian’s documentation!"
              >previous</a> |</li>

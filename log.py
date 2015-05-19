@@ -513,10 +513,22 @@ class LOGFile(object):
             the standard orientations in
             :attr:`gaussian.log.LOGFile.geometries_standard`.
         '''
-        return self._get_geometries(orientation='Input orientation')
+        # try standard orientations first
+        g = self.standard_orientations
+        if not g:
+            # obtain input orientations if no standards were found
+            g = self.input_orientations
+        return g
 
     @utils.cached
-    def geometries_standard(self):
+    def input_orientations(self):
+        '''
+        Return all geometries in input orientation, see
+        :attr:`gaussian.log.LOGFile.geometries`.
+        '''
+        return self._get_geometries(orientation='Input orientation')
+
+    def standard_orientations(self):
         '''
         Return all geometries in standard orientation, see
         :attr:`gaussian.log.LOGFile.geometries`.
