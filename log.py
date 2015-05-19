@@ -528,6 +528,7 @@ class LOGFile(object):
         '''
         return self._get_geometries(orientation='Input orientation')
 
+    @utils.cached
     def standard_orientations(self):
         '''
         Return all geometries in standard orientation, see
@@ -551,6 +552,7 @@ class LOGFile(object):
         # parsed, since self.geometries is only constructed when it is first
         # called.
         if self._summary_block:
+            logging.debug('here')
             geom = molecules.SuperMolecule.from_string(
                 '\n'.join([l.replace(',', '\t')
                            for l in self._summary_block.replace(' ', '').split(
@@ -559,6 +561,7 @@ class LOGFile(object):
             return geom
         # If not, fetch last geometry from self.geometries.
         else:
+            logging.debug('log.geometry: no summary block found')
             return self.geometries[-1]
 
     @utils.cached

@@ -71,9 +71,9 @@ if args.termination:
     else:
         logs = [l for l in logs if l.error == args.termination]
 if args.notspe:
-    logs = [l for l in logs if 'spe' not in l.name]
+    logs = [l for l in logs if 'spe' not in l.file]
 if args.notirc:
-    logs = [l for l in logs if 'irc' not in l.name]
+    logs = [l for l in logs if 'irc' not in l.file]
 if args.ts:
     logs = [l for l in logs
             if 'freq' in l.keywords and l.lowest_frequency < -100]
