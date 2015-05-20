@@ -26,39 +26,19 @@ class SixFour(gaupy.log.LOGFile):
         self.scalings = [1.0, 1.6]
 
         # stoichiometry determines which study is being studied
-        if self.stoichiometry == 'C14H19O(1+)':
+        if self.stoichiometry == 'C14H19O':
             self.system = 'furan'
-        elif self.stoichiometry == 'C14H19S(1+)':
+        elif self.stoichiometry == 'C14H19S':
             self.system = 'thiophene'
-        elif self.stoichiometry == 'C18H27O(1+)':
+        elif self.stoichiometry == 'C18H27O':
             self.system = 'ipr-me'
-        elif self.stoichiometry == 'C17H25O(1+)':
+        elif self.stoichiometry == 'C17H25O':
             self.system = 'ipr-h'
 
-        # reactant system consist of two seperate molecules
-        if len(self.geometry.molecules()) == 2:
-            self.species = 'reactant'
-        # in all other cases, atoms have to be classified
-        else:
-            self._classify()
+        self._species()
+        if 'reactant' not in self.species:
             self._exoendo()
             self._cistrans()
-            # second bond formed?
-            second = self.geometry.bonded(self.geometry.four_head1.n,
-                                          self.geometry.six_c3.n)
-            # TS?
-            ts = self.nimag == 1 and self.lowest_frequency < -50
-            # let's classify
-            if ts:
-                if second:
-                    self.species = 'ts2'
-                else:
-                    self.species = 'ts1'
-            else:
-                if second:
-                    self.species = 'product'
-                else:
-                    self.species = 'intermediate'
 
     def _classify(self):
 
@@ -167,3 +147,60 @@ class SixFour(gaupy.log.LOGFile):
                 self.cistrans = self.geometry.cistrans = 'trans'
         else:
             self.cistrans = None
+
+    def _species(self):
+        '''classify system: ts1, ts2, product, reactant, int
+        product (imag), reactant (imag), int(imag), ts1(multi), ts2(multi)'''
+
+        # reactant system consist of two seperate molecules
+        if len(self.geometry.molecules()) == 2:
+            if self.nimag == 0:
+                self.species = 'reactant'
+            else:
+                self.species = 'reactant (imag)'
+        # in all other cases, atoms have to be classified
+        else:
+            self._classify()
+            # second bond formed?
+            second = self.geometry.bonded(self.geometry.four_head1.n,
+                                          self.geometry.six_c3.n)
+
+            # let's classify single-molecule species
+
+            # single imaginatry frequencies can be TSs or annoyances
+            # in intermediates and products
+            if self.nimag >= 1:
+
+                # second bridge had been formed
+                if second:
+                    # still reacting?
+                    print self.vibrating_atoms
+                    if (set(self.vibrating_atoms)
+                        == set([self.geometry.four_head1.n,
+                                self.geometry.six_c3.n])):
+                        if self.nimag == 1:
+                            self.species = 'ts2'
+                        else:
+                            self.species = 'ts2(multi)'
+                    # both bridges have been formed, but still a neg freq
+                    else:
+                        self.species = 'product(imag)'
+
+                # only first bridge had been formed
+                else:
+                    # still reacting?
+                    if (set(self.vibrating_atoms)
+                        == set([self.geometry.four_head2.n,
+                                self.geometry.six_cation.n])):
+                        if self.nimag == 1:
+                            self.species = 'ts1'
+                        else:
+                            self.species = 'ts1(multi)'
+                    # already reacted, but still an annoying neg freq
+                    else:
+                        self.species = 'int(imag)'
+            else:
+                if second:
+                    self.species = 'product'
+                else:
+                    self.species = 'intermediate'

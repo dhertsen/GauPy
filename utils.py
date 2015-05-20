@@ -2,6 +2,8 @@
 import warnings
 import log
 
+# TODO import gaupy.utils in interactive session throws an exception
+
 # Dirty trick to silence warnings of confliciting
 # modules on the HPC cluster and to silence NumPy
 # warnings.
@@ -65,7 +67,7 @@ def is_translation(l1, l2):
         return False
 
 
-def find_all(string, sub):
+def find_all(string, sub, index=None, reverse=False):
     '''
     Generator to find all indices at which a substring occurs in a string.
 
@@ -75,13 +77,22 @@ def find_all(string, sub):
     Return:
         generator, yields int
     '''
-    start = 0
-    while True:
-        start = string.find(sub, start)
-        if start == -1:
-            return
-        yield start
-        start += len(sub)
+    if not reverse:
+        start = index or 0
+        while True:
+            start = string.find(sub, start)
+            if start == -1:
+                return
+            yield start
+            start += len(sub)
+    else:
+        start = index or len(string)
+        while True:
+            start = string.rfind(sub, 0, start)
+            if start == -1:
+                return
+            yield start
+            start -= len(sub)
 
 
 def energy(value, type='gibbs'):

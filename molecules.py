@@ -30,12 +30,71 @@ class Match(object):
         self.z = supermolecule.numbers[number]
 
 
+class Stoichiometry(object):
+
+    def __init__(self, molecule):
+        self._array = np.bincount(molecule.numbers)
+        '''
+        index is the atomic number, item is the number
+        of atoms with that atom number in the molecule
+        '''
+        self._string = ''
+        '''string representation'''
+        # print these atom numbers first in the string representation
+        first = [z for z in [6, 1, 8, 7] if z < len(self._array)]
+        rest = [z for z in range(len(self._array)) if z not in first]
+        # for z in first + rest:
+        for i, z in enumerate(first + rest):
+            self._string += self._atomstr(z)
+
+    def _atomstr(self, z):
+        '''print things like 'C6' based on the atom number (z) or even
+        the atom symbol'''
+        try:
+            n = self._array[utils.anum(z)]
+        except:
+            n = 0
+        if n:
+            if n > 1:
+                return '%s%i' % (utils.asym(z).upper(), n)
+            elif n == 1:
+                return '%s' % utils.asym(z).upper()
+        else:
+            return ''
+
+    def __str__(self):
+        '''returns the string representation'''
+        return self._string
+
+    def __getitem__(self, i):
+        '''both Stoichio['C'] and Stoichio[6] will yield the number
+        of carbon atoms'''
+        return self._array[utils.anum(i)]
+
+    def __eq__(self, other):
+        '''numpy arrays, other stoichiometries or string representations
+        can be compared'''
+        if isinstance(other, Stoichiometry):
+            return np.array_equal(self._array, other._array)
+        elif isinstance(other, str):
+            return self._string.strip().lower() == other.strip().lower()
+        else:
+            try:
+                return np.array_equal(self._array, other)
+            except:
+                return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+
 class SuperMolecule(mol.Molecule):
     ''' mention from_file, write_to_file '''
 
     def __init__(self, *pargs, **kargs):
         super(SuperMolecule, self).__init__(*pargs, **kargs)
         self.scaling = 1.0
+        self.stoichiometry = Stoichiometry(self)
 
     def scale(self, nimag, factor=[1.0, 1.5]):
         if nimag == 0:
@@ -50,6 +109,7 @@ class SuperMolecule(mol.Molecule):
         '''
         newmolecule = copy.deepcopy(molecule)
         newmolecule.__class__ = SuperMolecule
+        newmolecule.stoichiometry = Stoichiometry(newmolecule)
         return newmolecule
 
     @classmethod
@@ -80,7 +140,7 @@ class SuperMolecule(mol.Molecule):
     def dist(self, atom1, atom2):
         '''
         Calculate distance between atom1 and atom2 in molecule geom
-        (molod.molecules.Molecule).
+        (molod.molecules.Molecule). In angstrom!
 
         Arguments:
             atom1/2:        number of atoms in xyz matrix

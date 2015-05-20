@@ -288,7 +288,7 @@ class LOGFile(object):
         # This will also work if the csv file is cut below the Dataset,charges
         # block (file compression). In that case end=-1, so that csv[begin:-1].
         end = csv.find('Dataset,history_charges')
-        self.hi_charges = map(float, csv[begin:end].split('\n')[2:-2])
+        return map(float, csv[begin:end].split('\n')[2:-2])
 
     @classmethod
     def parse_all(cls, *pargs):
@@ -429,6 +429,10 @@ class LOGFile(object):
         return self._full[begin:end].replace('\n', '')
 
     @utils.cached
+    def _unspaced_summary(self):
+        return self._summary_block.replace(' ', '')
+
+    @utils.cached
     def route_section(self):
         '''
         Route section of the calculation (after # in the input file), fully
@@ -471,7 +475,7 @@ class LOGFile(object):
         '''
         try:
             if self._summary_block:
-                return map(int, self._summary_block.split(r'\\')[3]
+                return map(int, self._unspaced_summary.split(r'\\')[3]
                            .split('\\')[0].split(','))
             else:
                 reg_chargemulti = re.compile(
@@ -553,10 +557,9 @@ class LOGFile(object):
         # called.
         if self._summary_block:
             logging.debug('here')
-            geom = molecules.SuperMolecule.from_string(
-                '\n'.join([l.replace(',', '\t')
-                           for l in self._summary_block.replace(' ', '').split(
-                               r'\\')[3].split('\\')[1:]]))
+            lines = self._unspaced_summary.split(r'\\')[3].split('\\')[1:]
+            newblock = '\n'.join([l.replace(',', '\t') for l in lines])
+            geom = molecules.SuperMolecule.from_string(newblock)
             geom.scale(self.nimag, factor=self.scalings)
             return geom
         # If not, fetch last geometry from self.geometries.
@@ -602,9 +605,9 @@ class LOGFile(object):
         # called.
         if self._summary_block:
             try:
-                start = self._summary_block.find('HF') + 3
-                end = self._summary_block.find('\\', start)
-                return float(self._summary_block[start:end])
+                start = self._unspaced_summary.find('HF') + 3
+                end = self._unspaced_summary.find('\\', start)
+                return float(self._unspaced_summary[start:end])
             # If there is a summary block, but this approach fails,
             # try to fetch all electronic energies and pick last one.
             except:
@@ -854,10 +857,19 @@ class LOGFile(object):
         '''
 
         try:
-            start = self._full.find('Mulliken charges')
-            end = self._full.find('Sum of Mulliken charges')
-            return [float(l.split()[2]) for l in
-                    self._full[start:end].split('\n')[2:-1]]
+            # Look for instances of 'Mulliken', start at the bottom. These
+            # are clustered together. If a large jump in position is
+            # encountered, i.e. jumping between clusters, stop searching.
+            # The top two instances of 'Mulliken' in the cluster at the
+            # bottom of the file mark the atomic Mulliken charges.
+            finder = utils.find_all(self._full, 'Mulliken', reverse=True)
+            finds = [next(finder)]
+            diff = 0
+            while abs(diff) < 5000:
+                finds.append(next(finder))
+                diff = finds[-1] - finds[-2]
+            lines = self._full[finds[-2]:finds[-3]].split('\n')[2:-1]
+            return [float(l.split()[2]) for l in lines]
         except:
             return None
 
@@ -932,9 +944,7 @@ class LOGFile(object):
         Stoichiometry
         '''
         try:
-            begin = self._full.find('Stoichiometry') + 13
-            end = self._full.find('\n', begin)
-            return self._full[begin:end].strip()
+            return self.geometry.stoichiometry
         except:
             return None
 
@@ -1084,6 +1094,30 @@ class LOGFile(object):
             return sum(formatted_time * np.array([24*3600, 3600, 60, 1]))
         except:
             return None
+
+    @utils.cached
+    def normal_coordinates(self):
+        '''Returns normal coordinates for lowest vibrational frequency'''
+        if 'freq' in self.route_section:
+            try:
+                start = self._full.find('Frequencies')
+                end = self._full.find('Frequencies', start+1)
+                block = self._full[start:end].split('\n')[5:-3]
+                return np.array([l.split()[2:5] for l in block], np.float64)
+            except:
+                return None
+        else:
+            return None
+
+    @utils.cached
+    def normal_lengths(self):
+        '''Norms of the normal coordinates for lowest vibrational freq'''
+        return np.linalg.norm(self.normal_coordinates, axis=1)
+
+    @utils.cached
+    def vibrating_atoms(self):
+        '''Two atoms with the largest normal lenghts for the lowest freq'''
+        return self.normal_lengths.argsort()[-2:][::-1]
 
 
 class Path(object):
