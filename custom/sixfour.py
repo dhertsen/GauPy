@@ -36,49 +36,89 @@ class SixFour(gaupy.log.LOGFile):
             self.system = 'ipr-h'
 
         self._species()
-        if 'reactant' not in self.species:
+        if self.species not in ['reactant', 'reactant(imag)', 'irc']:
             self._exoendo()
             self._cistrans()
 
     def _classify(self):
 
         # custom patterns
+
         os = gr.CritOr(o, s)
         c_bonded_with_cch = g.HasNeighborNumbers(1, 6, 6)
 
         # patterns in specific order, since the groups recognized
         # will be removed from self.geometry.unparsed sequentially
+
         p = OrderedDict()
         p['six_hetero'] = os
         p['six_c5'] = g.HasNeighbors(os, me(6), c_bonded_with_cch)
         p['six_me'] = g.HasNeighbors(p['six_c5'], h, h, h)
         p['six_c4'] = g.HasNeighbors(p['six_c5'], h, c)
         p['six_c2'] = g.HasNeighbors(os, c, c)
+
         # In the first case, two methyl groups on the cationic position.
         # In the second case, a single one.
+
         p['six_cation'] = gr.CritOr(
             g.HasNeighbors(p['six_c2'], c, me(6), h),
             g.HasNeighbors(p['six_c2'], c, me(6), me(6)))
+
         # First case: before the second bond is formed.
         # Second case: after the second bond is formed.
+
         p['six_c3'] = gr.CritOr(
             g.HasNeighbors(p['six_c4'], p['six_c2'], h),
             g.HasNeighbors(p['six_c4'], p['six_c2'], h, c))
+
         # first bond has been formed when _classify() is called
+
         p['four_head2'] = g.HasNeighbors(p['six_cation'], c, c, h)
         p['four_c2'] = g.HasNeighbors(p['four_head2'], c, h, h)
-        p['four_c1'] = gr.CritOr(
-            g.HasNeighbors(p['four_c2'], c, h, h),
-            g.HasNeighbors(p['four_c2'], c, c, h))
+
+        # Flush matches, because we already need the info for four_c1.
+        # Could be done without the info, but using neighbors will
+        # save time.
+
+        self.geometry.initiate_match()
+        logging.debug('call set_matches from sixfour.SixFour._classify()')
+        self.geometry.set_matches(p)
+
+        # a much faster way than fiddling with molmod patterns
+        # and the reason why we flushed
+
+        c2_bonded = self.geometry.non_hydrogen_neighbors(
+            self.geometry.four_c2.n)
+        c2_bonded.remove(self.geometry.four_head2.n)
+        self.geometry.set_match('four_c1', c2_bonded[0])
+
+        # same story: look for head2_bonded 'manually'
+        # for performance reasons
+
+        head2_bonded = self.geometry.non_hydrogen_neighbors(
+            self.geometry.four_head2.n)
+        self.geometry.set_match('four_c4',
+                                (set(head2_bonded)
+                                 & set(self.geometry.unparsed)).pop())
+
+        # still need the pattern though, won't be parsed again, since
+        # set_match() checks whether the pattern doen't exist already
+
         p['four_c4'] = gr.CritOr(
             g.HasNeighbors(p['four_head2'], c, h),
             g.HasNeighbors(p['four_head2'], c, c))
         p['four_c3'] = g.HasNeighbors(p['four_c4'], c, h)
-        # First case: before the second bond is formed.
-        # Second case: after the second bond is formed.
-        p['four_head1'] = gr.CritOr(
-            g.HasNeighbors(p['four_c3'], c, h),
-            g.HasNeighbors(p['four_c3'], c, c, h))
+        self.geometry.set_matches(p)
+
+        # four_head1 as only non-hydrogen common neighbor of four_c1 and
+        # four_c3
+
+        self.geometry.set_match('four_head1',
+                                (set(self.geometry.non_hydrogen_neighbors(
+                                    self.geometry.four_c1.n))
+                                    & set(
+                                        self.geometry.non_hydrogen_neighbors(
+                                            self.geometry.four_c3.n))).pop())
 
         # TODO
         '''
@@ -90,8 +130,6 @@ class SixFour(gaupy.log.LOGFile):
         if 'ipr' in self.system:
             p['four_ipr'] = g.HasNeighbors(c, c, c, h)
 
-        self.geometry.initiate_match()
-        logging.debug('call set_matches from sixfour.SixFour._classify()')
         self.geometry.set_matches(p)
 
     def _exoendo(self):
@@ -150,57 +188,60 @@ class SixFour(gaupy.log.LOGFile):
 
     def _species(self):
         '''classify system: ts1, ts2, product, reactant, int
-        product (imag), reactant (imag), int(imag), ts1(multi), ts2(multi)'''
+        product (imag), reactant (imag), int(imag), ts1(multi), ts2(multi),
+        irc'''
 
-        # reactant system consist of two seperate molecules
-        if len(self.geometry.molecules()) == 2:
-            if self.nimag == 0:
-                self.species = 'reactant'
-            else:
-                self.species = 'reactant (imag)'
-        # in all other cases, atoms have to be classified
+        # irc eliminates all the rest
+        if 'irc' in self.route_section:
+            self.species = 'irc'
         else:
-            self._classify()
-            # second bond formed?
-            second = self.geometry.bonded(self.geometry.four_head1.n,
-                                          self.geometry.six_c3.n)
 
-            # let's classify single-molecule species
-
-            # single imaginatry frequencies can be TSs or annoyances
-            # in intermediates and products
-            if self.nimag >= 1:
-
-                # second bridge had been formed
-                if second:
-                    # still reacting?
-                    print self.vibrating_atoms
-                    if (set(self.vibrating_atoms)
-                        == set([self.geometry.four_head1.n,
-                                self.geometry.six_c3.n])):
-                        if self.nimag == 1:
-                            self.species = 'ts2'
-                        else:
-                            self.species = 'ts2(multi)'
-                    # both bridges have been formed, but still a neg freq
-                    else:
-                        self.species = 'product(imag)'
-
-                # only first bridge had been formed
+            # reactant system consist of two seperate molecules
+            if len(self.geometry.molecules()) == 2:
+                if self.nimag == 0:
+                    self.species = 'reactant'
                 else:
-                    # still reacting?
-                    if (set(self.vibrating_atoms)
-                        == set([self.geometry.four_head2.n,
-                                self.geometry.six_cation.n])):
-                        if self.nimag == 1:
-                            self.species = 'ts1'
-                        else:
-                            self.species = 'ts1(multi)'
-                    # already reacted, but still an annoying neg freq
-                    else:
-                        self.species = 'int(imag)'
+                    self.species = 'reactant (imag)'
+            # in all other cases, atoms have to be classified
             else:
-                if second:
-                    self.species = 'product'
+                self._classify()
+                # second bond formed?
+                second = self.geometry.bonded(self.geometry.four_head1.n,
+                                              self.geometry.six_c3.n)
+
+                # let's classify single-molecule species
+
+                # single imaginatry frequencies can be TSs or annoyances
+                # in intermediates and products
+                if self.nimag >= 1:
+
+                    # second bridge had been formed
+                    if second:
+                        # still reacting?
+                        if set([self.geometry.four_head1.n,
+                                self.geometry.six_c3.n]) in self.reacting:
+                            if self.nimag == 1:
+                                self.species = 'ts2'
+                            else:
+                                self.species = 'ts2(multi)'
+                        # both bridges have been formed, but still a neg freq
+                        else:
+                            self.species = 'product(imag)'
+
+                    # only first bridge had been formed
+                    else:
+                        # still reacting?
+                        if set([self.geometry.four_head2.n,
+                                self.geometry.six_cation.n]) in self.reacting:
+                            if self.nimag == 1:
+                                self.species = 'ts1'
+                            else:
+                                self.species = 'ts1(multi)'
+                        # already reacted, but still an annoying neg freq
+                        else:
+                            self.species = 'int(imag)'
                 else:
-                    self.species = 'intermediate'
+                    if second:
+                        self.species = 'product'
+                    else:
+                        self.species = 'intermediate'

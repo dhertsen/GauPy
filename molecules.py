@@ -4,6 +4,8 @@ import subprocess
 import os
 import utils
 import logging
+from itertools import chain
+from molmod.transformations import Translation, Rotation
 
 # Dirty trick to silence warnings of confliciting
 # modules on the HPC cluster and to silence NumPy
@@ -137,7 +139,13 @@ class SuperMolecule(mol.Molecule):
             lines.append('%-6s %15.6f %15.6f %15.6f' % (a, x, y, z))
         return '\n'.join(lines)
 
-    def dist(self, atom1, atom2):
+    @classmethod
+    def join(cls, *molecules):
+        numbers = list(chain(*[m.numbers for m in molecules]))
+        coordinates = list(chain(*[m.coordinates for m in molecules]))
+        return cls(numbers, coordinates)
+
+    def dist(self, *atoms):
         '''
         Calculate distance between atom1 and atom2 in molecule geom
         (molod.molecules.Molecule). In angstrom!
@@ -147,7 +155,7 @@ class SuperMolecule(mol.Molecule):
         Return:
             float
         '''
-        return self.distance_matrix[atom1][atom2] / units.angstrom
+        return self.distance_matrix[atoms[0]][atoms[1]] / units.angstrom
 
     def angle(self, *atoms):
         return ic.bend_angle([self.coordinates[i]
@@ -233,7 +241,7 @@ class SuperMolecule(mol.Molecule):
             except:
                 self.set_default_graph()
 
-    def get_nrings(self, n):
+    def nrings(self, n):
         '''
         Look for all n-membered rings
         '''
@@ -247,6 +255,7 @@ class SuperMolecule(mol.Molecule):
         return rings
 
     def initiate_match(self, ignore_hydrogens=True):
+        '''no hydrogens in self.unparsed!'''
         self._graph()
         if ignore_hydrogens:
             self.unparsed = self.nonhydrogens()
@@ -254,25 +263,49 @@ class SuperMolecule(mol.Molecule):
             self.unparsed = range(self.size)
 
     def set_match(self, name, pattern):
+        '''pattern can be both a molmod pattern and a the number of the
+        atom in the xyz matrix'''
         logging.debug('SuperMolecule.set_match(): begin pattern %s' % name)
-        for u in self.unparsed:
-            if pattern(u, self.graph):
-                setattr(self, name, Match(u, self))
-                self.unparsed.remove(u)
+        # try a molmod pattern
+        try:
+            for u in self.unparsed:
+                if pattern(u, self.graph):
+                    setattr(self, name, Match(u, self))
+                    self.unparsed.remove(u)
+                    logging.debug(
+                        'SuperMolecule.set_match(): pattern at atom %i' % u)
+                    return
+            else:
                 logging.debug(
-                    'SuperMolecule.set_match(): pattern at atom %i' % u)
-                return
-        else:
-            logging.debug(
-                'SupperMolecule.set_match(): pattern %s not found' % name)
+                    'SupperMolecule.set_match(): pattern %s not found' % name)
+        # if not, a number?
+        except:
+            try:
+                if pattern in self.unparsed:
+                    setattr(self, name, Match(pattern, self))
+                    self.unparsed.remove(pattern)
+                else:
+                    logging.warning(
+                        'SuperMolecule.set_match(): '
+                        + '%s: atom %i not in unparsed list' % (name, pattern))
+            # neither a molmod pattern, nor a number
+            except:
+                logging.warning(
+                    'SuperMolecule.set_match(): '
+                    + '%s: invalid formatting of %s pattern' % (name, pattern))
 
     def set_matches(self, patterns):
         '''
         patterns is OrderedDict {attributes: patterns}
-        returns the unparsed ones
+        If pattern with name is already set, ignore. Want to redo it?
+        Use initiate_match() again. This way you can flush an OrderedDict
+        in between, but don't have to empty it every time. You can still
+        access previous patterns (not emptied) and already access certain
+        parsed atoms (flushed).
         '''
         for name, pattern in patterns.iteritems():
-            self.set_match(name, pattern)
+            if not hasattr(self, name):
+                self.set_match(name, pattern)
 
     def molecules(self):
         '''
@@ -298,3 +331,25 @@ class SuperMolecule(mol.Molecule):
         '''
         self._graph()
         return atom2 in self.graph.neighbors[atom1]
+
+    def non_hydrogen_neighbors(self, atom):
+        ''' return non-hydrogen neighbors of an atom'''
+        self._graph()
+        return [n for n in self.graph.neighbors[atom] if self.numbers[n] != 1]
+
+    def transform(self, transformation):
+        return self.__init__(self.numbers,
+                             transformation.apply_to(self.coordinates))
+
+    def translate(self, vector):
+        self.transform(Translation(vector))
+
+    def rotate(self, center, axis, angle):
+        self.transform(Translation(-np.array(center)))
+        self.transform(Rotation.from_properties(angle, axis, invert=False))
+        self.transform(Translation(center))
+
+    def randomize(self, center):
+        self.transform(Translation(-np.array(center)))
+        self.transform(Rotation.random())
+        self.transform(Translation(center))

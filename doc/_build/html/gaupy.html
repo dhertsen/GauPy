@@ -354,13 +354,6 @@ of Gaussian output files. First one is used as a reference.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="gaupy.log.LOGFile.standard_orientations">
-<tt class="descname">standard_orientations</tt><big>(</big><big>)</big><a class="headerlink" href="#gaupy.log.LOGFile.standard_orientations" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return all geometries in standard orientation, see
-<tt class="xref py py-attr docutils literal"><span class="pre">gaussian.log.LOGFile.geometries</span></tt>.</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="gaupy.log.LOGFile.to_input">
 <tt class="descname">to_input</tt><big>(</big><em>filename=None</em><big>)</big><a class="headerlink" href="#gaupy.log.LOGFile.to_input" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a Gaussian input file using the same methods and computational
@@ -441,6 +434,12 @@ logfile.geometry.somecenter.xyz</p>
 </dd></dl>
 
 <dl class="class">
+<dt id="gaupy.molecules.Stoichiometry">
+<em class="property">class </em><tt class="descclassname">gaupy.molecules.</tt><tt class="descname">Stoichiometry</tt><big>(</big><em>molecule</em><big>)</big><a class="headerlink" href="#gaupy.molecules.Stoichiometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+</dd></dl>
+
+<dl class="class">
 <dt id="gaupy.molecules.SuperMolecule">
 <em class="property">class </em><tt class="descclassname">gaupy.molecules.</tt><tt class="descname">SuperMolecule</tt><big>(</big><em>*pargs</em>, <em>**kargs</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">molmod.molecules.Molecule</span></tt></p>
@@ -512,9 +511,9 @@ only:           limit search to these atoms</p>
 
 <dl class="method">
 <dt id="gaupy.molecules.SuperMolecule.dist">
-<tt class="descname">dist</tt><big>(</big><em>atom1</em>, <em>atom2</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.dist" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">dist</tt><big>(</big><em>*atoms</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.dist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate distance between atom1 and atom2 in molecule geom
-(molod.molecules.Molecule).</p>
+(molod.molecules.Molecule). In angstrom!</p>
 <dl class="docutils">
 <dt>Arguments:</dt>
 <dd>atom1/2:        number of atoms in xyz matrix</dd>
@@ -536,12 +535,6 @@ only:           limit search to these atoms</p>
 take three last cols and first col</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="gaupy.molecules.SuperMolecule.get_nrings">
-<tt class="descname">get_nrings</tt><big>(</big><em>n</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.get_nrings" title="Permalink to this definition">¶</a></dt>
-<dd><p>Look for all n-membered rings</p>
-</dd></dl>
-
 <dl class="attribute">
 <dt id="gaupy.molecules.SuperMolecule.graph">
 <tt class="descname">graph</tt><a class="headerlink" href="#gaupy.molecules.SuperMolecule.graph" title="Permalink to this definition">¶</a></dt>
@@ -556,7 +549,8 @@ take three last cols and first col</p>
 <dl class="method">
 <dt id="gaupy.molecules.SuperMolecule.initiate_match">
 <tt class="descname">initiate_match</tt><big>(</big><em>ignore_hydrogens=True</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.initiate_match" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>no hydrogens in self.unparsed!</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="gaupy.molecules.SuperMolecule.masses">
@@ -578,9 +572,21 @@ take three last cols and first col</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="gaupy.molecules.SuperMolecule.non_hydrogen_neighbors">
+<tt class="descname">non_hydrogen_neighbors</tt><big>(</big><em>atom</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.non_hydrogen_neighbors" title="Permalink to this definition">¶</a></dt>
+<dd><p>return non-hydrogen neighbors of an atom</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="gaupy.molecules.SuperMolecule.nonhydrogens">
 <tt class="descname">nonhydrogens</tt><big>(</big><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.nonhydrogens" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="gaupy.molecules.SuperMolecule.nrings">
+<tt class="descname">nrings</tt><big>(</big><em>n</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.nrings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Look for all n-membered rings</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="gaupy.molecules.SuperMolecule.numbers">
@@ -621,13 +627,19 @@ take three last cols and first col</p>
 <dl class="method">
 <dt id="gaupy.molecules.SuperMolecule.set_match">
 <tt class="descname">set_match</tt><big>(</big><em>name</em>, <em>pattern</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.set_match" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>pattern can be both a molmod pattern and a the number of the
+atom in the xyz matrix</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="gaupy.molecules.SuperMolecule.set_matches">
 <tt class="descname">set_matches</tt><big>(</big><em>patterns</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.set_matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>patterns is OrderedDict {attributes: patterns}
-returns the unparsed ones</p>
+If pattern with name is already set, ignore. Want to redo it?
+Use initiate_match() again. This way you can flush an OrderedDict
+in between, but don&#8217;t have to empty it every time. You can still
+access previous patterns (not emptied) and already access certain
+parsed atoms (flushed).</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -765,7 +777,7 @@ objects also works.</p>
 
 <dl class="function">
 <dt id="gaupy.utils.find_all">
-<tt class="descclassname">gaupy.utils.</tt><tt class="descname">find_all</tt><big>(</big><em>string</em>, <em>sub</em><big>)</big><a class="headerlink" href="#gaupy.utils.find_all" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">gaupy.utils.</tt><tt class="descname">find_all</tt><big>(</big><em>string</em>, <em>sub</em>, <em>index=None</em>, <em>reverse=False</em><big>)</big><a class="headerlink" href="#gaupy.utils.find_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generator to find all indices at which a substring occurs in a string.</p>
 <dl class="docutils">
 <dt>Arguments:</dt>
@@ -831,6 +843,12 @@ in float(&#8216;nan&#8217;) values in the output array.</p>
 <p><tt class="docutils literal"><span class="pre">absolute</span></tt> may be a number or a filename, <tt class="docutils literal"><span class="pre">relative</span></tt>
 is expected to be a number.</p>
 </div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="gaupy.utils.sfind">
+<tt class="descclassname">gaupy.utils.</tt><tt class="descname">sfind</tt><big>(</big><em>string</em>, <em>*pargs</em><big>)</big><a class="headerlink" href="#gaupy.utils.sfind" title="Permalink to this definition">¶</a></dt>
+<dd><p>sequential search function</p>
 </dd></dl>
 
 <dl class="function">

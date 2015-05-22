@@ -26,7 +26,7 @@ class Pox(gaupy.log.LOGFile):
         '''
 
         # find all oxazoline rings
-        self.rings = self.geometry.get_nrings(5)
+        self.rings = self.geometry.nrings(5)
         for r in self.rings:
             # Classify ring atoms, works both for cationic and neutral rings
             n = filter(lambda i: self.geometry.numbers[i] == 7, r)[0]

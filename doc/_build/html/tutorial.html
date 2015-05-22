@@ -104,6 +104,103 @@
 </tr>
 </tbody>
 </table>
+<p>Since requesting all geometries can be slow, it is recommended to load only the last one via <tt class="docutils literal"><span class="pre">geometry</span></tt> unless more are needed. All these geometries are <a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule" title="gaupy.molecules.SuperMolecule"><tt class="xref py py-class docutils literal"><span class="pre">gaupy.molecules.SuperMolecule</span></tt></a> instances, a subclass of <a class="reference external" href="http://molmod.github.io/molmod/reference/basic.html#molmod-molecules-molecular-systems">molmod.molecules.Molecule</a>. Several inherited attributes:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="57%" />
+<col width="43%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Attribute</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule.coordinates" title="gaupy.molecules.SuperMolecule.coordinates"><tt class="xref py py-attr docutils literal"><span class="pre">coordinates</span></tt></a></td>
+<td>cartesian coordinates (atomic units)</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-attr docutils literal"><span class="pre">mass</span></tt></td>
+<td>molecular mass</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule.numbers" title="gaupy.molecules.SuperMolecule.numbers"><tt class="xref py py-attr docutils literal"><span class="pre">numbers</span></tt></a></td>
+<td>atomic numbers</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-attr docutils literal"><span class="pre">size</span></tt></td>
+<td>number of atoms</td>
+</tr>
+</tbody>
+</table>
+<p>A lot of functionality has been added in <a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule" title="gaupy.molecules.SuperMolecule"><tt class="xref py py-class docutils literal"><span class="pre">SuperMolecule</span></tt></a>, both by extending the core functionality of <a class="reference external" href="http://molmod.github.io/molmod/reference/basic.html#molmod-molecules-molecular-systems">Molecule</a> and by creating some aliases. For most atomic properties, the rows of two-dimensional and the elements of one-dimensional <a class="reference external" href="http://www.numpy.org">NumPy</a> arrays correspond to atoms in the XYZ matrix in the log files in the same order. Several geometric parameters can be calculated from a <a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule" title="gaupy.molecules.SuperMolecule"><tt class="xref py py-class docutils literal"><span class="pre">SuperMolecule</span></tt></a>:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="57%" />
+<col width="43%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Function</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule.dist" title="gaupy.molecules.SuperMolecule.dist"><tt class="xref py py-func docutils literal"><span class="pre">dist(*atoms)</span></tt></a></td>
+<td>distance between in angstrom</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule.angle" title="gaupy.molecules.SuperMolecule.angle"><tt class="xref py py-func docutils literal"><span class="pre">angle(*atoms)</span></tt></a></td>
+<td>angle between three atoms in degrees</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule.dihedral" title="gaupy.molecules.SuperMolecule.dihedral"><tt class="xref py py-func docutils literal"><span class="pre">dihedral(*atoms)</span></tt></a></td>
+<td>dihedral angle between four atoms in degrees</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule.opbend_angle" title="gaupy.molecules.SuperMolecule.opbend_angle"><tt class="xref py py-func docutils literal"><span class="pre">opbend_angle(*atoms)</span></tt></a></td>
+<td>angle between the plane defined by the first three atoms
+and the vector defined by the first and the fourth atom
+in degrees</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule.opbend_dist" title="gaupy.molecules.SuperMolecule.opbend_dist"><tt class="xref py py-func docutils literal"><span class="pre">opbend_dist(*atoms)</span></tt></a></td>
+<td>distance between the plane defined by the first three atoms
+and the vector defined by the first and the fourth atom
+in angstroms</td>
+</tr>
+</tbody>
+</table>
+<p>More complex molecular operations can be performed as well:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="34%" />
+<col width="66%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Function</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule.closest" title="gaupy.molecules.SuperMolecule.closest"><tt class="xref py py-func docutils literal"><span class="pre">closest(atom_type,</span> <span class="pre">reference,</span> <span class="pre">n=1,</span> <span class="pre">exclude=False,</span> <span class="pre">only=False)</span></tt></a></td>
+<td>Return a list of the <tt class="docutils literal"><span class="pre">n</span></tt> atoms of atom type <tt class="docutils literal"><span class="pre">atom_type</span></tt> that are closest to atom with number <tt class="docutils literal"><span class="pre">reference</span></tt>. This search can be limited to a list of atoms (<tt class="docutils literal"><span class="pre">only</span></tt>) and/or exclude a list of atoms (<tt class="docutils literal"><span class="pre">exclude</span></tt>).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule.nonhydrogens" title="gaupy.molecules.SuperMolecule.nonhydrogens"><tt class="xref py py-func docutils literal"><span class="pre">nonhydrogens()</span></tt></a></td>
+<td>return a list of all heavy atoms</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule.part" title="gaupy.molecules.SuperMolecule.part"><tt class="xref py py-func docutils literal"><span class="pre">part(atoms)</span></tt></a></td>
+<td>return a new <a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule" title="gaupy.molecules.SuperMolecule"><tt class="xref py py-class docutils literal"><span class="pre">SuperMolecule</span></tt></a> that consist of the atoms in <tt class="docutils literal"><span class="pre">atoms</span></tt></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule.nrings" title="gaupy.molecules.SuperMolecule.nrings"><tt class="xref py py-func docutils literal"><span class="pre">nrings(n)</span></tt></a></td>
+<td>returns a list of all <tt class="docutils literal"><span class="pre">n</span></tt> membered rings in the molecule</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule.molecules" title="gaupy.molecules.SuperMolecule.molecules"><tt class="xref py py-func docutils literal"><span class="pre">molecules()</span></tt></a></td>
+<td>returns all molecules in the system as a list of <a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule" title="gaupy.molecules.SuperMolecule"><tt class="xref py py-class docutils literal"><span class="pre">SuperMolecule</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule.break_bond" title="gaupy.molecules.SuperMolecule.break_bond"><tt class="xref py py-func docutils literal"><span class="pre">break_bond(atom1,</span> <span class="pre">atom2)</span></tt></a></td>
+<td>breaks the bond between <tt class="docutils literal"><span class="pre">atom1</span></tt> and <tt class="docutils literal"><span class="pre">atom2</span></tt> and return both fragments as new &lt;gaupy.molecules.SuperMolecule&gt;`</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule.bonded" title="gaupy.molecules.SuperMolecule.bonded"><tt class="xref py py-func docutils literal"><span class="pre">bonded(atom1,</span> <span class="pre">atom2)</span></tt></a></td>
+<td>checks whether there is a bond between <tt class="docutils literal"><span class="pre">atom1</span></tt> and <tt class="docutils literal"><span class="pre">atom2</span></tt>, return a boolean</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule.non_hydrogen_neighbors" title="gaupy.molecules.SuperMolecule.non_hydrogen_neighbors"><tt class="xref py py-func docutils literal"><span class="pre">non_hydrogen_neighbors(atom)</span></tt></a></td>
+<td>returns a list of heavy atom neighbors of atom <tt class="docutils literal"><span class="pre">atom</span></tt></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section" id="energies">
 <h2>Energies<a class="headerlink" href="#energies" title="Permalink to this headline">¶</a></h2>

@@ -197,6 +197,14 @@ def relative_energies(values, reference='min', absolute=0, relative=0,
         return np.array([])
 
 
+def sfind(string, *pargs):
+    '''sequential search function'''
+    index = 0
+    for p in pargs:
+        index = string.find(p, index + 1)
+    return index
+
+
 class cached(object):
     """
     Descriptor (non-data) for building an attribute on-demand on first use.

@@ -9,6 +9,7 @@ import utils
 import numpy as np
 import molmod.molecules as mol
 import molmod.units as units
+import molmod.bonds as bonds
 import logging
 
 # Dirty trick to silence warnings of confliciting
@@ -556,7 +557,6 @@ class LOGFile(object):
         # parsed, since self.geometries is only constructed when it is first
         # called.
         if self._summary_block:
-            logging.debug('here')
             lines = self._unspaced_summary.split(r'\\')[3].split('\\')[1:]
             newblock = '\n'.join([l.replace(',', '\t') for l in lines])
             geom = molecules.SuperMolecule.from_string(newblock)
@@ -623,10 +623,9 @@ class LOGFile(object):
         '''
         # The link0 section is repeated literally at the top
         # of the log file.
-        a = self._full.find('%mem')
-        a = self._full.find('=', a) + 1
-        b = self._full.find('\n', a)
-        return self._full[a:b]
+        start = utils.sfind(self._full, '%mem', '=') + 1
+        end = self._full.find('\n', start)
+        return self._full[start:end]
 
     @utils.cached
     def _thermochem_block(self):
@@ -1115,9 +1114,43 @@ class LOGFile(object):
         return np.linalg.norm(self.normal_coordinates, axis=1)
 
     @utils.cached
-    def vibrating_atoms(self):
-        '''Two atoms with the largest normal lenghts for the lowest freq'''
-        return self.normal_lengths.argsort()[-2:][::-1]
+    def reacting(self, treshold=[1.2, 1.6], only=None):
+        '''
+        return a list of bonds (i.e. sets of atom pairs) that could be
+        considered to be reacting in the lowest frequency. In this context
+        two atoms react if:
+            - force vectors for this frequency are almost parallel
+            - distance between the atoms is between treshold[0] and
+              treshold[1] times the VDW radius for these atoms
+        search can be limited to a subset of atoms via only
+        '''
+        logging.debug('log.LOGFile.reacing')
+        # limit search to these atoms
+        if not only:
+            only = range(self.geometry.size)
+        # normalize all force vectors
+        normal = []
+        for vec in self.normal_coordinates:
+            denom = np.linalg.norm(vec) or 1
+            normal.append(vec / denom)
+        reacting = []
+        # for all atom pairs
+        for i, ni in enumerate(normal):
+            for j, nj in enumerate(normal):
+                if i < j and i in only and j in only:
+                    # if force the vectors are parallel
+                    if abs(np.dot(ni, nj)) > 0.90:
+                        # VDW distance between atom i and atom j
+                        vdw = bonds.bonds.get_length(
+                            self.geometry.numbers[i],
+                            self.geometry.numbers[j]) / units.angstrom
+                        # real distance
+                        real = self.geometry.dist(i, j)
+                        # real distance should be quite close to VDW distance
+                        if treshold[0] < real / vdw < treshold[1]:
+                            reacting.append(set([i, j]))
+        logging.debug('reacting atoms in %s are %s' % (self.file, reacting))
+        return reacting
 
 
 class Path(object):
