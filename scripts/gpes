@@ -6,8 +6,9 @@ import argparse
 import matplotlib.pyplot as plt
 import sys
 
-parser = argparse.ArgumentParser('Check geometric convergence of Gaussian '
-                                 + 'output file.')
+parser = argparse.ArgumentParser('Print energy profiles of geometry '
+                                 + 'optimization, IRC calculation or '
+                                 + 'relaxed PES scan.')
 parser.add_argument('file', help='Gaussian output file', default=sys.stdin)
 parser.add_argument('--stepmin', help='Minimum of step number axis', type=int)
 parser.add_argument('--stepmax', help='Maximum of step number axis', type=int)
@@ -15,9 +16,22 @@ parser.add_argument('--emin', help='Minimum of energy axis', type=float)
 parser.add_argument('--emax', help='Maximum of energy axis', type=float)
 args = parser.parse_args()
 
-plt.plot(utils.relative_energies(log.LOGFile(args.file).energies))
-plt.xlabel('Optimization steps')
-plt.ylabel('Rel. E$_{el}$ (kJ/mol)')
+l = log.LOGFile(args.file)
+if l.irc:
+    base = l.irc
+    label = 'IRC'
+elif l.scan:
+    base = l.scan
+    label = 'scan'
+else:
+    base = l
+    label = 'optimization'
+print('Interpreted %s as a %s calculation.' % (l.file, label))
+
+
+plt.plot(utils.relative_energies(base.energies))
+plt.xlabel('%s step' % label)
+plt.ylabel('rel. E$_{el}$ (kJ/mol)')
 
 if args.stepmin is not None:
     plt.gca().set_xlim(left=args.stepmin)

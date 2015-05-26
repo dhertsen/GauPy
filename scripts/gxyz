@@ -8,16 +8,45 @@ import molmod.io.xyz as xyz
 parser = argparse.ArgumentParser('XYZ files from Gaussian output files.')
 parser.add_argument('files', nargs='*', help='Gaussian output files',
                     default=sys.stdin)
+indexgroup = parser.add_mutually_exclusive_group()
+indexgroup.add_argument('--relative', '-r',
+                        choices=['last', 'first', 'max', 'min'],
+                        default='last',
+                        help='Select last (default), first, most stable (min) '
+                        + 'or least stable (max) geometry')
+indexgroup.add_argument('--index', '-i', type=int, help='Select ith step')
 args = parser.parse_args()
 
 
 for f in args.files:
     try:
-        flog = log.LOGFile(f)
-        xw = xyz.XYZWriter(flog.files.xyz, flog.geometry.numbers)
-        comment = '%s\tE=%s\tG=%s\tGcorr=%s' % (
-            flog.files.base, flog.energy, flog.gibbs, flog.gibbscorrection)
-        xw.dump(comment, flog.geometry.coordinates)
-        print('%s written.' % flog.files.xyz)
+        l = log.LOGFile(f)
+        if l.irc:
+            base = l.irc
+            label = 'IRC'
+        elif l.scan:
+            base = l.scan
+            label = 'scan'
+        else:
+            base = l
+            label = 'optimization'
+        print('Interpreted %s as a %s calculation.' % (l.file, label))
+        if args.index:
+            index = args.index
+        elif args.relative:
+            if args.relative == 'first':
+                index = 0
+            elif args.relative == 'last':
+                index = len(base.energies) - 1
+            elif args.relative == 'max':
+                index = base.energies.index(max(base.energies))
+            elif args.relative == 'min':
+                index = base.energies.index(min(base.energies))
+        print('Selected step %i out of %i steps.'
+              % (index, len(base.energies)))
+        xw = xyz.XYZWriter(l.files.xyz, l.geometry.numbers)
+        comment = '%s\tE=%s' % (l.files.base, base.energies[index])
+        xw.dump(comment, base.geometries[index].coordinates)
+        print('%s written.' % l.files.xyz)
     except:
         print('ERROR: %s could not be processed' % f)
