@@ -1114,7 +1114,7 @@ class LOGFile(object):
         return np.linalg.norm(self.normal_coordinates, axis=1)
 
     @utils.cached
-    def reacting(self, treshold=[1.2, 1.6], only=None):
+    def reacting(self, treshold=[1.2, 2.0], only=None):
         '''
         return a list of bonds (i.e. sets of atom pairs) that could be
         considered to be reacting in the lowest frequency. In this context

@@ -8,7 +8,7 @@
     
     <title>Using the Python modules &mdash; GauPy 1.0 documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -24,9 +24,14 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="GauPy 1.0 documentation" href="index.html" />
-    <link rel="prev" title="gaupy package" href="gaupy.html" /> 
+    <link rel="prev" title="gaupy package" href="gaupy.html" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
   </head>
   <body>
+
     <div class="related">
       <h3>Navigation</h3>
       <ul>
@@ -164,43 +169,6 @@ in angstroms</td>
 </tbody>
 </table>
 <p>More complex molecular operations can be performed as well:</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="34%" />
-<col width="66%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Function</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule.closest" title="gaupy.molecules.SuperMolecule.closest"><tt class="xref py py-func docutils literal"><span class="pre">closest(atom_type,</span> <span class="pre">reference,</span> <span class="pre">n=1,</span> <span class="pre">exclude=False,</span> <span class="pre">only=False)</span></tt></a></td>
-<td>Return a list of the <tt class="docutils literal"><span class="pre">n</span></tt> atoms of atom type <tt class="docutils literal"><span class="pre">atom_type</span></tt> that are closest to atom with number <tt class="docutils literal"><span class="pre">reference</span></tt>. This search can be limited to a list of atoms (<tt class="docutils literal"><span class="pre">only</span></tt>) and/or exclude a list of atoms (<tt class="docutils literal"><span class="pre">exclude</span></tt>).</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule.nonhydrogens" title="gaupy.molecules.SuperMolecule.nonhydrogens"><tt class="xref py py-func docutils literal"><span class="pre">nonhydrogens()</span></tt></a></td>
-<td>return a list of all heavy atoms</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule.part" title="gaupy.molecules.SuperMolecule.part"><tt class="xref py py-func docutils literal"><span class="pre">part(atoms)</span></tt></a></td>
-<td>return a new <a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule" title="gaupy.molecules.SuperMolecule"><tt class="xref py py-class docutils literal"><span class="pre">SuperMolecule</span></tt></a> that consist of the atoms in <tt class="docutils literal"><span class="pre">atoms</span></tt></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule.nrings" title="gaupy.molecules.SuperMolecule.nrings"><tt class="xref py py-func docutils literal"><span class="pre">nrings(n)</span></tt></a></td>
-<td>returns a list of all <tt class="docutils literal"><span class="pre">n</span></tt> membered rings in the molecule</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule.molecules" title="gaupy.molecules.SuperMolecule.molecules"><tt class="xref py py-func docutils literal"><span class="pre">molecules()</span></tt></a></td>
-<td>returns all molecules in the system as a list of <a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule" title="gaupy.molecules.SuperMolecule"><tt class="xref py py-class docutils literal"><span class="pre">SuperMolecule</span></tt></a></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule.break_bond" title="gaupy.molecules.SuperMolecule.break_bond"><tt class="xref py py-func docutils literal"><span class="pre">break_bond(atom1,</span> <span class="pre">atom2)</span></tt></a></td>
-<td>breaks the bond between <tt class="docutils literal"><span class="pre">atom1</span></tt> and <tt class="docutils literal"><span class="pre">atom2</span></tt> and return both fragments as new &lt;gaupy.molecules.SuperMolecule&gt;`</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule.bonded" title="gaupy.molecules.SuperMolecule.bonded"><tt class="xref py py-func docutils literal"><span class="pre">bonded(atom1,</span> <span class="pre">atom2)</span></tt></a></td>
-<td>checks whether there is a bond between <tt class="docutils literal"><span class="pre">atom1</span></tt> and <tt class="docutils literal"><span class="pre">atom2</span></tt>, return a boolean</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="gaupy.html#gaupy.molecules.SuperMolecule.non_hydrogen_neighbors" title="gaupy.molecules.SuperMolecule.non_hydrogen_neighbors"><tt class="xref py py-func docutils literal"><span class="pre">non_hydrogen_neighbors(atom)</span></tt></a></td>
-<td>returns a list of heavy atom neighbors of atom <tt class="docutils literal"><span class="pre">atom</span></tt></td>
-</tr>
-</tbody>
-</table>
 </div>
 <div class="section" id="energies">
 <h2>Energies<a class="headerlink" href="#energies" title="Permalink to this headline">¶</a></h2>
@@ -260,6 +228,13 @@ in angstroms</td>
 </tr>
 </tbody>
 </table>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;system1&#39;</span><span class="p">,</span> <span class="s">&#39;system2&#39;</span><span class="p">,</span> <span class="s">&#39;system3&#39;</span><span class="p">]:</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="n">LOGFile</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">lspe</span> <span class="o">=</span> <span class="n">LOGFile</span><span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="s">&#39;-spe&#39;</span><span class="p">)</span>
+    <span class="n">gibbs</span> <span class="o">=</span> <span class="n">l</span><span class="p">[</span><span class="s">&#39;energy&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">lspe</span><span class="p">[</span><span class="s">&#39;gibbscorrection&#39;</span><span class="p">]</span>
+    <span class="k">print</span>
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -282,11 +257,6 @@ in angstroms</td>
   <h4>Previous topic</h4>
   <p class="topless"><a href="gaupy.html"
                         title="previous chapter">gaupy package</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/tutorial.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">

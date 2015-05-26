@@ -67,22 +67,33 @@ Function                                                                        
 
 More complex molecular operations can be performed as well:
 
-=================================================================================================================   ========================================================================================================================================================================================================================
-Function                                                                                                                Description
-=================================================================================================================   ========================================================================================================================================================================================================================
-:func:`closest(atom_type, reference, n=1, exclude=False, only=False) <gaupy.molecules.SuperMolecule.closest>`           Return a list of the ``n`` atoms of atom type ``atom_type`` that are closest to atom with number ``reference``. This search can be limited to a list of atoms (``only``) and/or exclude a list of atoms (``exclude``).
-:func:`nonhydrogens() <gaupy.molecules.SuperMolecule.nonhydrogens>`                                                      return a list of all heavy atoms
-:func:`part(atoms) <gaupy.molecules.SuperMolecule.part>`                                                                return a new :class:`SuperMolecule <gaupy.molecules.SuperMolecule>` that consist of the atoms in ``atoms``
-:func:`nrings(n) <gaupy.molecules.SuperMolecule.nrings>`                                                            returns a list of all ``n`` membered rings in the molecule
-:func:`molecules() <gaupy.molecules.SuperMolecule.molecules>`                                                           returns all molecules in the system as a list of :class:`SuperMolecule <gaupy.molecules.SuperMolecule>`
-:func:`break_bond(atom1, atom2) <gaupy.molecules.SuperMolecule.break_bond>`                                              breaks the bond between ``atom1`` and ``atom2`` and return both fragments as new <gaupy.molecules.SuperMolecule>`
-:func:`bonded(atom1, atom2) <gaupy.molecules.SuperMolecule.bonded>`                                                     checks whether there is a bond between ``atom1`` and ``atom2``, return a boolean
-:func:`non_hydrogen_neighbors(atom) <gaupy.molecules.SuperMolecule.non_hydrogen_neighbors>`                                        returns a list of heavy atom neighbors of atom ``atom``
-=================================================================================================================   ========================================================================================================================================================================================================================
+
+.. tabularcolumns:: |lll
+
+    =================================================================================================================   ========================================================================================================================================================================================================================
+    Function                                                                                                                Description
+    =================================================================================================================   ========================================================================================================================================================================================================================
+    :func:`closest(atom_type, reference, n=1, exclude=False, only=False) <gaupy.molecules.SuperMolecule.closest>`           Return a list of the ``n`` atoms of atom type ``atom_type`` that are closest to atom with number ``reference``. This search can be limited to a list of atoms (``only``) and/or exclude a list of atoms (``exclude``).
+    :func:`nonhydrogens() <gaupy.molecules.SuperMolecule.nonhydrogens>`                                                      return a list of all heavy atoms
+    :func:`part(atoms) <gaupy.molecules.SuperMolecule.part>`                                                                return a new :class:`SuperMolecule <gaupy.molecules.SuperMolecule>` that consist of the atoms in ``atoms``
+    :func:`nrings(n) <gaupy.molecules.SuperMolecule.nrings>`                                                            returns a list of all ``n`` membered rings in the molecule
+    :func:`molecules() <gaupy.molecules.SuperMolecule.molecules>`                                                           returns all molecules in the system as a list of :class:`SuperMolecule <gaupy.molecules.SuperMolecule>`
+    :func:`break_bond(atom1, atom2) <gaupy.molecules.SuperMolecule.break_bond>`                                              breaks the bond between ``atom1`` and ``atom2`` and return both fragments as new <gaupy.molecules.SuperMolecule>`
+    :func:`bonded(atom1, atom2) <gaupy.molecules.SuperMolecule.bonded>`                                                     checks whether there is a bond between ``atom1`` and ``atom2``, return a boolean
+    :func:`non_hydrogen_neighbors(atom) <gaupy.molecules.SuperMolecule.non_hydrogen_neighbors>`                                        returns a list of heavy atom neighbors of atom ``atom``
+    =================================================================================================================   ========================================================================================================================================================================================================================
 
 Energies
----------
+--------
 
 Multiple energies are available:
 
 .. include:: energy-table.rst
+
+::
+
+    for s in ['system1', 'system2', 'system3']:
+        l = LOGFile(s)
+        lspe = LOGFile(s + '-spe')
+        gibbs = l['energy'] + lspe['gibbscorrection']
+        print

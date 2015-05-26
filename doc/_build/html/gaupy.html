@@ -8,7 +8,7 @@
     
     <title>gaupy package &mdash; GauPy 1.0 documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -25,9 +25,14 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="GauPy 1.0 documentation" href="index.html" />
     <link rel="next" title="Using the Python modules" href="tutorial.html" />
-    <link rel="prev" title="Welcome to PyGaussian’s documentation!" href="index.html" /> 
+    <link rel="prev" title="Welcome to PyGaussian’s documentation!" href="index.html" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
   </head>
   <body>
+
     <div class="related">
       <h3>Navigation</h3>
       <ul>
@@ -552,6 +557,11 @@ take three last cols and first col</p>
 <dd><p>no hydrogens in self.unparsed!</p>
 </dd></dl>
 
+<dl class="classmethod">
+<dt id="gaupy.molecules.SuperMolecule.join">
+<em class="property">classmethod </em><tt class="descname">join</tt><big>(</big><em>*molecules</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.join" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="attribute">
 <dt id="gaupy.molecules.SuperMolecule.masses">
 <tt class="descname">masses</tt><a class="headerlink" href="#gaupy.molecules.SuperMolecule.masses" title="Permalink to this definition">¶</a></dt>
@@ -620,6 +630,16 @@ take three last cols and first col</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="gaupy.molecules.SuperMolecule.randomize">
+<tt class="descname">randomize</tt><big>(</big><em>center</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.randomize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="gaupy.molecules.SuperMolecule.rotate">
+<tt class="descname">rotate</tt><big>(</big><em>center</em>, <em>axis</em>, <em>angle</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.rotate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="gaupy.molecules.SuperMolecule.scale">
 <tt class="descname">scale</tt><big>(</big><em>nimag, factor=[1.0, 1.5]</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.scale" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -665,6 +685,16 @@ parsed atoms (flushed).</p>
 <dl class="method">
 <dt id="gaupy.molecules.SuperMolecule.to_string">
 <tt class="descname">to_string</tt><big>(</big><em>header=False</em>, <em>comment=''</em>, <em>symbols=False</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.to_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="gaupy.molecules.SuperMolecule.transform">
+<tt class="descname">transform</tt><big>(</big><em>transformation</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.transform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="gaupy.molecules.SuperMolecule.translate">
+<tt class="descname">translate</tt><big>(</big><em>vector</em><big>)</big><a class="headerlink" href="#gaupy.molecules.SuperMolecule.translate" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -898,11 +928,6 @@ is expected to be a number.</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="tutorial.html"
                         title="next chapter">Using the Python modules</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/gaupy.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
