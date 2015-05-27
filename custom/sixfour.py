@@ -35,10 +35,13 @@ class SixFour(gaupy.log.LOGFile):
         elif self.stoichiometry == 'C17H25O':
             self.system = 'ipr-h'
 
-        self._species()
-        if self.species not in ['reactant', 'reactant(imag)', 'irc']:
-            self._exoendo()
-            self._cistrans()
+        try:
+            self._species()
+            if self.species not in ['reactant', 'reactant(imag)', 'irc']:
+                self._exoendo()
+                self._cistrans()
+        except:
+            logging.error('Failed to classify %s' % self.file)
 
     def _classify(self):
 
