@@ -5,7 +5,7 @@ import warnings
 import filenames
 import molecules
 import fnmatch
-import utils
+from gaupy.utils import find_all, sfind, cached
 import numpy as np
 import molmod.molecules as mol
 import molmod.units as units
@@ -16,6 +16,108 @@ import logging
 # modules on the HPC cluster and to silence NumPy
 # warnings.
 warnings.filterwarnings('ignore')
+
+
+def energy(value, type='gibbs'):
+    '''
+    Convert a energy or a filename to an energy. If a filename was provided,
+    energy of type ``type`` will be parsed. ``float('nan')`` values are
+    allowed and will even be returned if an error occurs. Passing LOGFile
+    objects also works.
+    '''
+    try:
+        return float(value)
+    except:
+        try:
+            return float(getattr(LOGFile(value), type))
+        except:
+            try:
+                return float(getattr(value, type))
+            except:
+                return float('nan')
+
+
+def energies(values, type='gibbs'):
+    '''
+    Convert a list or NumPy array of energies and filenames to a NumPy array
+    of energies. Energy of type ``type`` will be taken from log files.
+    ``float('nan')`` values are allowed.
+    '''
+    if values:
+        return np.array([energy(e, type) for e in values])
+    else:
+        return np.array([])
+
+
+def relative_energies(values, reference='min', absolute=0, relative=0,
+                      conversion='kjmol', type='gibbs'):
+    '''
+    Convert a list of energies and filanemes to a list of relative energies.
+
+        First of all, the internal reference is applied. The original
+        ``energies`` array is transformed to **internal reference**:
+            ------------------------    -------------------------------------
+            ``reference=``              reference
+            ------------------------    -------------------------------------
+            ``'min'``                   smallest energy in array
+            ``'max'``                   largest energy in array
+            ``'none'``                  use absolute values
+            ``i``                       i-th energy of array
+            ------------------------    -------------------------------------
+
+        If any filename is present, the energy will be parsed from the
+        corresponding log file first. The type of energy can be specified
+        (see Gaussian white pages for more info):
+            ------------------------    -------------------------------------
+            ``type=``            type
+            ------------------------    -------------------------------------
+            ``'electronic'``            electronic
+            ``'gibbs'``                 Gibbs free
+            ``'enthalpy'``              enthalpy
+            ``'zpe'``                   ZPE
+            ``'zpesum'``                electronic energy + ZPE
+            ``'thermal'``               thermal energy
+            ``'gibbscorrection'``       Gibbs - electronic
+            ``'enthalpycorrection'``    enthalpy - electronic
+            ``'thermalcorrection'``     thermal - electronic
+            ------------------------    -------------------------------------
+
+        ``float('nan')`` values are allowed in the array. They will result
+        in float('nan') values in the output array.
+
+        The **internal reference** is then further converted as such:
+            (**internal reference** + ``absolute``) * ``conversion``
+            + ``relative``
+
+        ``absolute`` may be a number or a filename, ``relative``
+        is expected to be a number.
+    '''
+
+    # Necessary if [] or np.array([]) is passed
+    if values:
+        # Convert to numerical energies
+        e = energies(values, type=type)
+        # Internal reference
+        if reference == 'min':
+            e = e - np.nanmin(e)
+        elif reference == 'max':
+            e = e - np.nanmax(e)
+        else:
+            try:
+                e = e - e[reference]
+            # Failure of internal reference will result in the
+            # parsed numerical energies
+            except:
+                pass
+        # Absolute and relative references, conversion
+        try:
+            return ((e + energy(absolute)) / units.parse_unit(conversion)
+                    + relative)
+        # If the calculation fails, the numerical energies will be returned
+        except:
+            return e
+    else:
+        return np.array([])
 
 
 class LOGFile(object):
@@ -120,7 +222,7 @@ class LOGFile(object):
         '''
         try:
             return [self._get_geometry(p, orientation=orientation)
-                    for p in utils.find_all(self._full, orientation)]
+                    for p in find_all(self._full, orientation)]
         except:
             return None
 
@@ -350,20 +452,20 @@ class LOGFile(object):
 
         By default, the most stable system is chosen as a reference and
         the results are saved as kJ/mol. For more settings see
-        :method:`gaussian.utils.relative_energies`.
+        :method:`gaussian.relative_energies`.
         '''
-        reles = utils.relative_energies(values=logs, reference=reference,
-                                        absolute=absolute, relative=relative,
-                                        conversion=conversion,
-                                        type='energy')
-        relhs = utils.relative_energies(values=logs, reference=reference,
-                                        absolute=absolute, relative=relative,
-                                        conversion=conversion,
-                                        type='enthalpy')
-        relgs = utils.relative_energies(values=logs, reference=reference,
-                                        absolute=absolute, relative=relative,
-                                        conversion=conversion,
-                                        type='gibbs')
+        reles = relative_energies(values=logs, reference=reference,
+                                  absolute=absolute, relative=relative,
+                                  conversion=conversion,
+                                  type='energy')
+        relhs = relative_energies(values=logs, reference=reference,
+                                  absolute=absolute, relative=relative,
+                                  conversion=conversion,
+                                  type='enthalpy')
+        relgs = relative_energies(values=logs, reference=reference,
+                                  absolute=absolute, relative=relative,
+                                  conversion=conversion,
+                                  type='gibbs')
         for i, l in enumerate(logs):
             l.relenergy = reles[i]
             l.relenthalpy = relhs[i]
@@ -393,12 +495,12 @@ class LOGFile(object):
 
     # Cached attributes
 
-    @utils.cached
+    @cached
     def _full(self):
         '''
         The full text of the Gaussian output file.
 
-            This is a large file, so all attributes have the utils.cached
+            This is a large file, so all attributes have the cached
             decorator. This causes the attributes to be parsed only after
             their first request, thereby eliminating unnecessary searches
             of the long file. Note that the full text and the summary block
@@ -407,7 +509,7 @@ class LOGFile(object):
         '''
         return open(self.files.log).read()
 
-    @utils.cached
+    @cached
     def _summary_block(self):
         '''
         Plain text of the summary block that appears at the end
@@ -429,11 +531,11 @@ class LOGFile(object):
         begin = self._full.rfind('GINC', 0, end)
         return self._full[begin:end].replace('\n', '')
 
-    @utils.cached
+    @cached
     def _unspaced_summary(self):
         return self._summary_block.replace(' ', '')
 
-    @utils.cached
+    @cached
     def route_section(self):
         '''
         Route section of the calculation (after # in the input file), fully
@@ -460,7 +562,7 @@ class LOGFile(object):
             except:
                 return None
 
-    @utils.cached
+    @cached
     def keywords(self):
         '''
         List of keywords in the route section, a simple (lowercase) split
@@ -468,7 +570,7 @@ class LOGFile(object):
         '''
         return self.route_section.replace('#', '', 1).split()
 
-    @utils.cached
+    @cached
     def _charge_and_multiplicity(self):
         '''
         ``(charge, multiplicity)`` tuple used during parsing,
@@ -487,21 +589,21 @@ class LOGFile(object):
         except:
             return float('nan'), float('nan')
 
-    @utils.cached
+    @cached
     def charge(self):
         '''
         Total charge (e)
         '''
         return self._charge_and_multiplicity[0]
 
-    @utils.cached
+    @cached
     def multiplicity(self):
         '''
         Multiplicity (number of paired electrons + 1)
         '''
         return self._charge_and_multiplicity[1]
 
-    @utils.cached
+    @cached
     def geometries(self):
         '''
         All geometries in the log file (list of
@@ -525,7 +627,7 @@ class LOGFile(object):
             g = self.input_orientations
         return g
 
-    @utils.cached
+    @cached
     def input_orientations(self):
         '''
         Return all geometries in input orientation, see
@@ -533,7 +635,7 @@ class LOGFile(object):
         '''
         return self._get_geometries(orientation='Input orientation')
 
-    @utils.cached
+    @cached
     def standard_orientations(self):
         '''
         Return all geometries in standard orientation, see
@@ -541,7 +643,7 @@ class LOGFile(object):
         '''
         return self._get_geometries(orientation='Standard orientation')
 
-    @utils.cached
+    @cached
     def geometry(self):
         '''
         Last geometry of the file (:class:`gaussian.molecules.SuperMolecule`).
@@ -567,7 +669,7 @@ class LOGFile(object):
             logging.debug('log.geometry: no summary block found')
             return self.geometries[-1]
 
-    @utils.cached
+    @cached
     def energies(self):
         '''
         List of electronic energies (Ha), which can be found
@@ -576,14 +678,14 @@ class LOGFile(object):
         try:
             if 'SCF Done' in self._full:
                 return [self._get_energy(p)
-                        for p in utils.find_all(self._full, 'SCF Done')]
+                        for p in find_all(self._full, 'SCF Done')]
             else:
                 return [self._get_energy(p)
-                        for p in utils.find_all(self._full, 'Energy=')]
+                        for p in find_all(self._full, 'Energy=')]
         except:
             return None
 
-    @utils.cached
+    @cached
     def steps(self):
         '''
         Number of geometrical steps
@@ -593,7 +695,7 @@ class LOGFile(object):
         except:
             return float('nan')
 
-    @utils.cached
+    @cached
     def energy(self):
         '''
         Final electronic energy (Ha)
@@ -616,18 +718,18 @@ class LOGFile(object):
         else:
             return self.energies[-1]
 
-    @utils.cached
+    @cached
     def memory(self):
         '''
         Requested memory (e.g. 1MB)
         '''
         # The link0 section is repeated literally at the top
         # of the log file.
-        start = utils.sfind(self._full, '%mem', '=') + 1
+        start = sfind(self._full, '%mem', '=') + 1
         end = self._full.find('\n', start)
         return self._full[start:end]
 
-    @utils.cached
+    @cached
     def _thermochem_block(self):
         '''
         Plain text block containing the thermal corrections to the
@@ -638,14 +740,14 @@ class LOGFile(object):
             end = self._full.find('E (Thermal)')
             return self._full[start:end]
 
-    @utils.cached
+    @cached
     def zpe(self):
         '''
         Zero point correction (Ha)
         '''
         return self._get_energy_correction('Zero-point correction')
 
-    @utils.cached
+    @cached
     def thermalcorrection(self):
         '''
         Thermal correction to Energy (Ha)
@@ -656,7 +758,7 @@ class LOGFile(object):
         '''
         return self._get_energy_correction('Thermal correction to Energy')
 
-    @utils.cached
+    @cached
     def enthalpycorrection(self):
         '''
         Thermal correction to Enthalpy (Ha)
@@ -670,7 +772,7 @@ class LOGFile(object):
         '''
         return self._get_energy_correction('Thermal correction to Enthalpy')
 
-    @utils.cached
+    @cached
     def gibbscorrection(self):
         '''
         Thermal correction to Gibbs Free Energy (Ha)
@@ -686,7 +788,7 @@ class LOGFile(object):
         return self._get_energy_correction(
             'Thermal correction to Gibbs Free Energy')
 
-    @utils.cached
+    @cached
     def zpesum(self):
         '''
         Electronic energy + ZPE (Ha)
@@ -694,7 +796,7 @@ class LOGFile(object):
         return self._get_energy_correction(
             'Sum of electronic and zero-point Energies')
 
-    @utils.cached
+    @cached
     def thermal(self):
         '''
         Electronic energy + Thermal correction to Energy
@@ -702,7 +804,7 @@ class LOGFile(object):
         return self._get_energy_correction(
             'Sum of electronic and thermal Energies')
 
-    @utils.cached
+    @cached
     def enthalpy(self):
         '''
         Enthalpy (Ha)
@@ -711,7 +813,7 @@ class LOGFile(object):
         return self._get_energy_correction(
             'Sum of electronic and thermal Enthalpies')
 
-    @utils.cached
+    @cached
     def gibbs(self):
         '''
         Gibbs free energy (Ha)
@@ -720,7 +822,7 @@ class LOGFile(object):
         return self._get_energy_correction(
             'Sum of electronic and thermal Free Energies')
 
-    @utils.cached
+    @cached
     def _temperature_and_pressure(self):
         '''
         (temperature (K), pressure (atm)) tuple, used in parsing
@@ -742,21 +844,21 @@ class LOGFile(object):
             pressure = float('nan')
         return temperature, pressure
 
-    @utils.cached
+    @cached
     def temperature(self):
         '''
         Temperature (K) used during frequency calculations
         '''
         return self._temperature_and_pressure[0]
 
-    @utils.cached
+    @cached
     def pressure(self):
         '''
         Pressure (atm) used during frequency calculations
         '''
         return self._temperature_and_pressure[1]
 
-    @utils.cached
+    @cached
     def irc(self):
         '''
         :class:`gaussian.log.IRCPath` instance that contains relevant
@@ -766,7 +868,7 @@ class LOGFile(object):
         if 'irc' in self.route_section:
             return IRCPath(self)
 
-    @utils.cached
+    @cached
     def scan(self):
         '''
         :class:`gaussian.log.ScanPath` instance that contains relevant
@@ -775,7 +877,7 @@ class LOGFile(object):
         if 'modredundant' in self.route_section:
             return ScanPath(self)
 
-    @utils.cached
+    @cached
     def frequencies(self):
         '''
         Vibrational frequencies (cm-1).
@@ -785,7 +887,7 @@ class LOGFile(object):
         if 'freq' in self.route_section:
             try:
                 # List of frequencies
-                freq_lines_start = list(utils.find_all(
+                freq_lines_start = list(find_all(
                     self._full, 'Frequencies --'))
                 freq_lines_end = [self._full.find('\n', i)
                                   for i in freq_lines_start]
@@ -799,7 +901,7 @@ class LOGFile(object):
                 pass
         return frequencies
 
-    @utils.cached
+    @cached
     def nimag(self):
         '''
         Number of imaginary frequencies
@@ -809,7 +911,7 @@ class LOGFile(object):
         except:
             return float('nan')
 
-    @utils.cached
+    @cached
     def lowest_frequency(self):
         '''
         Lowest (least positive, most negative) vibrational frequency (cm-1)
@@ -819,7 +921,7 @@ class LOGFile(object):
         except:
             return float('nan')
 
-    @utils.cached
+    @cached
     def chk_consistent(self):
         '''
         Return ``True`` if the checkpoint file specified in the input file
@@ -828,7 +930,7 @@ class LOGFile(object):
         '''
         return self.chk == self.files.chk
 
-    @utils.cached
+    @cached
     def npa_charges(self):
         '''
         NPA charges (list of atomic charges in, e)
@@ -849,7 +951,7 @@ class LOGFile(object):
         except:
             return None
 
-    @utils.cached
+    @cached
     def mulliken_charges(self):
         '''
         Mulliken charges (list of atomic charges, e)
@@ -861,7 +963,7 @@ class LOGFile(object):
             # encountered, i.e. jumping between clusters, stop searching.
             # The top two instances of 'Mulliken' in the cluster at the
             # bottom of the file mark the atomic Mulliken charges.
-            finder = utils.find_all(self._full, 'Mulliken', reverse=True)
+            finder = find_all(self._full, 'Mulliken', reverse=True)
             finds = [next(finder)]
             diff = 0
             while abs(diff) < 5000:
@@ -872,7 +974,7 @@ class LOGFile(object):
         except:
             return None
 
-    @utils.cached
+    @cached
     def error(self):
         '''
         Termination status of the calculation
@@ -937,7 +1039,7 @@ class LOGFile(object):
 
         return error
 
-    @utils.cached
+    @cached
     def stoichiometry(self):
         '''
         Stoichiometry
@@ -947,7 +1049,7 @@ class LOGFile(object):
         except:
             return None
 
-    @utils.cached
+    @cached
     def nproc(self):
         '''
         Number of processors used during a Gaussian calculation
@@ -959,7 +1061,7 @@ class LOGFile(object):
         except:
             return float('nan')
 
-    @utils.cached
+    @cached
     def comment(self):
         '''
         Comment line provided in input
@@ -977,7 +1079,7 @@ class LOGFile(object):
         except:
             return None
 
-    @utils.cached
+    @cached
     def chk(self):
         '''
         Checkpoint filename from Gaussian output file.
@@ -990,7 +1092,7 @@ class LOGFile(object):
         except:
             return None
 
-    @utils.cached
+    @cached
     def _method_and_basis(self):
         '''
         (method, basis) tuple, used internally for parsing purposes because
@@ -1018,28 +1120,28 @@ class LOGFile(object):
             method = lot = self.keywords[0]
         return method, basis, lot
 
-    @utils.cached
+    @cached
     def method(self):
         '''
         Method (Gaussian keyword: DFT functional, semiempirical method, etc.)
         '''
         return self._method_and_basis[0]
 
-    @utils.cached
+    @cached
     def basis(self):
         '''
         Basis set (Gaussian keyword). ``None`` for semiempirical methods.
         '''
         return self._method_and_basis[1]
 
-    @utils.cached
+    @cached
     def lot(self):
         '''
         Method/basis for ab initio, method for semiempirics
         '''
         return self._method_and_basis[2]
 
-    @utils.cached
+    @cached
     def dipole(self):
         '''
         Total dipole moment (field-independent basis, Debye)
@@ -1052,7 +1154,7 @@ class LOGFile(object):
         except:
             return float('nan')
 
-    @utils.cached
+    @cached
     def scrf(self):
         '''
         SCRF part (implicit solvation) in the route section or empty string
@@ -1064,7 +1166,7 @@ class LOGFile(object):
             scrf = scrf.group(1)
         return scrf
 
-    @utils.cached
+    @cached
     def scrf_nonstandard_input(self):
         '''
         Nonstandard SCRF block in input file or empty string
@@ -1080,7 +1182,7 @@ class LOGFile(object):
         except:
             return ''
 
-    @utils.cached
+    @cached
     def cputime(self):
         '''
         CPU time
@@ -1094,7 +1196,7 @@ class LOGFile(object):
         except:
             return None
 
-    @utils.cached
+    @cached
     def normal_coordinates(self):
         '''Returns normal coordinates for lowest vibrational frequency'''
         if 'freq' in self.route_section:
@@ -1108,12 +1210,12 @@ class LOGFile(object):
         else:
             return None
 
-    @utils.cached
+    @cached
     def normal_lengths(self):
         '''Norms of the normal coordinates for lowest vibrational freq'''
         return np.linalg.norm(self.normal_coordinates, axis=1)
 
-    @utils.cached
+    @cached
     def reacting(self, treshold=[1.2, 2.0], only=None):
         '''
         return a list of bonds (i.e. sets of atom pairs) that could be
@@ -1165,7 +1267,7 @@ class Path(object):
         of path.
     '''
 
-    @utils.cached
+    @cached
     def geometries(self):
         '''
         Geometries of the path points
@@ -1175,7 +1277,7 @@ class Path(object):
         return [self._logfile._get_geometry(x, reverse=True)
                 for x in self._point_positions]
 
-    @utils.cached
+    @cached
     def energies(self):
         '''
         Electronic energies of the path points (Ha)
@@ -1183,14 +1285,14 @@ class Path(object):
         return [self._logfile._get_energy(x, reverse=True)
                 for x in self._point_positions]
 
-    @utils.cached
+    @cached
     def relativeenergies(self):
         '''
         Relative electronic energies of the path points (kJ/mol)
         '''
-        return utils.relative_energies(self.energies)
+        return relative_energies(self.energies)
 
-    @utils.cached
+    @cached
     def length(self):
         '''
         Number of points
@@ -1206,17 +1308,17 @@ class IRCPath(Path):
     def __init__(self, logfile):
         self._logfile = logfile
 
-    @utils.cached
+    @cached
     def _point_positions(self):
         '''
         Fetch _point_positions (see parent class :class:`gaussian.log.Path`)
         '''
         # Find all 'Point Number: x    Path Number: 1'.
-        path1 = list(utils.find_all(self._logfile._full, 'Path Number:   1'))
-        path2 = list(utils.find_all(self._logfile._full, 'Path Number:   2'))
+        path1 = list(find_all(self._logfile._full, 'Path Number:   1'))
+        path2 = list(find_all(self._logfile._full, 'Path Number:   2'))
         return path2[::-1] + path1
 
-    @utils.cached
+    @cached
     def direction(self):
         '''
         Direction of the IRC path (``'both'``, ``'forward'`` or ``'reverse'``)
@@ -1240,10 +1342,9 @@ class ScanPath(Path):
     def __init__(self, logfile):
         self._logfile = logfile
 
-    @utils.cached
+    @cached
     def _point_positions(self):
         '''
         Fetch _point_positions (see parent class :class:`gaussian.log.Path`)
         '''
-        return list(utils.find_all(self._logfile._full,
-                                   'Stationary point found'))
+        return list(find_all(self._logfile._full, 'Stationary point found'))

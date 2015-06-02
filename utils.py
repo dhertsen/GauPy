@@ -1,6 +1,5 @@
 '''Common functions'''
 import warnings
-import log
 
 # TODO import gaupy.utils in interactive session throws an exception
 
@@ -9,8 +8,6 @@ import log
 # warnings.
 with warnings.catch_warnings():
     warnings.simplefilter('ignore')
-    import numpy as np
-    import molmod.units as units
     import molmod.periodic as periodic
 
 
@@ -93,108 +90,6 @@ def find_all(string, sub, index=None, reverse=False):
                 return
             yield start
             start -= len(sub)
-
-
-def energy(value, type='gibbs'):
-    '''
-    Convert a energy or a filename to an energy. If a filename was provided,
-    energy of type ``type`` will be parsed. ``float('nan')`` values are
-    allowed and will even be returned if an error occurs. Passing LOGFile
-    objects also works.
-    '''
-    try:
-        return float(value)
-    except:
-        try:
-            return float(getattr(log.LOGFile(value), type))
-        except:
-            try:
-                return float(getattr(value, type))
-            except:
-                return float('nan')
-
-
-def energies(values, type='gibbs'):
-    '''
-    Convert a list or NumPy array of energies and filenames to a NumPy array
-    of energies. Energy of type ``type`` will be taken from log files.
-    ``float('nan')`` values are allowed.
-    '''
-    if values:
-        return np.array([energy(e, type) for e in values])
-    else:
-        return np.array([])
-
-
-def relative_energies(values, reference='min', absolute=0, relative=0,
-                      conversion='kjmol', type='gibbs'):
-    '''
-    Convert a list of energies and filanemes to a list of relative energies.
-
-        First of all, the internal reference is applied. The original
-        ``energies`` array is transformed to **internal reference**:
-            ------------------------    -------------------------------------
-            ``reference=``              reference
-            ------------------------    -------------------------------------
-            ``'min'``                   smallest energy in array
-            ``'max'``                   largest energy in array
-            ``'none'``                  use absolute values
-            ``i``                       i-th energy of array
-            ------------------------    -------------------------------------
-
-        If any filename is present, the energy will be parsed from the
-        corresponding log file first. The type of energy can be specified
-        (see Gaussian white pages for more info):
-            ------------------------    -------------------------------------
-            ``type=``            type
-            ------------------------    -------------------------------------
-            ``'electronic'``            electronic
-            ``'gibbs'``                 Gibbs free
-            ``'enthalpy'``              enthalpy
-            ``'zpe'``                   ZPE
-            ``'zpesum'``                electronic energy + ZPE
-            ``'thermal'``               thermal energy
-            ``'gibbscorrection'``       Gibbs - electronic
-            ``'enthalpycorrection'``    enthalpy - electronic
-            ``'thermalcorrection'``     thermal - electronic
-            ------------------------    -------------------------------------
-
-        ``float('nan')`` values are allowed in the array. They will result
-        in float('nan') values in the output array.
-
-        The **internal reference** is then further converted as such:
-            (**internal reference** + ``absolute``) * ``conversion``
-            + ``relative``
-
-        ``absolute`` may be a number or a filename, ``relative``
-        is expected to be a number.
-    '''
-
-    # Necessary if [] or np.array([]) is passed
-    if values:
-        # Convert to numerical energies
-        e = energies(values, type=type)
-        # Internal reference
-        if reference == 'min':
-            e = e - np.nanmin(e)
-        elif reference == 'max':
-            e = e - np.nanmax(e)
-        else:
-            try:
-                e = e - e[reference]
-            # Failure of internal reference will result in the
-            # parsed numerical energies
-            except:
-                pass
-        # Absolute and relative references, conversion
-        try:
-            return ((e + energy(absolute)) / units.parse_unit(conversion)
-                    + relative)
-        # If the calculation fails, the numerical energies will be returned
-        except:
-            return e
-    else:
-        return np.array([])
 
 
 def sfind(string, *pargs):
