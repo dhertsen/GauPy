@@ -2,8 +2,10 @@
 
 # TODO import from, as, etc.: consistency
 import argparse
-import gaupy.log as log
 import gaupy.hpc as hpc
+from gaupy.log import LOGFile
+from gaupy.utils import get_full_attr, liteval
+from gaupy.custom import sixfour
 import logging
 
 parser = argparse.ArgumentParser('Select Gaussian output files '
@@ -26,6 +28,11 @@ sgroup.add_argument('--ircmin', type=int,
                     help='Minimum number of IRC steps')
 sgroup.add_argument('--ircmax', type=int,
                     help='Maximum number of IRC steps')
+sgroup.add_argument('--equal', nargs=2, action='append',
+                    help='Attribute (first arg) equals value (second arg)')
+sgroup.add_argument('--notequal', nargs=2, action='append',
+                    help='Attribute (first arg) equals value (second arg)')
+
 
 pgroup = parser.add_argument_group(title='print options')
 pgroup.add_argument('--extension', '-e', default='log',
@@ -53,7 +60,10 @@ agroup.add_argument('--cpall', default=None, help='For selected log files,\
                     move all files (all extensions) to subfolder (argument)')
 parser.add_argument('--debug', help='Print debug messages',
                     action='store_true')
-parser.add_argument('files', nargs='*', help='Gaussian output files')
+parser.add_argument('--type', choices=['sixfour'],
+                    help='Use a custom parsing class')
+parser.add_argument('files', nargs='*', help='Gaussian output files',
+                    default=[])
 
 args = parser.parse_args()
 
@@ -61,7 +71,11 @@ args = parser.parse_args()
 if args.debug:
     logging.basicConfig(level='DEBUG', format='%(asctime)s %(message)s')
 
-logs = log.LOGFile.parse_all(*args.files)
+parser = LOGFile
+if args.type:
+    if args.type == 'sixfour':
+        parser = sixfour.SixFour
+logs = map(parser, args.files)
 
 if args.termination:
     if args.termination == 'ok':
@@ -94,6 +108,14 @@ if args.ircmin or args.ircmax:
         else:
             newlog.append(l)
     logs = newlog
+if args.equal:
+    for attr, val in args.equal:
+        value = liteval(val)
+        logs = [l for l in logs if get_full_attr(l, attr) == value]
+if args.notequal:
+    for attr, val in args.notequal:
+        value = liteval(val)
+        logs = [l for l in logs if get_full_attr(l, attr) != value]
 
 for l in logs:
     if args.restart:

@@ -1,5 +1,6 @@
 '''Common functions'''
 import warnings
+from ast import literal_eval
 
 # TODO import gaupy.utils in interactive session throws an exception
 
@@ -98,6 +99,13 @@ def sfind(string, *pargs):
     for p in pargs:
         index = string.find(p, index + 1)
     return index
+
+
+def liteval(string):
+    try:
+        return literal_eval(string)
+    except:
+        return string
 
 
 class cached(object):

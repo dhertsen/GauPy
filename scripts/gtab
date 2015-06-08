@@ -4,7 +4,7 @@ import gaupy.table as table
 import argparse
 import sys
 from gaupy.log import LOGFile
-from gaupy.custom import *
+from gaupy.custom import sixfour
 import logging
 
 parser = argparse.ArgumentParser('Tabulate parsed output from Gaussian '
@@ -63,16 +63,14 @@ for x in args.extra:
     columns.append(x)
     layout.append('fit+2')
 
-type = LOGFile
+parser = LOGFile
 if args.type:
-    try:
-        type = eval(args.type)
-    except:
-        print('Parsing class %s not found.' % args.type)
+    if args.type == 'sixfour':
+        parser = sixfour.SixFour
 
 if args.debug:
     logging.basicConfig(level='DEBUG', format='%(asctime)s %(message)s')
 
 print table.GaussianTable(files, columns, layout, partition=args.sort,
                           partition_energies_rmsds=args.partitionenergies,
-                          type=type)
+                          type=parser)
