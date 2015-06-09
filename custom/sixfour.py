@@ -40,6 +40,7 @@ class SixFour(gaupy.log.LOGFile):
             if self.species not in ['reactant', 'reactant(imag)', 'irc']:
                 self._exoendo()
                 self._cistrans()
+                self._updown()
         except:
             logging.error('Failed to classify %s' % self.file)
 
@@ -123,13 +124,12 @@ class SixFour(gaupy.log.LOGFile):
                                         self.geometry.non_hydrogen_neighbors(
                                             self.geometry.four_c3.n))).pop())
 
-        # TODO
-        '''
-        - six and four instead of furan and diene
-        - hetero instead of o
-        - only diene_ipr further parsed, because it's necessay
-          for cis/trans
-        '''
+        methyls = list(set(self.geometry.unparsed)
+                       & set(self.geometry.non_hydrogen_neighbors(
+                           self.geometry.six_cation.n)))
+        for i, meth in enumerate(methyls):
+            self.geometry.set_match('six_me%i' % (i+1), meth)
+
         if 'ipr' in self.system:
             p['four_ipr'] = g.HasNeighbors(c, c, c, h)
 
@@ -188,6 +188,19 @@ class SixFour(gaupy.log.LOGFile):
                 self.cistrans = self.geometry.cistrans = 'trans'
         else:
             self.cistrans = None
+
+    def _updown(self):
+        if self.system == 'ipr-h':
+            normal = np.cross(self.geometry.six_cation.xyz
+                              - self.geometry.six_c2.xyz,
+                              self.geometry.six_cation.xyz
+                              - self.geometry.four_head2.xyz)
+            scalar = np.dot(self.geometry.six_cation.xyz
+                            - self.geometry.six_me1.xyz, normal)
+            if scalar < 0:
+                self.updown = self.geometry.updown = 'down'
+            else:
+                self.updown = self.geometry.updown = 'up'
 
     def _species(self):
         '''classify system: ts1, ts2, product, reactant, int
