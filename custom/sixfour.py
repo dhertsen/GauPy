@@ -40,7 +40,8 @@ class SixFour(gaupy.log.LOGFile):
             if self.species not in ['reactant', 'reactant(imag)', 'irc']:
                 self._exoendo()
                 self._cistrans()
-                self._updown()
+                self._meupdown()
+                self._hupdown()
         except:
             logging.error('Failed to classify %s' % self.file)
 
@@ -135,22 +136,6 @@ class SixFour(gaupy.log.LOGFile):
 
         self.geometry.set_matches(p)
 
-    def _exoendo(self):
-        four = ((self.geometry.four_head1.xyz - self.geometry.four_c3.xyz)
-                + (self.geometry.four_head2.xyz
-                    - self.geometry.four_c4.xyz))
-        four /= np.linalg.norm(four)
-        six_subs = (self.geometry.six_c2.xyz
-                    - self.geometry.six_hetero.xyz)
-        six_subs /= np.linalg.norm(six_subs)
-        angle = math.acos(np.dot(four, six_subs))
-        # stereo attributes is stored both is self and self.geometry
-        # (handy for making tables)
-        if 0 <= angle <= (math.pi / 2):
-            self.exoendo = self.geometry.stereo = 'endo'
-        else:
-            self.exoendo = self.geometry.stereo = 'exo'
-
     def _cistrans(self):
 
         if 'ipr' in self.system:
@@ -189,7 +174,7 @@ class SixFour(gaupy.log.LOGFile):
         else:
             self.cistrans = None
 
-    def _updown(self):
+    def _meupdown(self):
         if self.system == 'ipr-h':
             normal = np.cross(self.geometry.six_cation.xyz
                               - self.geometry.six_c2.xyz,
@@ -198,9 +183,21 @@ class SixFour(gaupy.log.LOGFile):
             scalar = np.dot(self.geometry.six_cation.xyz
                             - self.geometry.six_me1.xyz, normal)
             if scalar < 0:
-                self.updown = self.geometry.updown = 'down'
+                self.me = self.geometry.updown = 'down'
             else:
-                self.updown = self.geometry.updown = 'up'
+                self.me = self.geometry.updown = 'up'
+
+    def _hupdown(self):
+            normal = np.cross(self.geometry.six_c4.xyz
+                              - self.geometry.six_c3.xyz,
+                              self.geometry.six_c2.xyz
+                              - self.geometry.six_c3.xyz)
+            bridge = (self.geometry.four_head1.xyz - self.geometry.six_c3.xyz)
+            scalar = np.dot(normal, bridge)
+            if scalar < 0:
+                self.h = 'up'
+            else:
+                self.h = 'down'
 
     def _species(self):
         '''classify system: ts1, ts2, product, reactant, int
@@ -261,3 +258,20 @@ class SixFour(gaupy.log.LOGFile):
                         self.species = 'product'
                     else:
                         self.species = 'intermediate'
+
+    def _exoendo(self):
+        '''
+        c2-head2 UP
+        c4-head2 DOWN
+        head2-head wijst naar hier
+        '''
+        single = self.geometry.four_c2.xyz - self.geometry.four_head2.xyz
+        double = self.geometry.four_c4.xyz - self.geometry.four_head2.xyz
+        normal = np.cross(single, double)
+        head1head2 = (self.geometry.four_head2.xyz
+                      - self.geometry.four_head1.xyz)
+        dot = np.dot(normal, head1head2)
+        if dot < 0:
+            self.exoendo = 'exo'
+        else:
+            self.exoendo = 'endo'
