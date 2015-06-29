@@ -129,6 +129,11 @@ class SuperMolecule(mol.Molecule):
                                * units.angstrom)
         return cls.from_Molecule(mol.Molecule(atoms, coordinates))
 
+    @classmethod
+    def from_xyz(cls, filename):
+        with open(filename) as f:
+            return cls.from_string(f.read(), ignore_header=True)
+
     def to_string(self, header=False, comment='', symbols=False):
         lines = []
         if header:
@@ -138,6 +143,12 @@ class SuperMolecule(mol.Molecule):
             x, y, z = c / units.angstrom
             lines.append('%-6s %15.6f %15.6f %15.6f' % (a, x, y, z))
         return '\n'.join(lines)
+
+    def to_xyz(self, filename):
+        with open(filename, 'w') as f:
+            string = self.to_string(header=True, symbols=True)
+            f.write(string)
+            print('%s written' % filename)
 
     @classmethod
     def join(cls, *molecules):

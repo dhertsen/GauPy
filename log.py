@@ -529,7 +529,7 @@ class LOGFile(object):
         '''
         end = self._full.find('@')
         begin = self._full.rfind('GINC', 0, end)
-        return self._full[begin:end].replace('\n', '')
+        return self._full[begin:end].replace('\n ', '')
 
     @cached
     def _unspaced_summary(self):
