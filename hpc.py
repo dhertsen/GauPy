@@ -2,7 +2,7 @@ import subprocess
 import re
 
 # Available clusters on the Stevin infrastructure
-clusters = ['raichu', 'delcatty', 'haunter', 'gastly']
+clusters = ['raichu', 'delcatty', 'haunter', 'gastly', 'golett']
 
 
 def running(clusters=clusters):
@@ -11,7 +11,7 @@ def running(clusters=clusters):
 
     Arguments:
         clusters:       clusters to check for running calculations
-                        (default: ['haunter', 'gastly', 'raichu', 'delcatty'])
+                        (default: ['haunter', 'gastly', 'raichu', 'delcatty', 'golett'])
     Return:
         {'job_name':{job information}}
     '''
@@ -59,5 +59,4 @@ def set_status(*logfiles):
     r = running()
     for lf in logfiles:
         if lf.file in r:
-            print r[lf.file]['job_state']
             lf.hpc = r[lf.file]['job_state']
