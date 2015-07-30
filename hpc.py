@@ -59,5 +59,4 @@ def set_status(*logfiles):
     r = running()
     for lf in logfiles:
         if lf.file in r:
-            print r[lf.file]['job_state']
             lf.hpc = r[lf.file]['job_state']
