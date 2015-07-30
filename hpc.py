@@ -11,7 +11,7 @@ def running(clusters=clusters):
 
     Arguments:
         clusters:       clusters to check for running calculations
-                        (default: ['haunter', 'gastly', 'raichu', 'delcatty'])
+                        (default: ['haunter', 'gastly', 'raichu', 'delcatty', 'golett'])
     Return:
         {'job_name':{job information}}
     '''
