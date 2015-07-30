@@ -308,26 +308,23 @@ class LOGFile(object):
             geometry = self.geometry.to_string()
         except:
             geometry = ''
-        return '''%%nproc=%(nproc)s
-%%mem=%(mem)s
-%%chk=%(chk)s
-#%(route)s
-
-%(comment)s
-
-%(charge)i %(multiplicity)i
-%(geometry_text)s
-
-%(scrf)s
-''' % {'nproc': self.nproc,
-            'mem': self.memory,
-            'chk': fn.base,
-            'route': ' '.join(self.keywords),
-            'comment': self.comment,
-            'charge': self.charge,
-            'multiplicity': self.multiplicity,
-            'geometry_text': geometry,
-            'scrf': self.scrf_nonstandard_input}
+        inp = ('%%nproc=%(nproc)s\n'
+               '%%mem=%(mem)s\n'
+               '%%chk=%(chk)s\n'
+               '#%(route)s\n\n'
+               '%(comment)s\n\n'
+               '%(charge)i %(multiplicity)i\n'
+               '%(geometry_text)s\n\n'
+               '%(scrf)s\n\n')
+        return inp % {'nproc': self.nproc,
+                      'mem': self.memory,
+                      'chk': fn.base,
+                      'route': ' '.join(self.keywords),
+                      'comment': self.comment,
+                      'charge': self.charge,
+                      'multiplicity': self.multiplicity,
+                      'geometry_text': geometry,
+                      'scrf': self.scrf_nonstandard_input}
 
     def write_input(self, filename=None):
         '''
@@ -1008,7 +1005,9 @@ class LOGFile(object):
                            'FormBX had a problem': 'formbx',
                            'NtrErr Called from FileIO': 'ntrerr',
                            'A syntax error was detected in the input line':
-                           'syntax'}
+                           'syntax',
+                           'FileIO operation on non-existent file.':
+                           'nochk'}
 
         # Only search the bottom of the log file for termination information.
         bottom = self._full[-len(self._full)/2:]

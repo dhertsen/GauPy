@@ -1,10 +1,11 @@
 #! /usr/bin/python
 
-import gaupy.log as log
-import gaupy.utils as utils
+# import gaupy.log as log
+# import gaupy.utils as utils
 import argparse
 import matplotlib.pyplot as plt
 import sys
+from gaupy.log import LOGFile, relative_energies
 
 parser = argparse.ArgumentParser('Print energy profiles of geometry '
                                  + 'optimization, IRC calculation or '
@@ -16,7 +17,7 @@ parser.add_argument('--emin', help='Minimum of energy axis', type=float)
 parser.add_argument('--emax', help='Maximum of energy axis', type=float)
 args = parser.parse_args()
 
-l = log.LOGFile(args.file)
+l = LOGFile(args.file)
 if l.irc:
     base = l.irc
     label = 'IRC'
@@ -29,7 +30,7 @@ else:
 print('Interpreted %s as a %s calculation.' % (l.file, label))
 
 
-plt.plot(utils.relative_energies(base.energies))
+plt.plot(relative_energies(base.energies))
 plt.xlabel('%s step' % label)
 plt.ylabel('rel. E$_{el}$ (kJ/mol)')
 
