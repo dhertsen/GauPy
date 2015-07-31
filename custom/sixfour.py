@@ -42,6 +42,7 @@ class SixFour(gaupy.log.LOGFile):
                 self._cistrans()
                 self._meupdown()
                 self._hupdown()
+                self._rs()
         except:
             logging.error('Failed to classify %s' % self.file)
 
@@ -198,6 +199,18 @@ class SixFour(gaupy.log.LOGFile):
                 self.h = 'up'
             else:
                 self.h = 'down'
+
+    def _rs(self):
+        normal = np.cross(self.geometry.four_head1.xyz
+                          - self.geometry.four_c1.xyz,
+                          self.geometry.four_c2.xyz
+                          - self.geometry.four_c1.xyz)
+        scalar = np.dot(normal,
+                        self.geometry.four_ipr.xyz - self.geometry.four_c1.xyz)
+        if scalar < 0:
+            self.rs = 'R'
+        else:
+            self.rs = 'S'
 
     def _species(self):
         '''classify system: ts1, ts2, product, reactant, int
