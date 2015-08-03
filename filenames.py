@@ -2,7 +2,6 @@ import os
 import re
 import glob
 import shutil
-import logging
 
 
 class GaussianFile(object):
@@ -14,11 +13,14 @@ class GaussianFile(object):
     split is without path, root with
     '''
 
-    complex_patterns = ['fwd', 'rev', 'react', 'int', 'prc', 'prod']
+    complex_patterns = ['fwd', 'rev', 'react', 'int', 'prc', 'prod',
+                        'product', 'intermediate', 'reactant']
     irc_patterns = ['irc' + x for x in complex_patterns]
     ts_patterns = ['ts', 'ts1', 'ts2', 'tsopt']
     reaction_patterns = (complex_patterns + irc_patterns + ts_patterns
                          + ['spe'])
+    # TODO elegant way to customise reaction patterns
+    reaction_patterns += ['reaction1', 'reaction2']
 
     def __init__(self, name):
         '''
