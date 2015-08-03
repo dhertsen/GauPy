@@ -60,3 +60,4 @@ def set_status(*logfiles):
     for lf in logfiles:
         if lf.file in r:
             lf.hpc = r[lf.file]['job_state']
+            lf.cluster = r[lf.file]['cluster']
