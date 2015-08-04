@@ -567,6 +567,22 @@ class LOGFile(object):
         '''
         return self.route_section.replace('#', '', 1).split()
 
+    def _options(self, keyword):
+        '''
+        Parse keyword(a,b=c,d=e,f) to {'a':True, 'b':'c', 'd':'e', 'f':True}
+        '''
+        for kw in self.keywords:
+            if kw.startswith(keyword):
+                options = dict()
+                for option in re.split(',|\(|\)', kw)[1:]:
+                    if '=' in option:
+                        param, value = option.split('=')
+                        options[param] = value
+                    # necessary to avoid '':True entry in dictionary
+                    elif option:
+                        options[option] = True
+                return options
+
     @cached
     def _charge_and_multiplicity(self):
         '''
@@ -863,7 +879,11 @@ class LOGFile(object):
         calculation.
         '''
         if 'irc' in self.route_section:
-            return IRCPath(self)
+            ircpath = IRCPath(self)
+            ircoptions = self._options('irc')
+            for opt in ['maxcycle', 'stepsize', 'maxpoints']:
+                setattr(ircpath, opt, int(ircoptions[opt]))
+            return ircpath
 
     @cached
     def scan(self):
