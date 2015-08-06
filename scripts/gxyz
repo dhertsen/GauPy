@@ -14,7 +14,8 @@ indexgroup.add_argument('--relative', '-r',
                         default='last',
                         help='Select last (default), first, most stable (min) '
                         + 'or least stable (max) geometry')
-indexgroup.add_argument('--index', '-i', type=int, help='Select ith step')
+indexgroup.add_argument('--index', '-i', type=int, help='Select ith step'
+                        + ' (start at 1)')
 args = parser.parse_args()
 
 
@@ -32,7 +33,7 @@ for f in args.files:
             label = 'optimization'
         print('Interpreted %s as a %s calculation.' % (l.file, label))
         if args.index:
-            index = args.index
+            index = args.index - 1
         elif args.relative:
             if args.relative == 'first':
                 index = 0
@@ -43,7 +44,7 @@ for f in args.files:
             elif args.relative == 'min':
                 index = base.energies.index(min(base.energies))
         print('Selected step %i out of %i steps.'
-              % (index, len(base.energies)))
+              % (index + 1, len(base.energies)))
         xw = xyz.XYZWriter(l.files.xyz, l.geometry.numbers)
         comment = '%s\tE=%s' % (l.files.base, base.energies[index])
         xw.dump(comment, base.geometries[index].coordinates)
