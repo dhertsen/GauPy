@@ -14,7 +14,8 @@ class GaussianFile(object):
     '''
 
     complex_patterns = ['fwd', 'rev', 'react', 'int', 'prc', 'prod',
-                        'product', 'intermediate', 'reactant']
+                        'product', 'intermediate', 'reactant', 'p', 'r',
+                        'im1', 'im2']
     irc_patterns = ['irc' + x for x in complex_patterns]
     ts_patterns = ['ts', 'ts1', 'ts2', 'tsopt']
     reaction_patterns = (complex_patterns + irc_patterns + ts_patterns
