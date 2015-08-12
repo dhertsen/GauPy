@@ -364,3 +364,18 @@ class SuperMolecule(mol.Molecule):
         self.transform(Translation(-np.array(center)))
         self.transform(Rotation.random())
         self.transform(Translation(center))
+
+    def mirror(self, plane='xy'):
+        if plane == 'xy':
+            x = y = 1
+            z = -1
+        elif plane == 'xz':
+            x = z = 1
+            y = -1
+        elif plane == 'yz':
+            y = z = 1
+            x = -1
+        reflection = np.transpose(np.array([x * self.coordinates[:, 0],
+                                            y * self.coordinates[:, 1],
+                                            z * self.coordinates[:, 2]]))
+        self.coordinates = reflection

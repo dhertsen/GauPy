@@ -208,9 +208,9 @@ class SixFour(gaupy.log.LOGFile):
         scalar = np.dot(normal,
                         self.geometry.four_ipr.xyz - self.geometry.four_c1.xyz)
         if scalar < 0:
-            self.rs = 'R'
-        else:
             self.rs = 'S'
+        else:
+            self.rs = 'R'
 
     def _species(self):
         '''classify system: ts1, ts2, product, reactant, int
