@@ -427,14 +427,15 @@ class LOGFile(object):
         return selected
 
     @classmethod
-    def partition(cls, logs):
+    def partition(cls, logs, add_patterns=[], patterns=[]):
         '''
         Partition a list of ``LOGFile``s according to their filename. Return
         an iterator of sets of ``LOGFile``s.
         See ``gaussian.filenames.GaussianFiles`` for more information.
         '''
-        partition = filenames.GaussianFile.partition(
-            [l.files for l in logs])
+        partition = filenames.GaussianFile.partition([l.files for l in logs],
+                                                     add_patterns=add_patterns,
+                                                     patterns=patterns)
         for p in partition:
             yield set([cls.select(n.root, logs) for n in p])
 

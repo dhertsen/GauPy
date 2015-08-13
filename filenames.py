@@ -13,15 +13,11 @@ class GaussianFile(object):
     split is without path, root with
     '''
 
-    complex_patterns = ['fwd', 'rev', 'react', 'int', 'prc', 'prod',
-                        'product', 'intermediate', 'reactant', 'p', 'r',
-                        'im1', 'im2']
-    irc_patterns = ['irc' + x for x in complex_patterns]
+    cplx_patterns = ['fwd', 'rev', 'react', 'int', 'prc', 'prod', 'product',
+                     'intermediate', 'reactant', 'im1', 'im2']
+    irc_patterns = ['irc' + x for x in cplx_patterns]
     ts_patterns = ['ts', 'ts1', 'ts2', 'tsopt']
-    reaction_patterns = (complex_patterns + irc_patterns + ts_patterns
-                         + ['spe'])
-    # TODO elegant way to customise reaction patterns
-    reaction_patterns += ['reaction1', 'reaction2']
+    reaction_patterns = (cplx_patterns + irc_patterns + ts_patterns + ['spe'])
 
     def __init__(self, name):
         '''
@@ -141,9 +137,13 @@ class GaussianFile(object):
         return unique_self == unique_other
 
     @classmethod
-    def partition(cls, files):
+    def partition(cls, files, add_patterns=[], patterns=[]):
         # haalt ook dubbels eruit
         # is een generator
+        if patterns:
+            cls.reaction_patterns = patterns
+        cls.reaction_patterns += add_patterns
+
         l = set(files)
         while l:
             a = l.pop()
