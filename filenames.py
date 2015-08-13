@@ -83,7 +83,7 @@ class GaussianFile(object):
         '''
         Returns a single value, since one IRC corresponds to a single complex.
         '''
-        for irc, cplx in zip(self.irc_patterns, self.complex_patterns):
+        for irc, cplx in zip(self.irc_patterns, self.cplx_patterns):
             if irc in self.split:
                 return self.replace(irc, cplx)
         else:
