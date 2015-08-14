@@ -25,6 +25,9 @@ parser.add_argument('--replacets', action='store_true',
                     help='Replace typical ts parts of filename\
                     (ts, tsopt, etc.) with irc. Otherwise, irc\
                     will be added to the filename')
+parser.add_argument('--nochk', action='store_true',
+                    help='Do not look for TS checkpoint file for'
+                    + ' force constants and geometry')
 args = parser.parse_args()
 
 # TODO This is probably not the correct way to read from stdin.
@@ -37,27 +40,35 @@ except:
 if not args.fwd and not args.rev:
     args.fwd = args.rev = True
 
+
 for f in args.files:
     l = log.LOGFile(f)
-    geom = l.geometry
     ircfiles = l.files.ts_to_irc(replace=args.replacets)
+
+    def without_chk():
+        l.keywords = [l.lot, ('irc(%s,calcfc,maxcycle=%i,maxpoints=%i,'
+                              + 'stepsize=%i)') % (e, args.maxcycle,
+                                                   args.maxpoints,
+                                                   args.stepsize), args.extra]
+
+    def with_chk():
+        shutil.copy(l.files.chk, ircfiles[d].chk)
+        print('%s copied to %s.' % (l.files.chk, ircfiles[d].chk))
+        l.geometry = None
+        l.keywords = [l.lot, ('irc(%s,rcfc,maxcycle=%i,maxpoints=%i,'
+                              + 'stepsize=%i)') % (e, args.maxcycle,
+                                                   args.maxpoints,
+                                                   args.stepsize),
+                      'geom=checkpoint', args.extra]
+
     for d, e in [('fwd', 'forward'), ('rev', 'reverse')]:
         if getattr(args, d):
-            try:
-                shutil.copy(l.files.chk, ircfiles[d].chk)
-                print('%s copied to %s.' % (l.files.chk, ircfiles[d].chk))
-                l.geometry = None
-                l.keywords = [
-                    l.lot,
-                    ('irc(%s,rcfc,maxcycle=%i,maxpoints=%i,' + 'stepsize=%i)')
-                    % (e, args.maxcycle, args.maxpoints, args.stepsize),
-                    'geom=checkpoint', args.extra]
-            except:
-                l.keywords = [
-                    l.lot,
-                    ('irc(%s,calcfc,maxcycle=%i,maxpoints=%i,'
-                     + 'stepsize=%i)')
-                    % (e, args.maxcycle, args.maxpoints, args.stepsize),
-                    args.extra]
+            if args.nochk:
+                without_chk()
+            else:
+                try:
+                    with_chk()
+                except:
+                    without_chk()
             l.write_input(ircfiles[d].com)
             print('%s written.' % ircfiles[d].com)
