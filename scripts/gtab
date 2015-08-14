@@ -6,6 +6,7 @@ import sys
 from gaupy.log import LOGFile
 from gaupy.custom import sixfour
 import logging
+from glob import glob
 
 parser = argparse.ArgumentParser('Tabulate parsed output from Gaussian '
                                  + 'output files.')
@@ -38,7 +39,10 @@ args = parser.parse_args()
 try:
     files = args.files.read().split()
 except:
-    files = args.files
+    if not args.files:
+        files = glob('*log')
+    else:
+        files = args.files
 
 columns = ['file', 'nimag', 'lowest_frequency', 'irc.length', 'error']
 layout = ['fit+2', '%-5s', '%-7i', '%-7s', 'fit+2']
