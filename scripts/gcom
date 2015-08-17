@@ -4,7 +4,9 @@ import argparse
 import gaupy.filenames as filenames
 
 parser = argparse.ArgumentParser(
-    'Convert xyz file or Avogadro gau file to Gaussian input file.')
+    'Convert xyz file or Avogadro gau file to Gaussian input file.'
+    + 'Raw cartesian coordinates w/o comment and number of atoms will work,'
+    + ' save them as xyz.')
 parser.add_argument('--nproc', '-n', default='8',
                     help='Number of processors')
 parser.add_argument('--mem', default='16GB',
@@ -24,9 +26,13 @@ parser.add_argument('files', nargs='*', help='xyz or gau files')
 args = parser.parse_args()
 
 for f in args.files:
+    lines = open(f).readlines()
     fs = filenames.GaussianFile(f)
     if f.endswith('xyz'):
-        skiplines = 2
+        if len(lines[0].split()) == 4:
+            skiplines = 0
+        else:
+            skiplines = 2
     elif f.endswith('gau'):
         skiplines = 5
     open(fs.com, 'w').write('''%%nproc=%(nproc)s
@@ -40,7 +46,7 @@ comment
 %(geometry)s
 
     ''' % {'nproc': args.nproc,
-            'mem': args.mem,
+           'mem': args.mem,
            'chk': fs.root,
            'method': args.method,
            'basis': '/' + args.basis if args.basis else '',
@@ -48,7 +54,7 @@ comment
            'opt': 'opt' if not args.spe else '',
            'freq': 'freq' if not args.spe else '',
            'charge': args.charge,
-           'geometry': ''.join(open(f).readlines()[skiplines:]),
+           'geometry': ''.join(lines[skiplines:]),
            'extra': args.extra
            })
     print(fs.com + ' written.')

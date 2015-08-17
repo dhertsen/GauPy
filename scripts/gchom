@@ -1,13 +1,15 @@
 #! /usr/bin/python
 
 import argparse
-import gaupy.filenames as filenames
+from gaupy.filenames import GaussianFile
 
 parser = argparse.ArgumentParser(
     'Change a Gaussian input file')
 parser.add_argument('--nproc', '-n', help='Number of processors')
 parser.add_argument('--mem', '-m', help='Memory')
 parser.add_argument('--route', '-r', help='Route section without #')
+parser.add_argument('--matchchk', '-c', action='store_true',
+                    help='Match %%chk and filename')
 parser.add_argument('files', nargs='*', help='com files')
 args = parser.parse_args()
 
@@ -23,6 +25,10 @@ for f in args.files:
         if '#' in line and args.route:
             start = line.find('#') + 1
             lines[i] = line[:start] + args.route + '\n'
+        if '%chk=' in line and args.matchchk:
+            ff = GaussianFile(f)
+            start = line.find('%chk=') + 5
+            lines[i] = line[:start] + ff.root + '\n'
     fo = open(f, 'w')
     fo.write(''.join(lines))
     fo.close()
