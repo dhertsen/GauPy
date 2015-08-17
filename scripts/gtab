@@ -4,7 +4,7 @@ import gaupy.table as table
 import argparse
 import sys
 from gaupy.log import LOGFile
-from gaupy.custom import sixfour
+from gaupy.custom import sixfour, korean
 import logging
 from glob import glob
 from time import time
@@ -71,6 +71,8 @@ def main():
     if args.type:
         if args.type == 'sixfour':
             parser = sixfour.SixFour
+        if args.type == 'korean':
+            parser = korean.SixThreeBicyclic
 
     if args.debug:
         logging.basicConfig(level='DEBUG', format='%(asctime)s %(message)s')

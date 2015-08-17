@@ -71,7 +71,12 @@ class Stoichiometry(object):
     def __getitem__(self, i):
         '''both Stoichio['C'] and Stoichio[6] will yield the number
         of carbon atoms'''
-        return self._array[utils.anum(i)]
+        try:
+            return self._array[utils.anum(i)]
+        # What happens if the number of Hf atoms is requested,
+        # but only atoms up to Cl are included?
+        except IndexError:
+            return 0
 
     def __eq__(self, other):
         '''numpy arrays, other stoichiometries or string representations
@@ -284,7 +289,7 @@ class SuperMolecule(mol.Molecule):
                     setattr(self, name, Match(u, self))
                     self.unparsed.remove(u)
                     logging.debug(
-                        'SuperMolecule.set_match(): pattern at atom %i' % u)
+                        'SuperMolecule.set_match(): %s at atom %i' % (name, u))
                     return
             else:
                 logging.debug(
@@ -295,6 +300,9 @@ class SuperMolecule(mol.Molecule):
                 if pattern in self.unparsed:
                     setattr(self, name, Match(pattern, self))
                     self.unparsed.remove(pattern)
+                    logging.debug(
+                        'SuperMolecule.set_match(): %s at atom %i' % (
+                            name, pattern))
                 else:
                     logging.warning(
                         'SuperMolecule.set_match(): '
