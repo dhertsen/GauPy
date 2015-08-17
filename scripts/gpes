@@ -15,6 +15,7 @@ parser.add_argument('--stepmin', help='Minimum of step number axis', type=int)
 parser.add_argument('--stepmax', help='Maximum of step number axis', type=int)
 parser.add_argument('--emin', help='Minimum of energy axis', type=float)
 parser.add_argument('--emax', help='Maximum of energy axis', type=float)
+parser.add_argument('--out', '-o', help='Filename of output (default: only show)')
 args = parser.parse_args()
 
 l = LOGFile(args.file)
@@ -43,5 +44,9 @@ if args.emin is not None:
 if args.emax is not None:
     plt.gca().set_ylim(bottom=args.emax)
 
-plt.gcf().set_size_inches([1, 1])
-plt.show()
+if args.out:
+    plt.gcf().set_size_inches([5, 5])
+    plt.savefig(args.out)
+else:
+    plt.gcf().set_size_inches([1, 1])
+    plt.show()

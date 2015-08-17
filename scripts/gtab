@@ -7,72 +7,86 @@ from gaupy.log import LOGFile
 from gaupy.custom import sixfour
 import logging
 from glob import glob
+from time import time
 
-parser = argparse.ArgumentParser('Tabulate parsed output from Gaussian '
-                                 + 'output files.')
-parser.add_argument('--sort', '-s', action='store_true',
-                    help='Sort reactions')
-parser.add_argument('--running', '-r', action='store_true',
-                    help='Check job state (R: running, Q: queued)')
-parser.add_argument('--gibbs', '-g', '-G', action='store_true',
-                    help='Print relative Gibbs free energy (kJ/mol)')
-parser.add_argument('--enthalpy', '-H', action='store_true',
-                    help='Print relative enthalpies (kJ/mol)')
-parser.add_argument('--rmsd', action='store_true',
-                    help='Print RMSDs')
-parser.add_argument('--partitionenergies', '-b', action='store_true',
-                    help='Calculate relative Gibbs free energies/enthalpies '
-                    + 'and RMSDs per partition, only if -gs')
-parser.add_argument('--method', '-m', action='store_true',
-                    help='Print method and basis set')
-parser.add_argument('--extra', '-x', action='append', default=[],
-                    help='Print extra column '
-                    + '(fetch attribute from log.LOGFile object)')
-parser.add_argument('--type', '-t', help='Use different parsing class')
-parser.add_argument('--debug', help='Print debug messages',
-                    action='store_true')
-parser.add_argument('files', nargs='*', help='Gaussian output files'
-                    + ' (default: *log)')
-args = parser.parse_args()
+def main():
+    parser = argparse.ArgumentParser('Tabulate parsed output from Gaussian '
+                                     + 'output files.')
+    parser.add_argument('--sort', '-s', action='store_true',
+                        help='Sort reactions')
+    parser.add_argument('--running', '-r', action='store_true',
+                        help='Check job state (R: running, Q: queued)')
+    parser.add_argument('--gibbs', '-g', '-G', action='store_true',
+                        help='Print relative Gibbs free energy (kJ/mol)')
+    parser.add_argument('--enthalpy', '-H', action='store_true',
+                        help='Print relative enthalpies (kJ/mol)')
+    parser.add_argument('--rmsd', action='store_true',
+                        help='Print RMSDs')
+    parser.add_argument('--partitionenergies', '-b', action='store_true',
+                        help='Calculate relative Gibbs free energies/enthalpies '
+                        + 'and RMSDs per partition, only if -gs')
+    parser.add_argument('--method', '-m', action='store_true',
+                        help='Print method and basis set')
+    parser.add_argument('--extra', '-x', action='append', default=[],
+                        help='Print extra column '
+                        + '(fetch attribute from log.LOGFile object)')
+    parser.add_argument('--type', '-t', help='Use different parsing class')
+    parser.add_argument('--debug', help='Print debug messages',
+                        action='store_true')
+    parser.add_argument('files', nargs='*', help='Gaussian output files'
+                        + ' (default: *log)')
+    args = parser.parse_args()
 
-if not args.files:
-    files = glob('*log')
-else:
-    files = args.files
+    if not args.files:
+        files = glob('*log')
+    else:
+        files = args.files
 
-columns = ['file', 'nimag', 'lowest_frequency', 'irc.length', 'error']
-layout = ['fit+2', '%-5s', '%-7i', '%-7s', 'fit+2']
-if args.method:
-    columns.insert(1, 'method')
-    layout.insert(1, '%-8s')
-    columns.insert(2, 'basis')
-    layout.insert(2, '%-15s')
-if args.enthalpy:
-    columns.insert(1, 'relenthalpy')
-    layout.insert(1, '%-8.1f')
-if args.gibbs:
-    columns.insert(1, 'relgibbs')
-    layout.insert(1, '%-8.1f')
-if args.rmsd:
-    columns.insert(-2, 'rmsd')
-    layout.insert(-2, '%-10.3e')
-if args.running:
-    columns.append('hpc')
-    layout.append('fit+2')
-    columns.append('cluster')
-    layout.append('fit+2')
-for x in args.extra:
-    columns.append(x)
-    layout.append('fit+2')
+    columns = ['file', 'nimag', 'lowest_frequency', 'irc.length', 'error']
+    layout = ['fit+2', '%-5s', '%-7i', '%-7s', 'fit+2']
+    if args.method:
+        columns.insert(1, 'method')
+        layout.insert(1, '%-8s')
+        columns.insert(2, 'basis')
+        layout.insert(2, '%-15s')
+    if args.enthalpy:
+        columns.insert(1, 'relenthalpy')
+        layout.insert(1, '%-8.1f')
+    if args.gibbs:
+        columns.insert(1, 'relgibbs')
+        layout.insert(1, '%-8.1f')
+    if args.rmsd:
+        columns.insert(-2, 'rmsd')
+        layout.insert(-2, '%-10.3e')
+    if args.running:
+        columns.append('hpc')
+        layout.append('fit+2')
+        columns.append('cluster')
+        layout.append('fit+2')
+    for x in args.extra:
+        columns.append(x)
+        layout.append('fit+2')
 
-parser = LOGFile
-if args.type:
-    if args.type == 'sixfour':
-        parser = sixfour.SixFour
+    parser = LOGFile
+    if args.type:
+        if args.type == 'sixfour':
+            parser = sixfour.SixFour
 
-if args.debug:
-    logging.basicConfig(level='DEBUG', format='%(asctime)s %(message)s')
+    if args.debug:
+        logging.basicConfig(level='DEBUG', format='%(asctime)s %(message)s')
+        start = time()
 
-print table.GaussianTable(files, columns, layout, partition=args.sort,
-                          partition_energies_rmsds=args.partitionenergies,
-                          type=parser)
+    print table.GaussianTable(files, columns, layout,
+            partition=args.sort,
+            partition_energies_rmsds=args.partitionenergies,
+            type=parser)
+
+    if args.debug:
+        timeperfile = (time() - start) / len(files)
+        logging.debug('gtab: %s seconds per output file' % timeperfile)
+
+if __name__ == '__main__':
+    try:
+        main()
+    except ValueError:
+        print('No Gaussian output files!')
