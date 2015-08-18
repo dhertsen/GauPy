@@ -505,7 +505,15 @@ class LOGFile(object):
             (:attr:`gaussian.log.LOGFile._summary_block`) are also only
             constructed after their first request.
         '''
-        return open(self.files.log).read()
+        try:
+            return open(self.files.log).read()
+        except:
+            return
+
+    @cached
+    def exists(self):
+        if self._full:
+            return True
 
     @cached
     def _summary_block(self):

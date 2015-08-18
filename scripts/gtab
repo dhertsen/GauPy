@@ -10,7 +10,7 @@ from glob import glob
 from time import time
 
 logger = logging.getLogger()
-logging.basicConfig(format='%(asctime)s %(message)s')
+logging.basicConfig(format='%(message)s')
 
 def main():
 
@@ -101,10 +101,10 @@ def main():
 
     if args.debug:
         timeperfile = (time() - start) / len(files)
-        logging.debug('gtab: %s seconds per output file' % timeperfile)
+        logger.debug('gtab: %s seconds per output file' % timeperfile)
 
 if __name__ == '__main__':
     try:
         main()
     except ValueError:
-        print('No Gaussian output files!')
+        logger.error('No Gaussian output files!')
