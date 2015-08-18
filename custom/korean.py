@@ -1,6 +1,6 @@
 import gaupy.log
 import gaupy.molecules
-from gaupy.patterns import h, c, n
+from gaupy.patterns import h, c, n, o
 import molmod.molecular_graphs as g
 import molmod.graphs as gr
 from collections import OrderedDict
@@ -20,29 +20,75 @@ __all__ = ['SixThreeBicyclic']
 class SixThreeBicyclic(gaupy.log.LOGFile):
 
     def __init__(self, filename):
+        logging.debug('SixThreeBicyclic.__init__(): %s' % filename)
         super(SixThreeBicyclic, self).__init__(filename)
-
         self.scalings = [1.0, 1.6]
+        try:
+            self._nucleophile()
+        except:
+            logging.error('%s SixThreeBicyclic.__init__(): nucleophile could not be parsed.' % self.file)
+        try:
+            self._classify()
+        except:
+            logging.error('%s SixThreeBicyclic.__init__(): system could not be classified.' % self.file)
+        try:
+            self._pucker()
+        except:
+            logging.error('%s SixThreeBicyclic.__init__(): pucker could not be determined.' % self.file)
+        try:
+            self._species()
+        except:
+            logging.error('%s SixThreeBicyclic.__init__(): species could not be determined.' % self.file)
 
-        self._system()
-        self._classify()
-        self._pucker()
-        self._species()
+    def _nucleophile(self):
 
-    def _system(self):
-        # nucleophile
+        # determination of nucleophile based on stereochemistry,
+        # regardless of the number of explicit CH3CN molecules
+        hcn = self.stoichiometry['H'] - self.stoichiometry['C'] - self.stoichiometry['N'] 
+        os = self.stoichiometry['O'] + self.stoichiometry['S']
+        hcrat = self.stoichiometry['H'] / self.stoichiometry['C']
+        logging.debug('SixThreeBicyclic._nucleophile(): hcn = %s' % hcn)
+        logging.debug('SixThreeBicyclic._nucleophile(): os = %s' % os)
+        logging.debug('SixThreeBicyclic._nucleophile(): hcrat = %s' % hcrat)
+        
         if self.stoichiometry['Cl']:
             self.nucleophile = 'Cl'
             self.attacking_atom = 17
-        else:
-            C = self.stoichiometry['C']
-            N = self.stoichiometry['N']
-            if (C - N) == 10:
+        elif self.stoichiometry['Br']:
+            self.nucleophile = 'Br'
+            self.attacking_atom = 35
+        elif hcn == 2:
+            if os == 0:
                 self.nucleophile = 'N3'
                 self.attacking_atom = 7
-            elif (C - N) == 13:
+        elif hcn == 3:
+            if os == 0:
                 self.nucleophile = 'CN'
                 self.attacking_atom = 6
+            elif os == 1:
+                self.nucleophile = 'SCN'
+                self.attacking_atom = 16
+        elif hcn == 5:
+            if os == 2:
+                self.nucleophile = 'acryl'
+                self.attacking_atom = 8
+        elif hcn == 6:
+            if os == 0:
+                self.nucleophile = 'NH2'
+                self.attacking_atom = 7
+            elif os == 1:
+                self.nucleophile = 'OH'
+                self.attacking_atom = 8
+        elif hcn == 7:
+            if os == 1:
+                # holds at least up to 6 CH3CN
+                if hcrat > 1.5:
+                    self.nucleophile = 'OMe'
+                    self.attacking_atom = 8
+                elif hcrat < 1.5:
+                    self.nucleophile = 'OPh'
+                    self.attacking_atom = 8
+        logging.debug('SixThreeBicyclic._system(): nucleophile: %s' % self.nucleophile)
 
     def _classify(self):
         p = OrderedDict()
@@ -50,13 +96,20 @@ class SixThreeBicyclic(gaupy.log.LOGFile):
         p['ph'] = gr.CritAnd(c, g.HasNeighbors(c, c, c))
         self.geometry.set_matches(p)
 
+        if self.nucleophile == 'OPh':
+            # find the O just to check which ph was parsed
+            self.geometry.set_match('o', o)
+            # wrong phenyl group selected, select the other one
+            if self.geometry.dist(self.geometry.ph.n, self.geometry.o.n) < 3.0:
+                self.geometry.set_match('ph', gr.CritAnd(c, g.HasNeighbors(c, c, c)))
+
         # remove phenyl group to speed up pattern searching
         phgroup = self.geometry.closest(6, self.geometry.ph.n, n=2)
         phgroup += [self.geometry.closest(6, i, exclude=[self.geometry.ph.n])
                     for i in phgroup]
         phgroup += [self.geometry.closest(6, phgroup[-1], exclude=phgroup)]
         logging.debug(
-            'korean.SixThreeBicyclic._classify(): phenyl group %s' % (
+            'SixThreeBicyclic._classify(): phenyl group %s' % (
                 phgroup + [self.geometry.ph.n]))
         for i in phgroup:
             self.geometry.unparsed.remove(i)
@@ -82,10 +135,13 @@ class SixThreeBicyclic(gaupy.log.LOGFile):
         self.geometry.set_match(
             'c6', self.geometry.closest(
                 6, self.geometry.nplus.n, only=self.geometry.unparsed))
-        self.geometry.set_match(
-            'nu', self.geometry.closest(
-                self.attacking_atom, self.geometry.c5.n,
-                only=self.geometry.unparsed))
+        if self.attacking_atom:
+            self.geometry.set_match(
+                'nu', self.geometry.closest(
+                    self.attacking_atom, self.geometry.c5.n,
+                    only=self.geometry.unparsed))
+        else:
+            logging.debug('SixThreeBicyclic._classify(): nu not parsed, since no nucleophile was found.')
 
     def _pucker(self):
         middle = (self.geometry.c2.xyz + self.geometry.c4.xyz) / 2

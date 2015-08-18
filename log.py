@@ -1246,7 +1246,7 @@ class LOGFile(object):
               treshold[1] times the VDW radius for these atoms
         search can be limited to a subset of atoms via only
         '''
-        logging.debug('log.LOGFile.reacing')
+        logging.debug('log.LOGFile.reacting')
         # limit search to these atoms
         if not only:
             only = range(self.geometry.size)

@@ -9,7 +9,11 @@ import logging
 from glob import glob
 from time import time
 
+logger = logging.getLogger()
+logging.basicConfig(format='%(asctime)s %(message)s')
+
 def main():
+
     parser = argparse.ArgumentParser('Tabulate parsed output from Gaussian '
                                      + 'output files.')
     parser.add_argument('--sort', '-s', action='store_true',
@@ -36,6 +40,10 @@ def main():
     parser.add_argument('files', nargs='*', help='Gaussian output files'
                         + ' (default: *log)')
     args = parser.parse_args()
+
+    if args.debug:
+        logger.setLevel(logging.DEBUG)
+        start = time()
 
     if not args.files:
         files = glob('*log')
@@ -73,10 +81,6 @@ def main():
             parser = sixfour.SixFour
         if args.type == 'korean':
             parser = korean.SixThreeBicyclic
-
-    if args.debug:
-        logging.basicConfig(level='DEBUG', format='%(asctime)s %(message)s')
-        start = time()
 
     print table.GaussianTable(files, columns, layout,
             partition=args.sort,
