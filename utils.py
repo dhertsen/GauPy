@@ -38,7 +38,7 @@ def get_full_attr(obj, attr):
             if '[' in attr and ']' in attr:
                 listname, index = attr.split('[', 1)
                 index = index.split(']', 1)[0]
-                return getattr(obj, listname)[index]
+                return getattr(obj, listname)[int(index)]
             else:
                 return getattr(obj, attr)
         else:

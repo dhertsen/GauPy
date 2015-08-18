@@ -47,6 +47,8 @@ class GaussianTable(object):
     alias = {'gibbs': 'G', 'electronic': 'E', 'irc.length': '#IRC',
              'gibbs_relative': 'Grel', 'electronic_relative': 'Erel',
              'nimag': '#IM', 'lowest_frequency': 'FREQ', 'relgibbs': 'Grel',
+             'frequencies[1]': 'FREQ2', 'frequencies[2]': 'FREQ3',
+             'frequencies[3]': 'FREQ4', 'frequencies[4]': 'FREQ5',
              'relenthalpy': 'Hrel', 'temperature': 'T', 'pressure': 'P',
              'multiplicity': 'MULTI'}
 

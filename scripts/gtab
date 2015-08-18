@@ -37,6 +37,8 @@ def main():
     parser.add_argument('--type', '-t', help='Use different parsing class')
     parser.add_argument('--debug', help='Print debug messages',
                         action='store_true')
+    parser.add_argument('--extrafreq', action='store_true',
+                        help='Smallest five frequencies')
     parser.add_argument('files', nargs='*', help='Gaussian output files'
                         + ' (default: *log)')
     args = parser.parse_args()
@@ -52,6 +54,15 @@ def main():
 
     columns = ['file', 'nimag', 'lowest_frequency', 'irc.length', 'error']
     layout = ['fit+2', '%-5s', '%-7i', '%-7s', 'fit+2']
+    if args.extrafreq:
+        columns.insert(3, 'frequencies[1]')
+        columns.insert(4, 'frequencies[2]')
+        columns.insert(5, 'frequencies[3]')
+        columns.insert(6, 'frequencies[4]')
+        layout.insert(3, '%-7i')
+        layout.insert(4, '%-7i')
+        layout.insert(5, '%-7i')
+        layout.insert(6, '%-7i')
     if args.method:
         columns.insert(1, 'method')
         layout.insert(1, '%-8s')
