@@ -30,10 +30,17 @@ def get_full_attr(obj, attr):
     '''
     Make constructs like _getattr(somobject, 'a.b.c.d') possible. Whenever
     there is an error fetching the terminal attribute, None is returned.
+    Should also work for unnested lists:
+    get_full_attr(someobject, 'energies[3]')
     '''
     try:
         if '.' not in attr:
-            return getattr(obj, attr)
+            if '[' in attr and ']' in attr:
+                listname, index = attr.split('[', 1)
+                index = index.split(']', 1)[0]
+                return getattr(obj, listname)[index]
+            else:
+                return getattr(obj, attr)
         else:
             superattr, subattr = attr.split('.', 1)
             return get_full_attr(getattr(obj, superattr), subattr)

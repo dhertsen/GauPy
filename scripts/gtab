@@ -71,6 +71,7 @@ def main():
         layout.append('fit+2')
         columns.append('cluster')
         layout.append('fit+2')
+
     for x in args.extra:
         columns.append(x)
         layout.append('fit+2')

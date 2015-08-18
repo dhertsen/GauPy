@@ -940,13 +940,6 @@ class LOGFile(object):
             return float('nan')
 
     @cached
-    def negative_frequencies(self):
-        try:
-            return [f for f in self.frequencies if f < 0]
-        except:
-            return []
-
-    @cached
     def chk_consistent(self):
         '''
         Return ``True`` if the checkpoint file specified in the input file
