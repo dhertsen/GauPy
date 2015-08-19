@@ -62,6 +62,17 @@ class GaussianFile(object):
             newsplit = [s for s in self.newsplit if s != el]
         return GaussianFile(self.directory + '-'.join(newsplit))
 
+    def set(self, index, element):
+        newsplit = self.split[:]
+        newsplit[index] = element
+        return GaussianFile(self.directory + '-'.join(newsplit))
+
+    def startswith(self, string):
+        return self.root.startswith(string)
+
+    def endswith(self, string):
+        return self.root.endswith(string)
+
     def ts_to_irc(self, replace=False):
         '''
         yields two values, cause a single TS yields two IRCs

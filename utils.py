@@ -1,6 +1,11 @@
 '''Common functions'''
 import warnings
 from ast import literal_eval
+import shutil
+import logging
+
+logger = logging.getLogger()
+logging.basicConfig(format='%(message)s')
 
 # TODO import gaupy.utils in interactive session throws an exception
 
@@ -113,6 +118,14 @@ def liteval(string):
         return literal_eval(string)
     except:
         return string
+
+
+def copy(src, dst):
+    try:
+        shutil.copy(src, dst)
+        logger.warning('Copied %s to %s.' % (src, dst))
+    except:
+        logger.error('Error: failed to copy %s to %s' %(src, dst))
 
 
 class cached(object):

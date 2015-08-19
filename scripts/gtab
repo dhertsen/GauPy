@@ -2,7 +2,6 @@
 
 import gaupy.table as table
 import argparse
-import sys
 from gaupy.log import LOGFile
 from gaupy.custom import sixfour, korean
 import logging
@@ -11,6 +10,7 @@ from time import time
 
 logger = logging.getLogger()
 logging.basicConfig(format='%(message)s')
+
 
 def main():
 
@@ -27,7 +27,7 @@ def main():
     parser.add_argument('--rmsd', action='store_true',
                         help='Print RMSDs')
     parser.add_argument('--partitionenergies', '-b', action='store_true',
-                        help='Calculate relative Gibbs free energies/enthalpies '
+                        help='Relative Gibbs free energies/enthalpies '
                         + 'and RMSDs per partition, only if -gs')
     parser.add_argument('--method', '-m', action='store_true',
                         help='Print method and basis set')
@@ -37,6 +37,8 @@ def main():
     parser.add_argument('--type', '-t', help='Use different parsing class')
     parser.add_argument('--debug', help='Print debug messages',
                         action='store_true')
+    parser.add_argument('--time', action='store_true',
+                        help='Print time per output file')
     parser.add_argument('--extrafreq', action='store_true',
                         help='Smallest five frequencies')
     parser.add_argument('files', nargs='*', help='Gaussian output files'
@@ -45,6 +47,7 @@ def main():
 
     if args.debug:
         logger.setLevel(logging.DEBUG)
+    if args.time:
         start = time()
 
     if not args.files:
@@ -94,14 +97,14 @@ def main():
         if args.type == 'korean':
             parser = korean.SixThreeBicyclic
 
-    print table.GaussianTable(files, columns, layout,
-            partition=args.sort,
-            partition_energies_rmsds=args.partitionenergies,
-            type=parser)
+    print table.GaussianTable(files, columns, layout, partition=args.sort,
+                              partition_energies_rmsds=args.partitionenergies,
+                              type=parser)
 
-    if args.debug:
+    if args.time:
         timeperfile = (time() - start) / len(files)
-        logger.debug('gtab: %s seconds per output file' % timeperfile)
+        print('%.3fs per output file' % timeperfile)
+
 
 if __name__ == '__main__':
     try:
