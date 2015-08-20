@@ -39,15 +39,17 @@ def running(clusters=clusters):
             for option in (('job_name', 'Job_Name'),
                            ('job_state', 'job_state'),
                            ('walltime_used', 'resources_used.walltime'),
+                           ('walltime_requested', 'Resource_List.walltime'),
                            ('walltime_remaining', 'Walltime.Remaining')):
                 try:
                     calculation[option[0]] = re.search(option[1]
                                                        + ' = (.*)',
                                                        qstatf_output).group(1)
                 except:
-                    pass
+                    calculation[option[0]] = ''
 
             calculation['cluster'] = cluster
+            calculation['id'] = jobid
             calculations[calculation['job_name']] = calculation
 
     # Return a dictionary of running calculations
