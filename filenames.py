@@ -170,3 +170,7 @@ class GaussianFile(object):
             return max([len(f.root) for f in files])
         except:
             return max([len(cls(f).root) for f in files])
+
+    @classmethod
+    def remove_doubles(cls, files):
+        return list(set([cls(f).root for f in files]))
