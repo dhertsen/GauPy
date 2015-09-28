@@ -41,6 +41,9 @@ class GaussianFile(object):
         if extension not in ['root', 'base', 'directory', 'split']:
             return '%s.%s' % (self.root, extension)
 
+    def without_dir(self, extension):
+        return '%s.%s' % (self.base, extension)
+
     def get_all(self):
         return glob.iglob('%s.*' % self.root)
 
