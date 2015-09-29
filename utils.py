@@ -123,7 +123,7 @@ def liteval(string):
 def copy(src, dst):
     try:
         shutil.copy(src, dst)
-        logger.warning('Copied %s to %s.' % (src, dst))
+        logger.warning('Copied %s to %s' % (src, dst))
     except:
         logger.error('Error: failed to copy %s to %s' %(src, dst))
 

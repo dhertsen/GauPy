@@ -4,6 +4,7 @@ import gaupy.table as table
 import argparse
 from gaupy.log import LOGFile
 from gaupy.custom import sixfour, korean
+from gaupy.filenames import GaussianFile
 import logging
 from glob import glob
 from time import time
@@ -53,7 +54,7 @@ def main():
     if not args.files:
         files = glob('*log')
     else:
-        files = args.files
+        files = GaussianFile.remove_doubles(args.files)
 
     columns = ['file', 'nimag', 'lowest_frequency', 'irc.length', 'error']
     layout = ['fit+2', '%-5s', '%-7i', '%-7s', 'fit+2']

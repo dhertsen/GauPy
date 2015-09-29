@@ -41,6 +41,9 @@ class GaussianFile(object):
         if extension not in ['root', 'base', 'directory', 'split']:
             return '%s.%s' % (self.root, extension)
 
+    def without_dir(self, extension):
+        return '%s.%s' % (self.base, extension)
+
     def get_all(self):
         return glob.iglob('%s.*' % self.root)
 
@@ -170,3 +173,7 @@ class GaussianFile(object):
             return max([len(f.root) for f in files])
         except:
             return max([len(cls(f).root) for f in files])
+
+    @classmethod
+    def remove_doubles(cls, files):
+        return list(set([cls(f).root for f in files]))
