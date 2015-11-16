@@ -845,6 +845,13 @@ class LOGFile(object):
             'Sum of electronic and thermal Free Energies')
 
     @cached
+    def entropy(self):
+        '''
+        Entropy (Ha), calculated as (1/T) * (H - G)
+        '''
+        return (1.0 / self.temperature) * (self.enthalpy - self.gibbs)
+
+    @cached
     def _temperature_and_pressure(self):
         '''
         (temperature (K), pressure (atm)) tuple, used in parsing
