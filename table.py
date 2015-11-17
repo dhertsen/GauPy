@@ -53,6 +53,7 @@ class GaussianTable(object):
              'multiplicity': 'MULTI'}
 
     def __init__(self, logs, columns, layout, partition=False,
+                 partition_numbers=False,
                  partition_energies_rmsds=False, type=log.LOGFile):
         self.type = type
         self.logs = [l for l in self.type.parse_all(*logs) if l.exists]
@@ -67,7 +68,7 @@ class GaussianTable(object):
         self.caption = ''.join([l.string % self.alias.get(c, c.upper())
                                 for c, l in zip(self.columns, self.layout)])
         self.line = self.width * '-'
-        self._rows(partition=partition,
+        self._rows(partition=partition, partition_numbers=partition_numbers,
                    partition_energies_rmsds=partition_energies_rmsds)
 
     def _layout(self, layout):
@@ -112,10 +113,11 @@ class GaussianTable(object):
         return(''.join([l.format(utils.get_full_attr(logfile, c))
                         for c, l in zip(self.columns, self.layout)]))
 
-    def _rows(self, partition, partition_energies_rmsds):
+    def _rows(self, partition, partition_numbers, partition_energies_rmsds):
         self.rows = [self.line, self.caption, self.line]
         if partition:
-            for p in self.type.partition(self.logs):
+            for p in self.type.partition(self.logs,
+                                         group_by_number=partition_numbers):
                 if partition_energies_rmsds:
                     self.type.set_relative_energies(p)
                     self.type.set_rmsds(p)

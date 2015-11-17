@@ -19,6 +19,8 @@ def main():
                                      + 'output files.')
     parser.add_argument('--sort', '-s', action='store_true',
                         help='Sort reactions')
+    parser.add_argument('--groupbynumber', '-n', action='store_true',
+                        help='Group reactions by number')
     parser.add_argument('--running', '-r', action='store_true',
                         help='Check job state (R: running, Q: queued)')
     parser.add_argument('--gibbs', '-g', '-G', action='store_true',
@@ -99,6 +101,7 @@ def main():
             parser = korean.SixThreeBicyclic
 
     print table.GaussianTable(files, columns, layout, partition=args.sort,
+                              partition_numbers=args.groupbynumber,
                               partition_energies_rmsds=args.partitionenergies,
                               type=parser)
 

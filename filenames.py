@@ -15,10 +15,11 @@ class GaussianFile(object):
 
     cplx_patterns = ['fwd', 'rev', 'react', 'int', 'prc', 'prod', 'product',
                      'intermediate', 'reactant', 'im1', 'im2', 'Prod',
-                      'React']
+                     'React']
     irc_patterns = ['irc' + x for x in cplx_patterns]
     ts_patterns = ['ts', 'ts1', 'ts2', 'tsopt', 'TS1', 'TS2', 'TS3']
     reaction_patterns = (cplx_patterns + irc_patterns + ts_patterns + ['spe'])
+    number_pattern = False
 
     def __init__(self, name):
         '''
@@ -149,15 +150,26 @@ class GaussianFile(object):
         '''other must be GaussianFile'''
         unique_self = set(self.split) - set(self.reaction_patterns)
         unique_other = set(other.split) - set(self.reaction_patterns)
-        return unique_self == unique_other
+        if unique_self == unique_other:
+            return True
+        elif self.number_pattern:
+            # if they differ only in a couple of numbers
+            if all([x.isdigit() for x in unique_self ^ unique_other]):
+                return True
+            else:
+                return False
+        else:
+            return False
 
     @classmethod
-    def partition(cls, files, add_patterns=[], patterns=[]):
+    def partition(cls, files, add_patterns=[], patterns=[],
+                  group_by_number=False):
         # haalt ook dubbels eruit
         # is een generator
         if patterns:
             cls.reaction_patterns = patterns
         cls.reaction_patterns += add_patterns
+        cls.number_pattern = group_by_number
 
         l = set(files)
         while l:
