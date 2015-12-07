@@ -2,7 +2,7 @@ import subprocess
 import re
 
 # Available clusters on the Stevin infrastructure
-clusters = ['raichu', 'delcatty', 'haunter', 'gastly', 'golett']
+clusters = ['raichu', 'delcatty', 'golett']
 
 
 def running(clusters=clusters):
