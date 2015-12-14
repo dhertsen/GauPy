@@ -897,9 +897,9 @@ class LOGFile(object):
         '''
         if 'irc' in self.route_section:
             ircpath = IRCPath(self)
-            ircoptions = self._options('irc')
-            for opt in ['maxcycle', 'stepsize', 'maxpoints']:
-                setattr(ircpath, opt, int(ircoptions[opt]))
+            ircpath.maxcycle = self._options('irc').get('maxcycle', 20)
+            ircpath.stepsize = self._options('irc').get('stepsize', 10)
+            ircpath.maxpoints = self._options('irc').get('maxpoints', 10)
             return ircpath
 
     @cached
