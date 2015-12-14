@@ -290,7 +290,8 @@ class SixFour(gaupy.log.LOGFile):
             self.exoendo = 'endo'
 
     @classmethod
-    def partition(cls, logs):
+    def partition(cls, logs, add_patterns=[], patterns=[],
+                  group_by_number=False):
         return super(SixFour, cls).partition(
             logs, add_patterns=['mirror', 'im1', 'im2', 'p', 'r',
                                 'reaction1', 'reaction2'])

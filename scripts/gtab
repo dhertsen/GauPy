@@ -3,7 +3,7 @@
 import gaupy.table as table
 import argparse
 from gaupy.log import LOGFile
-from gaupy.custom import sixfour, korean
+from gaupy.custom import sixfour, korean, phosphite
 from gaupy.filenames import GaussianFile
 import logging
 from glob import glob
@@ -99,6 +99,8 @@ def main():
             parser = sixfour.SixFour
         if args.type == 'korean':
             parser = korean.SixThreeBicyclic
+        if args.type == 'fos':
+            parser = phosphite.Phosphite
 
     print table.GaussianTable(files, columns, layout, partition=args.sort,
                               partition_numbers=args.groupbynumber,

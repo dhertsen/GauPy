@@ -195,7 +195,8 @@ class SixThreeBicyclic(gaupy.log.LOGFile):
                     self.species = '1'
 
     @classmethod
-    def partition(cls, logs):
+    def partition(cls, logs, add_patterns=[], patterns=[],
+                  group_by_number=False):
         return super(SixThreeBicyclic, cls).partition(
             logs, add_patterns=['tsi', 'tsii', '1', '2', '3', 'irc1', 'irc3',
                                 'irc2'])
