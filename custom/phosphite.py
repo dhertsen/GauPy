@@ -23,4 +23,4 @@ class Phosphite(gaupy.log.LOGFile):
     def partition(cls, logs, add_patterns=[], patterns=[],
                   group_by_number=False):
         return super(Phosphite, cls).partition(
-            logs, add_patterns=['ntms', 'otms'])
+            logs, add_patterns=['ntms', 'otms', 'prc', 'adduct', 'opt'])
