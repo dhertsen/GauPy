@@ -1077,6 +1077,13 @@ class LOGFile(object):
         return error
 
     @cached
+    def termination_count(self):
+        '''
+        Number of 'termination's
+        '''
+        return len(list(find_all(self._full, 'termination')))
+
+    @cached
     def stoichiometry(self):
         '''
         Stoichiometry
@@ -1115,7 +1122,7 @@ class LOGFile(object):
             return []
 
     @cached
-    def pred(self):
+    def predicted_last(self):
         '''
         Logarithm (base 10) of the absolute
         value of the last predicted energy change

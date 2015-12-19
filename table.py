@@ -50,7 +50,8 @@ class GaussianTable(object):
              'frequencies[1]': 'FREQ2', 'frequencies[2]': 'FREQ3',
              'frequencies[3]': 'FREQ4', 'frequencies[4]': 'FREQ5',
              'relenthalpy': 'Hrel', 'temperature': 'T', 'pressure': 'P',
-             'multiplicity': 'MULTI'}
+             'multiplicity': 'MULTI', 'termination_count': 'NTERM',
+             'predicted_last': 'PRED'}
 
     def __init__(self, logs, columns, layout, partition=False,
                  partition_numbers=False,

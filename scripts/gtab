@@ -44,6 +44,8 @@ def main():
                         help='Print time per output file')
     parser.add_argument('--extrafreq', action='store_true',
                         help='Smallest five frequencies')
+    parser.add_argument('--backup', '-B', action='store_true',
+                        help='Print relevant backup info')
     parser.add_argument('files', nargs='*', help='Gaussian output files'
                         + ' (default: *log)')
     args = parser.parse_args()
@@ -83,11 +85,20 @@ def main():
     if args.rmsd:
         columns.insert(-2, 'rmsd')
         layout.insert(-2, '%-10.3e')
-    if args.running:
+    if args.running or args.backup:
         columns.append('hpc')
         layout.append('fit+2')
         columns.append('cluster')
         layout.append('fit+2')
+    if args.backup:
+        del columns[1:3]
+        del layout[1:3]
+        del columns[2]
+        del layout[2]
+        columns.append('predicted_last')
+        layout.append('%-7.1f')
+        columns.append('termination_count')
+        layout.append('%-7i')
 
     for x in args.extra:
         columns.append(x)
