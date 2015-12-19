@@ -99,6 +99,8 @@ def main():
         layout.append('%-7.1f')
         columns.append('termination_count')
         layout.append('%-7i')
+        columns.append('steps')
+        layout.append('%-7i')
 
     for x in args.extra:
         columns.append(x)
