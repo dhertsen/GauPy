@@ -1121,7 +1121,7 @@ class LOGFile(object):
         value of the last predicted energy change
         '''
         try:
-            return round(log10(abs(self.predicted[-1])), 0)
+            return round(log10(abs(self.predicted[-1])), 1)
         except:
             return float('nan')
 
