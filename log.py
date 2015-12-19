@@ -11,6 +11,7 @@ import molmod.molecules as mol
 import molmod.units as units
 import molmod.bonds as bonds
 import logging
+from math import log10
 
 # Dirty trick to silence warnings of confliciting
 # modules on the HPC cluster and to silence NumPy
@@ -1094,6 +1095,33 @@ class LOGFile(object):
             nproc_index = self._full.find('%nproc')
             return re.search('%nproc=([0-9]*)', self._full[
                 nproc_index:nproc_index + 100]).group(1)
+        except:
+            return float('nan')
+
+    @cached
+    def predicted(self):
+        '''
+        Predicted energy changes in Hartree
+        '''
+        try:
+            predicted = []
+            for i in find_all(self._full, 'Predicted'):
+                begin = self._full.find('=', i) + 1
+                end = self._full.find('\n', begin)
+                predicted.append(
+                    float(self._full[begin:end].replace('D', 'E')))
+            return predicted
+        except:
+            return []
+
+    @cached
+    def pred(self):
+        '''
+        Logarithm (base 10) of the absolute
+        value of the last predicted energy change
+        '''
+        try:
+            return round(log10(abs(self.predicted[-1])), 0)
         except:
             return float('nan')
 
