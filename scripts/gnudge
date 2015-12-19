@@ -1,0 +1,80 @@
+#! /usr/bin/env python2.7
+
+import argparse
+from gaupy.log import LOGFile
+from gaupy.filenames import GaussianFile
+from gaupy.molecules import SuperMolecule
+import logging
+from glob import glob
+
+logger = logging.getLogger()
+logging.basicConfig(format='%(message)s')
+
+
+def main():
+
+    parser = argparse.ArgumentParser('Move atoms along the normal coordinates'
+                                     + ' of one of the three lowest lying'
+                                     + ' vibrational frequencies.')
+    parser.add_argument('--frequency', '-f', type=int, choices=[1, 2, 3],
+                        default=1, help='Which frequency (1=lowest)')
+    parser.add_argument('--amplitude', '-a', default=1.0, type=float,
+                        help='Amplitude of nudge')
+    parser.add_argument('--output', '-o',
+                        choices=['ends', 'movie'], default='ends',
+                        help='Create two files with forward and reverse nudges'
+                        + ' (ends) or write a movie (movie)')
+    parser.add_argument('--steps', '-s', type=int, default=100,
+                        help='Number of steps in a movie')
+    parser.add_argument('files', nargs='*', help='Gaussian output files'
+                        + ' (default: *log)')
+    parser.add_argument('--debug', help='Print debug messages',
+                        action='store_true')
+    args = parser.parse_args()
+
+    if args.debug:
+        logger.setLevel(logging.DEBUG)
+
+    if not args.files:
+        files = glob('*log')
+    else:
+        files = GaussianFile.remove_doubles(args.files)
+
+    for f in files:
+        l = LOGFile(f)
+        if args.output == 'ends':
+            fwd_coord = (l.standard_orientations[-1].coordinates
+                         + args.amplitude * l.normal_coordinates[
+                             args.frequency - 1])
+            rev_coord = (l.standard_orientations[-1].coordinates
+                         - args.amplitude * l.normal_coordinates[
+                             args.frequency - 1])
+            fwd_geom = SuperMolecule(numbers=l.geometry.numbers,
+                                     coordinates=fwd_coord)
+            rev_geom = SuperMolecule(numbers=l.geometry.numbers,
+                                     coordinates=rev_coord)
+            fwd_geom.to_xyz(l.files.add('nudgeforward').xyz)
+            rev_geom.to_xyz(l.files.add('nudgereverse').xyz)
+        elif args.output == 'movie':
+            steps = [l.normal_coordinates[args.frequency - 1] *
+                     (-args.amplitude + (i * args.amplitude * 2.0
+                                         / args.steps))
+                     for i in range(args.steps)]
+            geometries = [SuperMolecule(
+                numbers=l.geometry.numbers,
+                coordinates=l.standard_orientations[-1].coordinates + step)
+                for step in steps]
+            xyz = ''.join([g.to_string(header=True, comment=i) + '\n'
+                           for i, g in enumerate(geometries)])
+            fname = l.files.add('nudgemovie').xyz
+            f = open(fname, 'w')
+            f.write(xyz)
+            print(fname + ' written')
+            f.close()
+
+
+if __name__ == '__main__':
+    try:
+        main()
+    except ValueError:
+        logger.error('No Gaussian output files!')
