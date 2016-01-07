@@ -932,6 +932,12 @@ class LOGFile(object):
                 for freq_line in freq_lines:
                     frequencies.extend((freq_line.split()[2:]))
                 frequencies = map(float, frequencies)
+                # If opt(calcall) is specified, frequencies are reported in the
+                # optimisation section. If another, superfluous frequency
+                # calculation was performed afterwards, discard it.
+                if ('calcall' in self.route_section
+                        and 'freq' in self.route_section):
+                    frequencies = frequencies[:len(frequencies) / 2]
             except:
                 pass
         return frequencies
