@@ -15,7 +15,7 @@ class GaussianFile(object):
 
     cplx_patterns = ['fwd', 'rev', 'react', 'int', 'prc', 'prod', 'product',
                      'intermediate', 'reactant', 'im1', 'im2', 'Prod',
-                     'React', 'nudgeforward', 'nudgereverse']
+                     'React', 'nudgeforward', 'nudgereverse', 'adduct']
     irc_patterns = ['irc' + x for x in cplx_patterns]
     ts_patterns = ['ts', 'ts1', 'ts2', 'tsopt', 'TS1', 'TS2', 'TS3']
     reaction_patterns = (cplx_patterns + irc_patterns + ts_patterns + ['spe'])
