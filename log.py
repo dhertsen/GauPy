@@ -391,6 +391,10 @@ class LOGFile(object):
         end = csv.find('Dataset,history_charges')
         return map(float, csv[begin:end].split('\n')[2:-2])
 
+    @cached
+    def hi_charges(self):
+        return self.get_hi_charges()
+
     @classmethod
     def parse_all(cls, *pargs):
         '''
