@@ -139,7 +139,7 @@ class SuperMolecule(mol.Molecule):
         with open(filename) as f:
             return cls.from_string(f.read(), ignore_header=True)
 
-    def to_string(self, header=False, comment='', symbols=False):
+    def to_string(self, header=False, comment='', symbols=True):
         lines = []
         if header:
             lines += [str(self.size), str(comment)]
@@ -151,7 +151,7 @@ class SuperMolecule(mol.Molecule):
 
     def to_xyz(self, filename):
         with open(filename, 'w') as f:
-            string = self.to_string(header=True, symbols=True)
+            string = self.to_string(header=True)
             f.write(string)
             print('%s written' % filename)
 
