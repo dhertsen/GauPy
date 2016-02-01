@@ -1316,7 +1316,7 @@ class LOGFile(object):
             only = range(self.geometry.size)
         # normalize all force vectors
         normal = []
-        for vec in self.normal_coordinates:
+        for vec in self.normal_coordinates[0]:
             denom = np.linalg.norm(vec) or 1
             normal.append(vec / denom)
         reacting = []

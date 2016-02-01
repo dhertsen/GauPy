@@ -48,6 +48,8 @@ class SixFour(gaupy.log.LOGFile):
 
     def _classify(self):
 
+        logging.debug('start _classify()')
+
         # custom patterns
 
         os = gr.CritOr(o, s)
@@ -137,6 +139,8 @@ class SixFour(gaupy.log.LOGFile):
 
         self.geometry.set_matches(p)
 
+        logging.debug('end _classify()')
+
     def _cistrans(self):
 
         if 'ipr' in self.system:
@@ -216,6 +220,8 @@ class SixFour(gaupy.log.LOGFile):
         '''classify system: ts1, ts2, product, reactant, int
         product (imag), reactant (imag), int(imag), ts1(multi), ts2(multi),
         irc'''
+
+        logging.debug('start _species()')
 
         # irc eliminates all the rest
         if 'irc' in self.route_section:
