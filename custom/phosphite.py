@@ -1,6 +1,7 @@
 import gaupy.log
 import gaupy.molecules
-from gaupy.patterns import h, c, n
+from gaupy.patterns import h, c, n, p
+import molmod.graphs as gr
 import molmod.molecular_graphs as g
 from collections import OrderedDict
 import warnings
@@ -19,8 +20,10 @@ class Phosphite(gaupy.log.LOGFile):
     def __init__(self, filename):
         logging.debug('Phosphite.__init__(): %s' % filename)
         super(Phosphite, self).__init__(filename)
-        self._classify()
-        self.charges()
+        try:
+            self._classify()
+        except:
+            logging.error('Failed to classify %s' % self.file)
 
     @classmethod
     def partition(cls, logs, add_patterns=[], patterns=[],
@@ -30,11 +33,12 @@ class Phosphite(gaupy.log.LOGFile):
                                 'adductirc', 'prcirc', 'noirc', 'esma'])
 
     def _classify(self):
-        p = OrderedDict()
+        od = OrderedDict()
         self.geometry.initiate_match()
-        p['n'] = n
-        p['c2'] = g.HasNeighbors(n, c, h)
-        self.geometry.set_matches(p)
+        od['n'] = n
+        od['c2'] = gr.CritOr(g.HasNeighbors(n, c, h),
+                            g.HasNeighbors(n, c, h, p))
+        self.geometry.set_matches(od)
         self.geometry.set_match('c3', self.geometry.closest(
             6, self.geometry.c2.n, only=self.geometry.unparsed))
         self.geometry.set_match('c4', self.geometry.closest(
