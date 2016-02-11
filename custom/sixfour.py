@@ -43,6 +43,7 @@ class SixFour(gaupy.log.LOGFile):
                 self._meupdown()
                 self._hupdown()
                 self._rs()
+                #self.geometry.d1 = self.geometry.six_c2
         except:
             logging.error('Failed to classify %s' % self.file)
 

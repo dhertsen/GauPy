@@ -41,9 +41,14 @@ def get_full_attr(obj, attr):
     try:
         if '.' not in attr:
             if '[' in attr and ']' in attr:
-                listname, index = attr.split('[', 1)
-                index = index.split(']', 1)[0]
-                return getattr(obj, listname)[int(index)]
+                split = attr.split('[')
+                listname = split[0]
+                indices = split[1:]
+                indices = [int(i.replace(']', '')) for i in indices]
+                x = getattr(obj, listname)
+                for i in indices:
+                    x = x[i]
+                return x
             else:
                 return getattr(obj, attr)
         else:
