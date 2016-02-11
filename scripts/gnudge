@@ -21,9 +21,10 @@ def main():
     parser.add_argument('--amplitude', '-a', default=1.0, type=float,
                         help='Amplitude of nudge')
     parser.add_argument('--output', '-o',
-                        choices=['ends', 'movie'], default='ends',
-                        help='Create two files with forward and reverse nudges'
-                        + ' (ends) or write a movie (movie)')
+                        choices=['com', 'xyz', 'movie'], default='com',
+                        help='Create two Gaussian input (com) or xyz (xyz)'
+                        + ' files with forward and reverse nudges'
+                        + ' or write a movie (movie)')
     parser.add_argument('--steps', '-s', type=int, default=100,
                         help='Number of steps in a movie')
     parser.add_argument('files', nargs='*', help='Gaussian output files'
@@ -42,7 +43,7 @@ def main():
 
     for f in files:
         l = LOGFile(f)
-        if args.output == 'ends':
+        if args.output in ['com' or 'xyz']:
             fwd_coord = (l.standard_orientations[-1].coordinates
                          + args.amplitude * l.normal_coordinates[
                              args.frequency - 1])
@@ -53,8 +54,16 @@ def main():
                                      coordinates=fwd_coord)
             rev_geom = SuperMolecule(numbers=l.geometry.numbers,
                                      coordinates=rev_coord)
-            fwd_geom.to_xyz(l.files.add('nudgeforward').xyz)
-            rev_geom.to_xyz(l.files.add('nudgereverse').xyz)
+            fwd_file = l.files.add('nudgeforward')
+            rev_file = l.files.add('nudgereverse')
+            if args.output == 'xyz':
+                fwd_geom.to_xyz(fwd_file.xyz)
+                rev_geom.to_xyz(rev_file.xyz)
+            elif args.output == 'com':
+                l.geometry = fwd_geom
+                l.write_input(fwd_file)
+                l.geometry = rev_geom
+                l.write_input(rev_file)
         elif args.output == 'movie':
             steps = [l.normal_coordinates[args.frequency - 1] *
                      (-args.amplitude + (i * args.amplitude * 2.0

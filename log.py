@@ -340,6 +340,7 @@ class LOGFile(object):
         f = open(fn.com, 'w')
         f.write(self.to_input(fn.base))
         f.close()
+        print('%s written' % fn.com)
 
     def get_nbo_energy(self, atom1, atom2, debug=[]):
         '''
