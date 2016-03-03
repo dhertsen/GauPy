@@ -288,6 +288,8 @@ class LOGFile(object):
                 (charge) (multiplicity)
                 (geometry)
 
+                (modredundant)
+
                 (scrf_nonstandard_input)
 
             If ``filename=None``, ``files.base`` will be used for ``(chk)``,
@@ -316,6 +318,7 @@ class LOGFile(object):
                '%(comment)s\n\n'
                '%(charge)i %(multiplicity)i\n'
                '%(geometry_text)s\n\n'
+               '%(modredundant)s\n\n'
                '%(scrf)s\n\n')
         return inp % {'nproc': self.nproc,
                       'mem': self.memory,
@@ -325,6 +328,7 @@ class LOGFile(object):
                       'charge': self.charge,
                       'multiplicity': self.multiplicity,
                       'geometry_text': geometry,
+                      'modredundant': self.modredundant,
                       'scrf': self.scrf_nonstandard_input}
 
     def write_input(self, filename=None):
@@ -631,6 +635,22 @@ class LOGFile(object):
         Multiplicity (number of paired electrons + 1)
         '''
         return self._charge_and_multiplicity[1]
+
+    @cached
+    def modredundant(self):
+        '''
+        ModRedundant input section
+        '''
+        try:
+            if self.scan:
+                a = self._full.find('The following ModRedundant input')
+                b = self._full.find('\n', a) + 2
+                c = self._full.find('\n \n', b)
+                return self._full[b:c]
+            else:
+                return ''
+        except:
+            return ''
 
     @cached
     def geometries(self):
