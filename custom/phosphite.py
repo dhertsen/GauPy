@@ -30,7 +30,8 @@ class Phosphite(gaupy.log.LOGFile):
                   group_by_number=False):
         return super(Phosphite, cls).partition(
             logs, add_patterns=['ntms', 'otms', 'prc', 'adduct', 'opt',
-                                'adductirc', 'prcirc', 'noirc', 'esma'])
+                                'adductirc', 'prcirc', 'noirc', 'esma',
+                                'iprperpendicular', 'iprflat'])
 
     def _classify(self):
         od = OrderedDict()
