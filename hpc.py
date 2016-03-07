@@ -63,3 +63,4 @@ def set_status(*logfiles):
         if lf.file in r:
             lf.hpc = r[lf.file]['job_state']
             lf.cluster = r[lf.file]['cluster']
+            lf.jobid = r[lf.file]['id']
