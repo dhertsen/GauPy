@@ -43,7 +43,7 @@ def main():
 
     for f in files:
         l = LOGFile(f)
-        if args.output in ['com' or 'xyz']:
+        if args.output in ['com', 'xyz']:
             fwd_coord = (l.standard_orientations[-1].coordinates
                          + args.amplitude * l.normal_coordinates[
                              args.frequency - 1])

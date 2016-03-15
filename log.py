@@ -1302,17 +1302,16 @@ class LOGFile(object):
     def normal_coordinates(self):
         '''Returns normal coordinates for three lowest
         vibrational frequencies'''
-        if 'freq' in self.route_section:
-            try:
-                start = self._full.find('Frequencies')
-                end = self._full.find('Frequencies', start+1)
-                block = self._full[start:end].split('\n')[5:-3]
-                return [np.array([l.split()[2:5] for l in block], np.float64),
-                        np.array([l.split()[5:8] for l in block], np.float64),
-                        np.array([l.split()[8:11] for l in block], np.float64)]
-            except:
-                return None
-        else:
+        # Do not check for 'freq' in the route section. Some people use fake
+        # Gaussian output files, with frequencies, but without freq.
+        try:
+            start = self._full.find('Frequencies')
+            end = self._full.find('Frequencies', start+1)
+            block = self._full[start:end].split('\n')[5:-3]
+            return [np.array([l.split()[2:5] for l in block], np.float64),
+                    np.array([l.split()[5:8] for l in block], np.float64),
+                    np.array([l.split()[8:11] for l in block], np.float64)]
+        except:
             return None
 
     @cached
