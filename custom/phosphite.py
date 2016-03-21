@@ -6,6 +6,7 @@ import molmod.molecular_graphs as g
 from collections import OrderedDict
 import warnings
 import logging
+from gaupy.utils import cached
 
 # Dirty trick to silence warnings of confliciting
 # modules on the HPC cluster and to silence NumPy
@@ -32,6 +33,12 @@ class Phosphite(gaupy.log.LOGFile):
             logs, add_patterns=['ntms', 'otms', 'prc', 'adduct', 'opt',
                                 'adductirc', 'prcirc', 'noirc', 'esma',
                                 'iprperpendicular', 'iprflat'])
+
+    @cached
+    def pc2(self):
+        c2 = self.geometry.c2.n
+        p = self.geometry.closest(15, c2)
+        return self.geometry.dist(c2, p)
 
     def _classify(self):
         od = OrderedDict()
