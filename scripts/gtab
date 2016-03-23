@@ -38,6 +38,7 @@ def main():
                         help='Print extra column '
                         + '(fetch attribute from log.LOGFile object)')
     parser.add_argument('--type', '-t', help='Use different parsing class')
+    parser.add_argument('--typeinfo', action='store_true', help='Print info about special types')
     parser.add_argument('--debug', help='Print debug messages',
                         action='store_true')
     parser.add_argument('--time', action='store_true',
@@ -114,6 +115,8 @@ def main():
             parser = korean.SixThreeBicyclic
         if args.type == 'fos':
             parser = phosphite.Phosphite
+        if args.typeinfo:
+            print parser.info
 
     print table.GaussianTable(files, columns, layout, partition=args.sort,
                               partition_numbers=args.groupbynumber,

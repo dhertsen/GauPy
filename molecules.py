@@ -4,6 +4,7 @@ import subprocess
 import os
 import utils
 import logging
+import numpy
 from itertools import chain
 from molmod.transformations import Translation, Rotation
 
@@ -387,3 +388,8 @@ class SuperMolecule(mol.Molecule):
                                             y * self.coordinates[:, 1],
                                             z * self.coordinates[:, 2]]))
         self.coordinates = reflection
+
+    def atoms(self, at):
+        '''return the indices of the atoms with the given atom number or symbol'''
+        atom_type = utils.anum(at)
+        return numpy.where(self.numbers == atom_type)[0]

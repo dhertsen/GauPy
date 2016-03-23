@@ -7,6 +7,7 @@ from collections import OrderedDict
 import warnings
 import logging
 from gaupy.utils import cached
+import numpy as np
 
 # Dirty trick to silence warnings of confliciting
 # modules on the HPC cluster and to silence NumPy
@@ -17,6 +18,13 @@ __all__ = ['Phosphite']
 
 
 class Phosphite(gaupy.log.LOGFile):
+
+    info = '''
+Phosphite additions to mono- and diunsatured systems.
+Atoms:      N, C2/3/4/5/6, P2/4/6 (closest to respective C)
+Distances:  PC2, PC4, PC6
+Methods:    charges()
+    '''
 
     def __init__(self, filename):
         logging.debug('Phosphite.__init__(): %s' % filename)
@@ -36,9 +44,18 @@ class Phosphite(gaupy.log.LOGFile):
 
     @cached
     def pc2(self):
-        c2 = self.geometry.c2.n
-        p = self.geometry.closest(15, c2)
-        return self.geometry.dist(c2, p)
+        if self.geometry.p2:
+            return self.geometry.dist(self.geometry.c2.n, self.geometry.p2.n)
+
+    @cached
+    def pc4(self):
+        if self.geometry.p4:
+            return self.geometry.dist(self.geometry.c4.n, self.geometry.p4.n)
+
+    @cached
+    def pc6(self):
+        if self.geometry.p6:
+            return self.geometry.dist(self.geometry.c6.n, self.geometry.p6.n)
 
     def _classify(self):
         od = OrderedDict()
@@ -56,6 +73,16 @@ class Phosphite(gaupy.log.LOGFile):
                 6, self.geometry.c4.n, only=self.geometry.unparsed))
             self.geometry.set_match('c6', self.geometry.closest(
                 6, self.geometry.c5.n, only=self.geometry.unparsed))
+        # classify P atoms as p2, p4, p6 based on whether they're
+        # closer to C2, C4, C6 respectively
+        for pat in self.geometry.atoms(15):
+            reactives = [self.geometry.c2.n, self.geometry.c4.n]
+            if 'di' in self.file:
+                reactives.append(self.geometry.c6.n)
+            closest_reactive = self.geometry.closest(6, pat, only=reactives)
+            # dirty trick to convert a list index to p2/4/6
+            name = 'p%i' % ((reactives.index(closest_reactive) + 1) * 2)
+            self.geometry.set_match(name, pat)
 
     def charges(self, hi=True, npa=True, npa_suffix=None, all_carbons=True,
                 string=False):

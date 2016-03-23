@@ -128,6 +128,9 @@ class LOGFile(object):
     before parsing. Only this true log file will be parsed.
     '''
 
+    # Default info message for special parser classes.
+    info = 'No special info about this type.'
+
     def __init__(self, filename):
         logging.debug('log.LOGFile.__init__(): %s' % filename)
         self.files = filenames.GaussianFile(filename)
