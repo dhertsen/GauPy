@@ -45,17 +45,23 @@ Methods:    charges()
     @cached
     def pc2(self):
         if self.geometry.p2:
-            return self.geometry.dist(self.geometry.c2.n, self.geometry.p2.n)
+            d = self.geometry.dist(self.geometry.c2.n, self.geometry.p2.n)
+            if d < 3.0:
+                return d
 
     @cached
     def pc4(self):
         if self.geometry.p4:
-            return self.geometry.dist(self.geometry.c4.n, self.geometry.p4.n)
+            d = self.geometry.dist(self.geometry.c4.n, self.geometry.p4.n)
+            if d < 3.0: 
+                return d
 
     @cached
     def pc6(self):
         if self.geometry.p6:
-            return self.geometry.dist(self.geometry.c6.n, self.geometry.p6.n)
+            d = self.geometry.dist(self.geometry.c6.n, self.geometry.p6.n)
+            if d < 3.0: 
+                return d
 
     def _classify(self):
         od = OrderedDict()
