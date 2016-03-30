@@ -1067,7 +1067,6 @@ class LOGFile(object):
             ``unknown``         The error could not be assigned
             ==================  =============================================
         '''
-        error = None
         possible_errors = {'The combination of multiplicity': 'multi/charge',
                            'Convergence failure': 'convergence',
                            'Maximum number of corrector steps': 'corrector',
@@ -1081,34 +1080,32 @@ class LOGFile(object):
                            'FileIO operation on non-existent file.':
                            'nochk'}
 
-        # Only search the bottom of the log file for termination information.
+        # even a Gaussian calculation?
+        if not self._full.startswith(' Entering Gaussian System'):
+            return 'notgaussian'
+
+        # bottom of the log file contains termination information
         bottom = self._full[-len(self._full)/2:]
 
-        # If the calculation terminated at all.
+        # terminated, with or without errors
         if 'termination' in bottom:
 
-            # Test for all possible errors, but only if no error was found yet,
-            # i.e. elif in a for loop.
+            # test for all possible errors
             for possible_error in possible_errors:
-                if not error and possible_error in bottom:
-                    error = possible_errors[possible_error]
+                if possible_error in bottom:
+                    return possible_errors[possible_error]
 
-            # The last 200 characters should include 'Normal termination',
-            # since otherwise a combined calculation (e.g. opt freq) could not
-            # be evaluated.
-            if not error:
-                if 'Normal termination' in bottom[-200:]:
-                    error = None
+            # All okay?
+            # Last 200 characters should include 'Normal termination'.
+            if 'Normal termination' in bottom[-200:]:
+                return
 
-                # Other cases are unknown errors.
-                else:
-                    error = 'unknown'
+            # terminated, but an unknown error
+            return 'unknown'
 
-        # No 'termination in ongoing calculations.
+        # did not terminate
         else:
-            error = 'abrupted'
-
-        return error
+            return 'abrupted'
 
     @cached
     def termination_count(self):
