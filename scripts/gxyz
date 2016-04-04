@@ -45,9 +45,6 @@ for f in args.files:
                 index = base.energies.index(min(base.energies))
         print('Selected step %i out of %i steps.'
               % (index + 1, len(base.energies)))
-        xw = xyz.XYZWriter(l.files.xyz, l.geometry.numbers)
-        comment = '%s\tE=%s' % (l.files.base, base.energies[index])
-        xw.dump(comment, base.geometries[index].coordinates)
-        print('%s written.' % l.files.xyz)
+        base.geometries[index].to_xyz(l.files.xyz)
     except:
         print('ERROR: %s could not be processed' % f)
