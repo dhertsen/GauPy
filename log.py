@@ -318,9 +318,9 @@ class LOGFile(object):
         # Do not include %nproc and %memory if they were not provided in the
         # input file.
         if not np.isnan(self.nproc):
-            inp += '%%nproc=%(nproc)s\n' % self.nproc
+            inp += '%%nproc=%s\n' % self.nproc
         if self.memory:
-            inp += '%%mem=%(mem)s\n' % self.memory
+            inp += '%%mem=%s\n' % self.memory
         # Do include %chk in all cases, even if it was not provided in the
         # input file.
         inp += ('%%chk=%(chk)s\n'
@@ -1154,8 +1154,8 @@ class LOGFile(object):
         '''
         try:
             nproc_index = self._full.find('%nproc')
-            return re.search('%nproc=([0-9]*)', self._full[
-                nproc_index:nproc_index + 100]).group(1)
+            return int(re.search('%nproc=([0-9]*)', self._full[
+                nproc_index:nproc_index + 100]).group(1))
         except:
             return float('nan')
 
