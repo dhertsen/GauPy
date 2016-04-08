@@ -5,7 +5,7 @@ import warnings
 import filenames
 import molecules
 import fnmatch
-from gaupy.utils import find_all, sfind, cached
+from gaupy.utils import find_all, cached
 import numpy as np
 import molmod.molecules as mol
 import molmod.units as units
@@ -314,18 +314,23 @@ class LOGFile(object):
             geometry = self.geometry.to_string()
         except:
             geometry = ''
-        inp = ('%%nproc=%(nproc)s\n'
-               '%%mem=%(mem)s\n'
-               '%%chk=%(chk)s\n'
-               '#%(route)s\n\n'
-               '%(comment)s\n\n'
-               '%(charge)i %(multiplicity)i\n'
-               '%(geometry_text)s\n\n'
-               '%(modredundant)s\n\n'
-               '%(scrf)s\n\n')
-        return inp % {'nproc': self.nproc,
-                      'mem': self.memory,
-                      'chk': fn.base,
+        inp = ''
+        # Do not include %nproc and %memory if they were not provided in the
+        # input file.
+        if not np.isnan(self.nproc):
+            inp += '%%nproc=%(nproc)s\n' % self.nproc
+        if self.memory:
+            inp += '%%mem=%(mem)s\n' % self.memory
+        # Do include %chk in all cases, even if it was not provided in the
+        # input file.
+        inp += ('%%chk=%(chk)s\n'
+                '#%(route)s\n\n'
+                '%(comment)s\n\n'
+                '%(charge)i %(multiplicity)i\n'
+                '%(geometry_text)s\n\n'
+                '%(modredundant)s\n\n'
+                '%(scrf)s\n\n')
+        return inp % {'chk': fn.base,
                       'route': ' '.join(self.keywords),
                       'comment': self.comment,
                       'charge': self.charge,
@@ -648,8 +653,18 @@ class LOGFile(object):
             if self.scan:
                 a = self._full.find('The following ModRedundant input')
                 b = self._full.find('\n', a) + 2
-                c = self._full.find('\n \n', b)
-                return self._full[b:c]
+                # Look for modredundant input in the first 1000 characters
+                # after the start of the modredundant section. This ought to be
+                # enough.
+                modinput = []
+                for line in self._full[b:b+1000].split('\n'):
+                    split = line.split()
+                    # Looks for lines that start correctly
+                    if len(split) > 2:
+                        if (split[0] in ['X', 'B', 'A', 'D', 'L']
+                                and split[1].isdigit()):
+                            modinput.append(line)
+                return '\n'.join(modinput)
             else:
                 return ''
         except:
@@ -777,9 +792,16 @@ class LOGFile(object):
         '''
         # The link0 section is repeated literally at the top
         # of the log file.
-        start = sfind(self._full, '%mem', '=') + 1
-        end = self._full.find('\n', start)
-        return self._full[start:end]
+
+        # Do not use sfind. If '%mem' is not found, '=' will still be found
+        # after position -1. This will lead to nonsense if no memory limit was
+        # provided in the input file.
+
+        mem = self._full.find('%mem')
+        if mem != -1:
+            start = self._full.find('=', mem) + 1
+            end = self._full.find('\n', start)
+            return self._full[start:end]
 
     @cached
     def _thermochem_block(self):

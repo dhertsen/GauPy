@@ -130,7 +130,7 @@ def copy(src, dst):
         shutil.copy(src, dst)
         logger.warning('Copied %s to %s' % (src, dst))
     except:
-        logger.error('Error: failed to copy %s to %s' %(src, dst))
+        logger.error('Error: failed to copy %s to %s' % (src, dst))
 
 
 class cached(object):
