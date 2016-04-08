@@ -329,15 +329,16 @@ class LOGFile(object):
                 '%(charge)i %(multiplicity)i\n'
                 '%(geometry_text)s\n\n'
                 '%(modredundant)s\n\n'
-                '%(scrf)s\n\n')
-        return inp % {'chk': fn.base,
-                      'route': ' '.join(self.keywords),
-                      'comment': self.comment,
-                      'charge': self.charge,
-                      'multiplicity': self.multiplicity,
-                      'geometry_text': geometry,
-                      'modredundant': self.modredundant,
-                      'scrf': self.scrf_nonstandard_input}
+                '%(scrf)s\n\n') % {
+                    'chk': fn.base,
+                    'route': ' '.join(self.keywords),
+                    'comment': self.comment,
+                    'charge': self.charge,
+                    'multiplicity': self.multiplicity,
+                    'geometry_text': geometry,
+                    'modredundant': self.modredundant,
+                    'scrf': self.scrf_nonstandard_input}
+        return inp.rstrip() + '\n\n'
 
     def write_input(self, filename=None):
         '''
@@ -1199,6 +1200,7 @@ class LOGFile(object):
                 '------\n', after_route_section) + 10
             begin_comment = self._full.find('--\n', just_after_route_block) + 3
             end_comment = self._full.find('--', begin_comment + 1)
+            print self._full[begin_comment:end_comment].strip()
             return self._full[begin_comment:end_comment].strip()
         except:
             return None
