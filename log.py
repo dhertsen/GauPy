@@ -1200,7 +1200,6 @@ class LOGFile(object):
                 '------\n', after_route_section) + 10
             begin_comment = self._full.find('--\n', just_after_route_block) + 3
             end_comment = self._full.find('--', begin_comment + 1)
-            print self._full[begin_comment:end_comment].strip()
             return self._full[begin_comment:end_comment].strip()
         except:
             return None
