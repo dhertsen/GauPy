@@ -19,7 +19,7 @@ __all__ = ['SixFour']
 
 class SixFour(gaupy.log.LOGFile):
 
-    def __init__(self, filename):
+    def __init__(self, filename, species=None):
         super(SixFour, self).__init__(filename)
 
         # adjusted scaling necessary for thiophene molecular graphs
@@ -36,7 +36,11 @@ class SixFour(gaupy.log.LOGFile):
             self.system = 'ipr-h'
 
         try:
-            self._species()
+            if species:
+                self.species = species
+            else:
+                self._species()
+            self._classify()
             if self.species not in ['reactant', 'reactant(imag)', 'irc']:
                 self._exoendo()
                 self._cistrans()
@@ -71,7 +75,9 @@ class SixFour(gaupy.log.LOGFile):
 
         p['six_cation'] = gr.CritOr(
             g.HasNeighbors(p['six_c2'], c, me(6), h),
-            g.HasNeighbors(p['six_c2'], c, me(6), me(6)))
+            g.HasNeighbors(p['six_c2'], c, me(6), me(6)),
+            g.HasNeighbors(p['six_c2'], me(6), me(6)),
+            g.HasNeighbors(p['six_c2'], me(6), h))
 
         # First case: before the second bond is formed.
         # Second case: after the second bond is formed.
@@ -82,8 +88,11 @@ class SixFour(gaupy.log.LOGFile):
 
         # first bond has been formed when _classify() is called
 
-        p['four_head2'] = g.HasNeighbors(p['six_cation'], c, c, h)
-        p['four_c2'] = g.HasNeighbors(p['four_head2'], c, h, h)
+        p['four_c4'] = g.HasNeighbors(c, c, me(6))
+        p['four_c2'] = g.HasNeighbors(c, c, h, h)
+        p['four_head2'] = gr.CritOr(
+            g.HasNeighbors(p['four_c2'], p['four_c4'], c, h),
+            g.HasNeighbors(p['four_c2'], p['four_c4'], h))
 
         # Flush matches, because we already need the info for four_c1.
         # Could be done without the info, but using neighbors will
@@ -101,21 +110,6 @@ class SixFour(gaupy.log.LOGFile):
         c2_bonded.remove(self.geometry.four_head2.n)
         self.geometry.set_match('four_c1', c2_bonded[0])
 
-        # same story: look for head2_bonded 'manually'
-        # for performance reasons
-
-        head2_bonded = self.geometry.non_hydrogen_neighbors(
-            self.geometry.four_head2.n)
-        self.geometry.set_match('four_c4',
-                                (set(head2_bonded)
-                                 & set(self.geometry.unparsed)).pop())
-
-        # still need the pattern though, won't be parsed again, since
-        # set_match() checks whether the pattern doen't exist already
-
-        p['four_c4'] = gr.CritOr(
-            g.HasNeighbors(p['four_head2'], c, h),
-            g.HasNeighbors(p['four_head2'], c, c))
         p['four_c3'] = g.HasNeighbors(p['four_c4'], c, h)
         self.geometry.set_matches(p)
 
