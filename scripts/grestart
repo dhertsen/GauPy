@@ -7,6 +7,7 @@ import gaupy.log as log
 parser = argparse.ArgumentParser('Create a input file that will restart'
                                  + ' a Gaussian calculation.')
 parser.add_argument('--firstgeometry', '-f', action='store_true')
+parser.add_argument('--skiplast', '-s', help='Skip n last points', type=int)
 parser.add_argument('files', nargs='*', help='Gaussian output files',
                     default=sys.stdin)
 args = parser.parse_args()
@@ -15,6 +16,8 @@ for f in args.files:
     logf = log.LOGFile(f)
     if args.firstgeometry:
         logf.geometry = logf.geometries[0]
+    elif args.skiplast:
+        logf.geometry = logf.geometries[-(args.skiplast + 1)]
     restart = logf.to_input()
     open(logf.files.com, 'w').write(restart)
     print('%s written.' % logf.files.com)
