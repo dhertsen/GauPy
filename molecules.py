@@ -140,14 +140,16 @@ class SuperMolecule(mol.Molecule):
         with open(filename) as f:
             return cls.from_string(f.read(), ignore_header=True)
 
-    def to_string(self, header=False, comment='', symbols=True):
+    def to_string(self, header=False, comment='', symbols=True, width=15):
         lines = []
         if header:
             lines += [str(self.size), str(comment)]
         for a, c in zip(self.numbers, self.coordinates):
             a = utils.asym(a) if symbols else a
             x, y, z = c / units.angstrom
-            lines.append('%-6s %15.6f %15.6f %15.6f' % (a, x, y, z))
+            #lines.append('%-6s %15.6f %15.6f %15.6f' % (a, x, y, z))
+            lines.append('%-6s %*.6f %*.6f %*.6f' % (a, width, x, width, y,
+                                                     width, z))
         return '\n'.join(lines)
 
     def to_xyz(self, filename):
