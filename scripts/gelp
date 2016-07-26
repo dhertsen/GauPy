@@ -1,0 +1,35 @@
+#! /usr/bin/env python2.7
+
+print '''gchom
+ -- change an input file
+gcom
+ -- input from Avogadro or xyz
+gelp
+ -- overview of scripts
+gend
+ -- optimise end points from IRC output file
+girc
+ -- IRC input file from TS output file
+gmov
+ -- xyz movie from IRC, scan or optimisation output file
+gnbo
+ -- NBO interaction energies from output file
+gnudge
+ -- translate atoms along normal coordinates
+gopt
+ -- extract optima from a scan output file
+gpes
+ -- show or write IRC, scan or optimisation profile
+grestart
+ -- restart an output file
+gselect
+ -- select output files according to set of criteria
+ -- and perform file operations
+gsi
+ -- display SI information fro output file
+gsplit
+ -- split an xyz movie
+gtab
+ -- display info from output in a table
+gxyz
+ -- xyz from output file '''
