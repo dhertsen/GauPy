@@ -33,7 +33,7 @@ for f in args.files:
             skiplines = 0
         else:
             skiplines = 2
-    elif f.endswith('gau'):
+    elif f.endswith('gau') or f.endswith('com'):
         skiplines = 5
     open(fs.com, 'w').write('''%%nproc=%(nproc)s
 %%mem=%(mem)s
