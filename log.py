@@ -526,7 +526,7 @@ class LOGFile(object):
             constructed after their first request.
         '''
         try:
-            return open(self.files.log).read()
+            return self.files.output()
         except:
             return
 

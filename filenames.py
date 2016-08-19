@@ -20,6 +20,7 @@ class GaussianFile(object):
     ts_patterns = ['ts', 'ts1', 'ts2', 'tsopt', 'TS1', 'TS2', 'TS3']
     reaction_patterns = (cplx_patterns + irc_patterns + ts_patterns + ['spe'])
     number_pattern = False
+    output_extensions = ['log', 'LOG', 'out', 'OUT']
 
     def __init__(self, name):
         '''
@@ -48,6 +49,13 @@ class GaussianFile(object):
 
     def get_all(self):
         return glob.iglob('%s.*' % self.root)
+
+    def output(self):
+        for ext in self.output_extensions:
+            try:
+                return open(getattr(self, ext)).read()
+            except:
+                continue
 
     def _reset_root(self, dir):
         self.root = os.path.join(dir, os.path.basename(self.root))

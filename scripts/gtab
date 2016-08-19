@@ -38,7 +38,8 @@ def main():
                         help='Print extra column '
                         + '(fetch attribute from log.LOGFile object)')
     parser.add_argument('--type', '-t', help='Use different parsing class')
-    parser.add_argument('--typeinfo', action='store_true', help='Print info about special types')
+    parser.add_argument('--typeinfo', action='store_true',
+                        help='Print info about special types')
     parser.add_argument('--debug', help='Print debug messages',
                         action='store_true')
     parser.add_argument('--time', action='store_true',
@@ -57,11 +58,14 @@ def main():
         start = time()
 
     if not args.files:
-        files = glob('*log')
+        files = []
+        for ext in GaussianFile.output_extensions:
+            files += glob('*.%s' % ext)
     else:
         files = GaussianFile.remove_doubles(args.files)
 
-    columns = ['file', 'nimag', 'lowest_frequency', 'irc.length', 'scan.length', 'error']
+    columns = ['file', 'nimag', 'lowest_frequency', 'irc.length',
+               'scan.length', 'error']
     layout = ['fit+2', '%-5s', '%-7i', '%-7s', '%-7s', 'fit+2']
     if args.extrafreq:
         columns.insert(3, 'frequencies[1]')
