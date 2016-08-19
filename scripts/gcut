@@ -8,6 +8,9 @@ import argparse
 
 parser = argparse.ArgumentParser('Split a multimolecular Gaussian output file'
                                  ' or XYZ file into unimolecular XYZ files.')
+parser.add_argument('--scaling', '-s',
+                    help='Scaling factor for bond recognition (default=1.0)',
+                    default=1.0, type=float)
 parser.add_argument('files', nargs='*', help='Multimolecular Gaussian output'
                     ' or xyz files', default=sys.stdin)
 args = parser.parse_args()
@@ -19,9 +22,11 @@ for f in args.files:
             molecule = SuperMolecule.from_xyz(f)
             name = GaussianFile(f)
         except:
-            molecule = LOGFile(f)
-            name = molecule.files
-        for i, m in enumerate(molecule.geometry.molecules()):
-            m.to_xyz(name.add(i).xyz)
+            logfile = LOGFile(f)
+            molecule = logfile.geometry
+            name = logfile.files
+        molecule.scaling = args.scaling
+        for i, m in enumerate(molecule.molecules()):
+            m.to_xyz(name.add(i+1).xyz)
     except:
         print('ERROR: %s could not be processed' % f)
