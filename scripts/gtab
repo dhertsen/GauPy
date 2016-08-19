@@ -3,7 +3,7 @@
 import gaupy.table as table
 import argparse
 from gaupy.log import LOGFile
-from gaupy.custom import sixfour, korean, phosphite
+from gaupy.custom import sixfour, korean, phosphite, pox
 from gaupy.filenames import GaussianFile
 import logging
 from glob import glob
@@ -117,6 +117,8 @@ def main():
             parser = korean.SixThreeBicyclic
         if args.type == 'fos':
             parser = phosphite.Phosphite
+        if args.type == 'pox':
+            parser = pox.Pox
         if args.typeinfo:
             print parser.info
 
