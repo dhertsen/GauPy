@@ -281,35 +281,42 @@ class SuperMolecule(mol.Molecule):
         else:
             self.unparsed = range(self.size)
 
-    def set_match(self, name, pattern):
+    def set_match(self, name, pattern, only=False):
         '''pattern can be both a molmod pattern and a the number of the
-        atom in the xyz matrix'''
+        atom in the xyz matrix
+        If only is specified, only those atoms will be checked, and not the
+        full molecule.
+        The new unparsed atom numbers, either from 'only' or 'self.unparsed'
+        are returned.'''
         logging.debug('SuperMolecule.set_match(): begin pattern %s' % name)
+        unparsed = only or self.unparsed
         # try a molmod pattern
         try:
-            for u in self.unparsed:
+            for u in unparsed:
                 if pattern(u, self.graph):
                     setattr(self, name, Match(u, self))
-                    self.unparsed.remove(u)
+                    unparsed.remove(u)
                     logging.debug(
                         'SuperMolecule.set_match(): %s at atom %i' % (name, u))
-                    return
+                    return unparsed
             else:
                 logging.debug(
                     'SupperMolecule.set_match(): pattern %s not found' % name)
         # if not, a number?
         except:
             try:
-                if pattern in self.unparsed:
+                if pattern in unparsed:
                     setattr(self, name, Match(pattern, self))
-                    self.unparsed.remove(pattern)
+                    unparsed.remove(pattern)
                     logging.debug(
                         'SuperMolecule.set_match(): %s at atom %i' % (
                             name, pattern))
+                    return unparsed
                 else:
                     logging.warning(
                         'SuperMolecule.set_match(): '
                         + '%s: atom %i not in unparsed list' % (name, pattern))
+                    return unparsed
             # neither a molmod pattern, nor a number
             except:
                 logging.warning(

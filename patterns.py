@@ -45,3 +45,9 @@ def ch2(x, y):
     x = _convert(x)
     y = _convert(y)
     return g.CritAnd(c, mg.HasNeighbors(h, h, x, y))
+
+
+def ch(x, y):
+    x = _convert(x)
+    y = _convert(y)
+    return g.CritAnd(c, mg.HasNeighbors(h, x, y))
