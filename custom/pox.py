@@ -4,8 +4,7 @@ import gaupy.utils as utils
 import warnings
 from numpy.linalg import norm
 # from molmod.units import angstrom
-from gaupy.patterns import h, c, o, s, me, ch2
-from collections import OrderedDict
+from gaupy.patterns import ch2
 import logging
 from molmod.units import angstrom
 
@@ -32,7 +31,6 @@ class Pox(gaupy.log.LOGFile):
 
         self._classify()
 
-
     @utils.cached
     def _hi(self):
         return self.get_hi_charges()
@@ -50,7 +48,7 @@ class Pox(gaupy.log.LOGFile):
         ring = self.geometry.cation_c2.xyz
         midpoint = (self.geometry.butylc3.xyz + self.geometry.butylc4.xyz) / 2
         return norm(ring - midpoint) / angstrom
-        
+
     @utils.cached
     def electro(self):
         if self.cation_c5:
@@ -95,15 +93,24 @@ class Pox(gaupy.log.LOGFile):
             # Add 'cation_' or 'monomer_'.
             self.geometry.set_match('%s_%s' % (species, 'n'), nitrogen)
             self.geometry.set_match('%s_%s' % (species, 'o'), oxygen)
-            for atom in ['c2', 'c4', 'c5']:
-                name = '%s_%s' % (species, atom)
-                self.geometry.set_match(name, eval(atom))
+            self.geometry.set_match('%s_%s' % (species, 'c2'), c2)
+            self.geometry.set_match('%s_%s' % (species, 'c4'), c4)
+            self.geometry.set_match('%s_%s' % (species, 'c5'), c5)
+            # Try to sort out butyl chain
             try:
-                self.geometry.set_match('butylc1', self.geometry.closest(6, c2))
-                attached_to_c1 = self.geometry.closest(6, self.geometry.butylc1.n, n=3)
-                self.geometry.set_match('butylc2', ch2(6, 6), only=attached_to_c1)
-                self.geometry.set_match('butylc3', self.geometry.closest(6, self.geometry.butylc2.n))
-                self.geometry.set_match('butylc4', self.geometry.closest(6, self.geometry.butylc3.n))
+                self.geometry.set_match(
+                    'butylc1', self.geometry.closest(6, c2))
+                attached_to_c1 = self.geometry.closest(
+                    6, self.geometry.butylc1.n, n=3, exclude=[c2])
+                print attached_to_c1
+                self.geometry.set_match(
+                    'butylc2', ch2(6, 6), only=attached_to_c1)
+                self.geometry.set_match(
+                    'butylc3', self.geometry.closest(
+                        6, self.geometry.butylc2.n))
+                self.geometry.set_match(
+                    'butylc4', self.geometry.closest(
+                        6, self.geometry.butylc3.n))
             except:
                 logging.debug('No butyl chain.')
 
