@@ -2,11 +2,12 @@ import gaupy.log
 import gaupy.molecules
 import gaupy.utils as utils
 import warnings
-# import numpy as np
+from numpy.linalg import norm
 # from molmod.units import angstrom
 from gaupy.patterns import h, c, o, s, me, ch2
 from collections import OrderedDict
 import logging
+from molmod.units import angstrom
 
 
 # Dirty trick to silence warnings of confliciting
@@ -38,11 +39,17 @@ class Pox(gaupy.log.LOGFile):
 
     @utils.cached
     def n(self):
-        return self._hi[self.geometry.monomer_nitrogen.n]
+        return self._hi[self.geometry.monomer_n.n]
 
     @utils.cached
     def c5(self):
         return self._hi[self.geometry.cation_c5.n]
+
+    @utils.cached
+    def folding(self):
+        ring = self.geometry.cation_c2.xyz
+        midpoint = (self.geometry.butylc3.xyz + self.geometry.butylc4.xyz) / 2
+        return norm(ring - midpoint) / angstrom
         
     @utils.cached
     def electro(self):
@@ -86,7 +93,9 @@ class Pox(gaupy.log.LOGFile):
             else:
                 species = 'monomer'
             # Add 'cation_' or 'monomer_'.
-            for atom in ['nitrogen', 'oxygen', 'c2', 'c4', 'c5']:
+            self.geometry.set_match('%s_%s' % (species, 'n'), nitrogen)
+            self.geometry.set_match('%s_%s' % (species, 'o'), oxygen)
+            for atom in ['c2', 'c4', 'c5']:
                 name = '%s_%s' % (species, atom)
                 self.geometry.set_match(name, eval(atom))
             try:
