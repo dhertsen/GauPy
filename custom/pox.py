@@ -102,7 +102,6 @@ class Pox(gaupy.log.LOGFile):
                     'butylc1', self.geometry.closest(6, c2))
                 attached_to_c1 = self.geometry.closest(
                     6, self.geometry.butylc1.n, n=3, exclude=[c2])
-                print attached_to_c1
                 self.geometry.set_match(
                     'butylc2', ch2(6, 6), only=attached_to_c1)
                 self.geometry.set_match(
