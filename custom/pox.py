@@ -37,6 +37,14 @@ class Pox(gaupy.log.LOGFile):
         return self.get_hi_charges()
 
     @utils.cached
+    def n(self):
+        self.n = self._hi[self.geometry.monomer_nitrogen.n]
+
+    @utils.cached
+    def c5(self):
+        self.c5 = self._hi[self.geometry.cation_c5.c5]
+        
+    @utils.cached
     def electro(self):
         if self.cation_c5:
             return self._hi[self.cation_c5]
@@ -82,18 +90,11 @@ class Pox(gaupy.log.LOGFile):
                 name = '%s_%s' % (species, atom)
                 self.geometry.set_match(name, eval(atom))
             try:
-                print 1
                 self.geometry.set_match('butylc1', self.geometry.closest(6, c2))
-                print 2
                 attached_to_c1 = self.geometry.closest(6, self.geometry.butylc1.n, n=3)
-                print attached_to_c1
-                print 3
                 self.geometry.set_match('butylc2', ch2(6, 6), only=attached_to_c1)
-                print 4
                 self.geometry.set_match('butylc3', self.geometry.closest(6, self.geometry.butylc2.n))
-                print 5
                 self.geometry.set_match('butylc4', self.geometry.closest(6, self.geometry.butylc3.n))
-                print 6
             except:
                 logging.debug('No butyl chain.')
 
