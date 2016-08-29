@@ -38,11 +38,11 @@ class Pox(gaupy.log.LOGFile):
 
     @utils.cached
     def n(self):
-        self.n = self._hi[self.geometry.monomer_nitrogen.n]
+        return self._hi[self.geometry.monomer_nitrogen.n]
 
     @utils.cached
     def c5(self):
-        self.c5 = self._hi[self.geometry.cation_c5.c5]
+        return self._hi[self.geometry.cation_c5.n]
         
     @utils.cached
     def electro(self):
