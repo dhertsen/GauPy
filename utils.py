@@ -133,6 +133,32 @@ def copy(src, dst):
         logger.error('Error: failed to copy %s to %s' % (src, dst))
 
 
+def empty(line):
+    '''
+    Is this an empty string?
+    '''
+    return line.strip() == ''
+
+
+def blocks(text):
+    '''
+    Split a text or a list of lines into text blocks, which were seperated
+    by empty lines.
+    '''
+    try:
+        lines = text.split('\n')
+    except:
+        lines = text
+    blocks = []
+    block = []
+    for l in lines:
+        if block and empty(l):
+            blocks.append(block)
+            block = []
+        else:
+            block.append(l)
+    return blocks
+
 class cached(object):
     """
     Descriptor (non-data) for building an attribute on-demand on first use.

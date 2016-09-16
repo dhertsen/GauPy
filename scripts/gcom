@@ -2,6 +2,7 @@
 
 import argparse
 import gaupy.filenames as filenames
+from gaupy.utils import blocks
 
 parser = argparse.ArgumentParser(
     'Convert xyz file or Avogadro gau file to Gaussian input file.'
@@ -30,11 +31,12 @@ for f in args.files:
     fs = filenames.GaussianFile(f)
     if f.endswith('xyz'):
         if len(lines[0].split()) == 4:
-            skiplines = 0
+            geometry = lines
         else:
-            skiplines = 2
+            geometry = lines[2:]
     elif f.endswith('gau') or f.endswith('com'):
-        skiplines = 5
+        geometry = blocks(lines)[2][1:]
+
     open(fs.com, 'w').write('''%%nproc=%(nproc)s
 %%mem=%(mem)s
 %%chk=%(chk)s
@@ -54,7 +56,7 @@ comment
            'opt': 'opt' if not args.spe else '',
            'freq': 'freq' if not args.spe else '',
            'charge': args.charge,
-           'geometry': ''.join(lines[skiplines:]),
+           'geometry': ''.join(geometry),
            'extra': args.extra
            })
     print(fs.com + ' written.')
