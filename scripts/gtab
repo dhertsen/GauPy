@@ -8,9 +8,77 @@ from gaupy.filenames import GaussianFile
 import logging
 from glob import glob
 from time import time
+import os
+import fnmatch
 
 logger = logging.getLogger()
 logging.basicConfig(format='%(message)s')
+
+overview = '''
+CHARGES
+    hi_charges
+    mulliken_charges
+    npa_charges
+FREQUENCIES AND THERMOCHEMISTRY
+    enthalpy
+    enthalpycorrection
+    entropy
+    frequencies
+    gibbs
+    gibbscorrection
+    lowest_frequency
+    nimag
+    pressure
+    temperature
+    thermal
+    thermalcorrection
+    zpe
+    zpesum
+INPUT
+    basis
+    charge
+    chk
+    comment
+    memory
+    method
+    modredundant
+    multiplicity
+    nproc
+    route_section
+    scrf
+    scrf_nonstandard_input
+    stoichiometry
+GENERAL OUTPUT
+    dipole
+    energies
+    energy
+    geometries
+    geometry
+    input_orientations
+    standard_orientations
+PATHS
+    irc
+        direction
+        energies
+        geometries
+        length
+        maxcycle
+        maxpoints
+        relativeenergies
+        stepsize
+    scan
+        energies
+        geometries
+        length
+        relativeenergies
+PROGRESS AND STATUS
+    cputime
+    error
+    predicted
+    predicted_last
+    steps
+    termination_count
+'''
 
 
 def main():
@@ -50,6 +118,13 @@ def main():
                         help='Print relevant backup info')
     parser.add_argument('files', nargs='*', help='Gaussian output files'
                         + ' (default: *log)')
+    parser.add_argument('--recursive', '-R', action='store_true',
+            help="Look for files recursively")
+    parser.add_argument('--recursivepattern', '-P',
+            help='Only look for these files recursively'
+            '(Unix wildcards between quotes)')
+    parser.add_argument('--overview', '-o', action='store_true',
+            help='Most important data which can be parsed')
     args = parser.parse_args()
 
     if args.debug:
@@ -57,12 +132,20 @@ def main():
     if args.time:
         start = time()
 
-    if not args.files:
+    if args.recursive:
+        files = []
+        for root, dirnames, filenames in os.walk('.'):
+            for filename in fnmatch.filter(
+                    filenames, args.recursivepattern or '*'):
+                files.append(os.path.join(root, filename)[2:])
+    elif not args.files:
         files = []
         for ext in GaussianFile.output_extensions:
             files += glob('*.%s' % ext)
     else:
-        files = GaussianFile.remove_doubles(args.files)
+        files = args.files
+    files = GaussianFile.remove_doubles(files)
+    files.sort()
 
     columns = ['file', 'nimag', 'lowest_frequency', 'irc.length',
                'scan.length', 'error']
@@ -126,10 +209,13 @@ def main():
         if args.typeinfo:
             print parser.info
 
-    print table.GaussianTable(files, columns, layout, partition=args.sort,
-                              partition_numbers=args.groupbynumber,
-                              partition_energies_rmsds=args.partitionenergies,
-                              type=parser)
+    if args.overview:
+        print overview
+    else:
+        print table.GaussianTable(files, columns, layout, partition=args.sort,
+                                  partition_numbers=args.groupbynumber,
+                                  partition_energies_rmsds=args.partitionenergies,
+                                  type=parser)
 
     if args.time:
         timeperfile = (time() - start) / len(files)
