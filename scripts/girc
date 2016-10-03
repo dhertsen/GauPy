@@ -46,19 +46,19 @@ for f in args.files:
     ircfiles = l.files.ts_to_irc(replace=args.replacets)
 
     def without_chk():
-        l.keywords = [l.lot, ('irc(%s,calcfc,maxcycle=%i,maxpoints=%i,'
-                              + 'stepsize=%i)') % (e, args.maxcycle,
-                                                   args.maxpoints,
-                                                   args.stepsize), args.extra]
+        l.keywords = [l.lot, ('irc(%s,calcfc,maxcycle=%s,maxpoints=%i,'
+                              + 'stepsize=%i)') % (e, int(args.maxcycle),
+                                                   int(args.maxpoints),
+                                                   int(args.stepsize)), args.extra]
 
     def with_chk():
         shutil.copy(l.files.chk, ircfiles[d].chk)
         print('%s copied to %s.' % (l.files.chk, ircfiles[d].chk))
         l.geometry = None
         l.keywords = [l.lot, ('irc(%s,rcfc,maxcycle=%i,maxpoints=%i,'
-                              + 'stepsize=%i)') % (e, args.maxcycle,
-                                                   args.maxpoints,
-                                                   args.stepsize),
+                              + 'stepsize=%i)') % (e, int(args.maxcycle),
+                                                   int(args.maxpoints),
+                                                   int(args.stepsize)),
                       'geom=checkpoint', args.extra]
 
     for d, e in [('fwd', 'forward'), ('rev', 'reverse')]:
