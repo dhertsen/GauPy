@@ -23,4 +23,3 @@ for f in args.files:
         l.geometry = l.irc.geometries[-1]
         fn = l.files.irc_to_end()
         l.write_input(fn)
-        print('%s written.' % fn.com)

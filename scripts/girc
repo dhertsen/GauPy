@@ -71,4 +71,3 @@ for f in args.files:
                 except:
                     without_chk()
             l.write_input(ircfiles[d].com)
-            print('%s written.' % ircfiles[d].com)
