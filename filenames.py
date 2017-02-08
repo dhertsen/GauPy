@@ -50,6 +50,15 @@ class GaussianFile(object):
     def get_all(self):
         return glob.iglob('%s.*' % self.root)
 
+    def get_stderr(self):
+        '''
+        return the last standard error file
+        '''
+        try:
+            return sorted(glob.glob('%s.e[0-9]*' % self.root))[-1]
+        except:
+            return
+
     def output(self):
         for ext in self.output_extensions:
             try:

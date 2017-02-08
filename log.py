@@ -1128,6 +1128,13 @@ class LOGFile(object):
 
         # did not terminate
         else:
+
+            # 'Argument list too long' error will stop the calculation
+            # abruptly. This will only show in the standard error file.
+            stderr = self.files.get_stderr()
+            if stderr:
+                if 'Argument list too long' in open(stderr).read():
+                    return 'argumentlist'
             return 'abrupted'
 
     @cached
