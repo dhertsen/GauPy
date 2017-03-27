@@ -44,10 +44,16 @@ def main():
     for f in files:
         l = LOGFile(f)
         if args.output in ['com', 'xyz']:
-            fwd_coord = (l.standard_orientations[-1].coordinates
+            # Normal coordinates are defined with respect to standard
+            # orientations, unless the 'nosymmetry' keyword has been used.
+            # In that case, use the input geometries.
+            geometries = l.standard_orientations
+            if 'nosymm' in l.route_section and not l.standard_orientations:
+                geometries = l.input_orientations
+            fwd_coord = (l.geometries[-1].coordinates
                          + args.amplitude * l.normal_coordinates[
                              args.frequency - 1])
-            rev_coord = (l.standard_orientations[-1].coordinates
+            rev_coord = (l.geometries[-1].coordinates
                          - args.amplitude * l.normal_coordinates[
                              args.frequency - 1])
             fwd_geom = SuperMolecule(numbers=l.geometry.numbers,
