@@ -55,9 +55,12 @@ class GaussianTable(object):
 
     def __init__(self, logs, columns, layout, partition=False,
                  partition_numbers=False,
-                 partition_energies_rmsds=False, type=log.LOGFile):
+                 partition_energies_rmsds=False,
+                 sort_gibbs=False, type=log.LOGFile):
         self.type = type
         self.logs = [l for l in self.type.parse_all(*logs) if l.exists]
+        if sort_gibbs:
+            self.logs.sort(key=lambda x: x.gibbs)
         self.type.set_relative_energies(self.logs)
         self.type.set_rmsds(self.logs)
         self.columns = columns

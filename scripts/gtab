@@ -83,8 +83,8 @@ PROGRESS AND STATUS
 
 def main():
 
-    parser = argparse.ArgumentParser('Tabulate parsed output from Gaussian '
-                                     + 'output files.')
+    parser = argparse.ArgumentParser('Tabulate parsed output from Gaussian ' +
+                                     'output files.')
     parser.add_argument('--sort', '-s', action='store_true',
                         help='Sort reactions')
     parser.add_argument('--groupbynumber', '-n', action='store_true',
@@ -98,13 +98,13 @@ def main():
     parser.add_argument('--rmsd', action='store_true',
                         help='Print RMSDs')
     parser.add_argument('--partitionenergies', '-b', action='store_true',
-                        help='Relative Gibbs free energies/enthalpies '
-                        + 'and RMSDs per partition, only if -gs')
+                        help='Relative Gibbs free energies/enthalpies ' +
+                        'and RMSDs per partition, only if -gs')
     parser.add_argument('--method', '-m', action='store_true',
                         help='Print method and basis set')
     parser.add_argument('--extra', '-x', action='append', default=[],
-                        help='Print extra column '
-                        + '(fetch attribute from log.LOGFile object)')
+                        help='Print extra column ' +
+                        '(fetch attribute from log.LOGFile object)')
     parser.add_argument('--type', '-t', help='Use different parsing class')
     parser.add_argument('--typeinfo', action='store_true',
                         help='Print info about special types')
@@ -116,15 +116,17 @@ def main():
                         help='Smallest five frequencies')
     parser.add_argument('--backup', '-B', action='store_true',
                         help='Print relevant backup info')
-    parser.add_argument('files', nargs='*', help='Gaussian output files'
-                        + ' (default: *log)')
+    parser.add_argument('files', nargs='*', help='Gaussian output files' +
+                        ' (default: *log)')
     parser.add_argument('--recursive', '-R', action='store_true',
-            help="Look for files recursively")
+                        help="Look for files recursively")
     parser.add_argument('--recursivepattern', '-P',
-            help='Only look for these files recursively'
-            '(Unix wildcards between quotes)')
+                        help='Only look for these files recursively'
+                        '(Unix wildcards between quotes)')
     parser.add_argument('--overview', '-o', action='store_true',
-            help='Most important data which can be parsed')
+                        help='Most important data which can be parsed')
+    parser.add_argument('--sortgibbs', action='store_true',
+                        help='Sort according to Gibbs free energy')
     args = parser.parse_args()
 
     if args.debug:
@@ -207,15 +209,16 @@ def main():
         if args.type == 'pox':
             parser = pox.Pox
         if args.typeinfo:
-            print parser.info
+            print(parser.info)
 
     if args.overview:
-        print overview
+        print(overview)
     else:
-        print table.GaussianTable(files, columns, layout, partition=args.sort,
-                                  partition_numbers=args.groupbynumber,
-                                  partition_energies_rmsds=args.partitionenergies,
-                                  type=parser)
+        print(table.GaussianTable(
+            files, columns, layout, partition=args.sort,
+            partition_numbers=args.groupbynumber,
+            partition_energies_rmsds=args.partitionenergies,
+            sort_gibbs=args.sortgibbs, type=parser))
 
     if args.time:
         timeperfile = (time() - start) / len(files)
